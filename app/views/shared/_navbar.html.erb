@@ -1,0 +1,75 @@
+<nav class="sticky top-0 z-40 bg-cream-50 border-b border-gray-200" data-controller="navbar">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-20">
+
+      <%# Brand - Brooke & Maisy Text Logo %>
+      <div class="flex items-center">
+        <%= link_to root_path, class: "flex items-center" do %>
+          <span class="text-lg font-display font-semibold tracking-wide text-navy-900">
+            BROOKE & MAISY
+          </span>
+        <% end %>
+      </div>
+
+      <%# Desktop nav links %>
+      <div class="hidden sm:flex sm:items-center sm:gap-1">
+        <%= link_to "Home", root_path,
+              class: "text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+        <%= link_to "About", about_path,
+              class: "text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+        <%= link_to "Services", services_path,
+              class: "text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+        <%= link_to "Portfolio", portfolio_path,
+              class: "text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+        <%= link_to "Contact", contact_path,
+              class: "text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+        <%= link_to "Client Portal", client_portal_path,
+              class: "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+      </div>
+
+      <%# CTA Button - Book Consultation %>
+      <div class="hidden sm:flex sm:items-center">
+        <%= link_to "Book Consultation", contact_path,
+              class: "bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors" %>
+      </div>
+
+      <%# Mobile menu button %>
+      <div class="flex items-center sm:hidden">
+        <button data-action="click->navbar#toggle"
+                class="text-gray-700 hover:text-gray-900 hover:bg-gray-100 p-2 rounded-md transition-colors"
+                aria-label="Toggle navigation menu">
+
+          <svg data-navbar-target="openIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+
+          <svg data-navbar-target="closeIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <%# Mobile menu (hidden by default) %>
+  <div data-navbar-target="menu" class="hidden sm:hidden border-t border-gray-200 bg-gray-50">
+    <div class="px-2 py-2 space-y-1">
+      <%= link_to "Home", root_path,
+            class: "block text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+      <%= link_to "About", about_path,
+            class: "block text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+      <%= link_to "Services", services_path,
+            class: "block text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+      <%= link_to "Portfolio", portfolio_path,
+            class: "block text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+      <%= link_to "Contact", contact_path,
+            class: "block text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+      <%= link_to "Client Portal", client_portal_path,
+            class: "block text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+      <%= link_to "Book Consultation", contact_path,
+            class: "block bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,50 @@
+<% content_for(:title, "Portfolio - Brooke & Maisy Interior Designs") %>
+
+<section class="bg-cream-50 py-16 lg:py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h1 class="text-4xl lg:text-5xl font-semibold text-navy-900 mb-4" style="letter-spacing: -1px;">Portfolio</h1>
+    <p class="text-xl text-gray-600 mb-12 max-w-2xl">
+      Recent projects. A collection of our favorite transformations — each one unique, designed to fit the client's vision and lifestyle.
+    </p>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <div class="rounded-xl overflow-hidden bg-gray-200 aspect-[4/3] flex items-center justify-center">
+        <span class="text-gray-400">[ Project Image ]</span>
+      </div>
+
+      <div class="rounded-xl overflow-hidden bg-gray-200 aspect-[4/3] flex items-center justify-center">
+        <span class="text-gray-400">[ Project Image ]</span>
+      </div>
+
+      <div class="rounded-xl overflow-hidden bg-gray-200 aspect-[4/3] flex items-center justify-center">
+        <span class="text-gray-400">[ Project Image ]</span>
+      </div>
+
+      <div class="rounded-xl overflow-hidden bg-gray-200 aspect-[4/3] flex items-center justify-center">
+        <span class="text-gray-400">[ Project Image ]</span>
+      </div>
+
+      <div class="rounded-xl overflow-hidden bg-gray-200 aspect-[4/3] flex items-center justify-center">
+        <span class="text-gray-400">[ Project Image ]</span>
+      </div>
+
+      <div class="rounded-xl overflow-hidden bg-gray-200 aspect-[4/3] flex items-center justify-center">
+        <span class="text-gray-400">[ Project Image ]</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<%# CTA Section %>
+<section class="bg-navy-900 text-white py-16 lg:py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-3xl lg:text-4xl font-semibold mb-4" style="letter-spacing: -1px;">Want to see more?</h2>
+    <p class="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+      Book a consultation and I can show you more examples
+    </p>
+    <%= link_to "Book a Consultation", contact_path,
+          class: "inline-block bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-md font-medium text-lg transition-colors" %>
+  </div>
+</section>
