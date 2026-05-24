@@ -15,4 +15,9 @@ test:
   database: brooke_maisy_test
 
 production:
-  url: <%= ENV["DATABASE_URL"] %>
+  primary:
+    url: <%= ENV["DATABASE_URL"] %>
+  queue:
+    url: <%= ENV["DATABASE_URL"] %>
+  cable:
+    url: <%= ENV["DATABASE_URL"] %>
