@@ -2,7 +2,7 @@
 <% content_for(:description, "Professional interior design services in Tega Cay, SC serving the Greater Charlotte Area. Transform your space into something beautiful.") %>
 
 <%# Hero Section %>
-<section class="bg-cream-100">
+<section class="bg-linear-to-br from-olive-100 to-olive-300">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
     <div class="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
 
@@ -11,21 +11,23 @@
         <h1 class="text-4xl lg:text-5xl xl:text-6xl font-semibold text-navy-900 leading-tight mb-6" style="letter-spacing: -1.5px;">
           Transform your space into something beautiful
         </h1>
-        <p class="text-lg lg:text-xl text-gray-600 leading-relaxed mb-8 max-w-lg">
+        <p class="text-lg lg:text-xl text-navy-800 leading-relaxed mb-8 max-w-lg">
           Professional interior design services tailored to your lifestyle. Let me help you create a home you'll love coming home to.
         </p>
         <div class="flex flex-wrap gap-4">
           <%= link_to "Start Your Project", contact_path,
-                class: "bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-md font-medium transition-colors" %>
+                class: "bg-olive-500 hover:bg-pastel-sky hover:text-navy-800 text-white px-6 py-3 rounded-md font-medium transition-colors" %>
           <%= link_to "View Portfolio", portfolio_path,
-                class: "border border-navy-900 text-navy-900 hover:bg-navy-900 hover:text-white px-6 py-3 rounded-md font-medium transition-colors" %>
+                class: "border border-navy-900 bg-white text-navy-900 hover:bg-pastel-sky px-6 py-3 rounded-md font-medium transition-colors" %>
         </div>
       </div>
 
       <%# Hero Image %>
       <div class="flex-1 w-full lg:w-auto">
-        <div class="aspect-[7/6] rounded-xl overflow-hidden bg-gray-200 flex items-center justify-center">
-          <%= image_tag "reference/blue-white-living-room.jpg", alt: "Beautiful blue and white living room interior design" %>
+        <div class="aspect-7/6 rounded-xl border-4 border-olive-300 p-1 bg-olive-400">
+          <div class="rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center h-full shadow-[inset_0_0_40px_rgba(0,0,0,0.20)]">
+            <%= image_tag "reference/blue-white-living-room.jpg", alt: "Beautiful blue and white living room interior design" %>
+          </div>
         </div>
       </div>
 
@@ -58,7 +60,7 @@
 </section>
 
 <%# Services Section %>
-<section class="bg-[#FAF9F6] py-16 lg:py-20">
+<section class="bg-cream-100 py-16 lg:py-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <h2 class="text-3xl lg:text-4xl font-semibold text-navy-900 mb-12" style="letter-spacing: -1px;">Services</h2>
 
@@ -109,7 +111,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center mb-12">
       <h2 class="text-3xl lg:text-4xl font-semibold text-navy-900" style="letter-spacing: -1px;">Portfolio</h2>
-      <%= link_to "View All Projects →", portfolio_path, class: "text-emerald-600 font-medium hover:underline" %>
+      <%= link_to "View All Projects →", portfolio_path, class: "text-olive-500 font-medium hover:underline" %>
     </div>
 
     <div class="grid md:grid-cols-3 gap-6">
@@ -130,58 +132,15 @@
   </div>
 </section>
 
-<%# Blog Section %>
-<section class="bg-[#FAF9F6] py-16 lg:py-20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex justify-between items-center mb-12">
-      <h2 class="text-3xl lg:text-4xl font-semibold text-navy-900" style="letter-spacing: -1px;">Design Ideas & Inspiration</h2>
-      <%= link_to "View All Posts →", "#", class: "text-emerald-600 font-medium hover:underline" %>
-    </div>
-
-    <div class="grid md:grid-cols-3 gap-8">
-
-      <div>
-        <div class="aspect-[16/10] rounded-xl overflow-hidden bg-gray-200 mb-4 flex items-center justify-center">
-          <span class="text-gray-400">[ Blog Image ]</span>
-        </div>
-        <h3 class="text-lg font-semibold text-navy-900 mb-2">5 Ways to Make Any Room Feel Bigger</h3>
-        <p class="text-gray-600 text-sm leading-relaxed">
-          Simple design tricks to open up your space without renovations...
-        </p>
-      </div>
-
-      <div>
-        <div class="aspect-[16/10] rounded-xl overflow-hidden bg-gray-200 mb-4 flex items-center justify-center">
-          <span class="text-gray-400">[ Blog Image ]</span>
-        </div>
-        <h3 class="text-lg font-semibold text-navy-900 mb-2">Color Trends for 2026</h3>
-        <p class="text-gray-600 text-sm leading-relaxed">
-          The palettes and shades that are defining this year's top interiors...
-        </p>
-      </div>
-
-      <div>
-        <div class="aspect-[16/10] rounded-xl overflow-hidden bg-gray-200 mb-4 flex items-center justify-center">
-          <span class="text-gray-400">[ Blog Image ]</span>
-        </div>
-        <h3 class="text-lg font-semibold text-navy-900 mb-2">Choosing the Right Furniture Layout</h3>
-        <p class="text-gray-600 text-sm leading-relaxed">
-          How to arrange your pieces for flow, function, and style...
-        </p>
-      </div>
-
-    </div>
-  </div>
-</section>
 
 <%# Contact CTA Section %>
-<section class="bg-navy-900 text-white py-16 lg:py-20">
+<section class="bg-olive-500 text-white py-16 lg:py-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
     <h2 class="text-3xl lg:text-4xl font-semibold mb-4" style="letter-spacing: -1px;">Let's create something beautiful</h2>
-    <p class="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+    <p class="text-white text-lg mb-8 max-w-2xl mx-auto">
       Book a free 30-minute consultation to discuss your project — no pressure, just a conversation about your vision.
     </p>
     <%= link_to "Book a Free Consultation", contact_path,
-          class: "inline-block bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-md font-medium text-lg transition-colors" %>
+          class: "inline-block bg-olive-200 hover:bg-olive-100 text-navy-800 px-8 py-4 rounded-md font-medium text-lg transition-colors" %>
   </div>
 </section>
