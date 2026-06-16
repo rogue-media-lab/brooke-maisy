@@ -116,17 +116,33 @@
 
     <div class="grid md:grid-cols-3 gap-6">
 
-      <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 flex items-center justify-center">
-        <span class="text-gray-400">[ Project Image ]</span>
-      </div>
+      <% @featured_projects.each do |project| %>
+        <% if project.photos.attached? %>
+          <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity group" data-action="click->lightbox#open">
+            <%= image_tag project.photos.last, class: "w-full h-full object-cover", alt: "#{project.title} interior design" %>
+            <div class="absolute bottom-0 left-0 right-0 bg-black/50 text-white px-4 py-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span class="text-sm font-medium"><%= project.title %></span>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
 
-      <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 flex items-center justify-center">
-        <span class="text-gray-400">[ Project Image ]</span>
-      </div>
-
-      <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 flex items-center justify-center">
-        <span class="text-gray-400">[ Project Image ]</span>
-      </div>
+      <% remaining = 3 - @featured_projects.count { |p| p.photos.attached? } %>
+      <% if remaining > 0 %>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/luxurious-foyer-mural.jpg", class: "w-full h-full object-cover", alt: "Luxurious foyer with hand-painted mural" %>
+        </div>
+      <% end %>
+      <% if remaining > 1 %>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/modern-bathroom-vanity.jpg", class: "w-full h-full object-cover", alt: "Modern bathroom vanity design" %>
+        </div>
+      <% end %>
+      <% if remaining > 2 %>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/rustic-dining-table.jpg", class: "w-full h-full object-cover", alt: "Rustic dining table setting" %>
+        </div>
+      <% end %>
 
     </div>
   </div>

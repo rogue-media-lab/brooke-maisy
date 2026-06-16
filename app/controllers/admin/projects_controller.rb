@@ -30,6 +30,11 @@ class Admin::ProjectsController < Admin::BaseController
   end
 
   def update
+    if params[:project][:remove_photos].present?
+      ids_to_remove = params[:project][:remove_photos]
+      @project.photos.select { |p| ids_to_remove.include?(p.signed_id) }.each(&:purge)
+    end
+
     if @project.update(project_params)
       redirect_to admin_project_path(@project), notice: "Project updated."
     else
@@ -49,6 +54,6 @@ class Admin::ProjectsController < Admin::BaseController
   end
 
   def project_params
-    params.require(:project).permit(:user_id, :title, :description, :status, :address, photos: [])
+    params.require(:project).permit(:user_id, :title, :description, :status, :address, photos: [], remove_photos: [])
   end
 end

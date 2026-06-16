@@ -4,35 +4,180 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <h1 class="text-4xl lg:text-5xl font-semibold text-navy-900 mb-4" style="letter-spacing: -1px;">Portfolio</h1>
     <p class="text-xl text-gray-600 mb-12 max-w-2xl">
-      Recent projects. A collection of our favorite transformations — each one unique, designed to fit the client's vision and lifestyle.
+      Recent projects. A collection of our favorite transformations. Each one is unique and designed to fit the your vision and lifestyle.
     </p>
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% if @projects.any? %>
+      <% @projects.each do |project| %>
+        <div class="mb-16">
+          <div class="flex items-center gap-3 mb-6">
+            <h2 class="text-2xl lg:text-3xl font-semibold text-navy-900"><%= project.title %></h2>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+              <%= project.status.titleize %>
+            </span>
+          </div>
 
-      <div class="rounded-xl overflow-hidden bg-gray-200 aspect-[4/3] flex items-center justify-center">
-        <span class="text-gray-400">[ Project Image ]</span>
+          <% if project.photos.attached? %>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <% project.photos.each do |photo| %>
+                <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity group" data-action="click->lightbox#open">
+                  <%= image_tag photo, class: "w-full h-full object-cover", alt: "#{project.title} interior design" %>
+                  <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"></div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-gray-400 italic">No photos uploaded yet for this project.</p>
+          <% end %>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="text-gray-500 mb-12">No completed projects yet. Check back soon!</p>
+    <% end %>
+
+    <%# Reference & Inspiration Gallery %>
+    <div class="border-t border-gray-200 pt-16 mt-16">
+      <h2 class="text-2xl lg:text-3xl font-semibold text-navy-900 mb-8">Design Inspiration</h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/bathroom-inspiration-20260524.jpg", class: "w-full h-full object-cover", alt: "Interior design reference" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/blue-white-living-room.jpg", class: "w-full h-full object-cover", alt: "Interior design reference" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/empty-modern-room.jpg", class: "w-full h-full object-cover", alt: "Interior design reference" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/IMG_0929.jpg", class: "w-full h-full object-cover", alt: "Interior design reference" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/luxurious-foyer-mural.jpg", class: "w-full h-full object-cover", alt: "Interior design reference" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/mirrored-tray-vignette.jpg", class: "w-full h-full object-cover", alt: "Interior design reference" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/modern-bathroom-vanity.jpg", class: "w-full h-full object-cover", alt: "Interior design reference" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/modern-cafe-interior.jpg", class: "w-full h-full object-cover", alt: "Interior design reference" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/rustic-dining-table.jpg", class: "w-full h-full object-cover", alt: "Interior design reference" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/wine-rack-fern-corner.jpg", class: "w-full h-full object-cover", alt: "Interior design reference" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/panel_inspiration/img_0e43d9c6e85c.jpeg", class: "w-full h-full object-cover", alt: "Panel inspiration" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/panel_inspiration/img_1b0f030897c2.jpeg", class: "w-full h-full object-cover", alt: "Panel inspiration" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/panel_inspiration/img_e06753803852.jpeg", class: "w-full h-full object-cover", alt: "Panel inspiration" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_0080241f9445.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_01ee0165b0a2.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_023525f9cc54.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_07cbe257f929.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_23c44331d9c5.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_2ec5d58b26a1.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_365dd84fd0ac.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_43ec72139f35.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_49de9a7d94fb.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_4c7f20445ff5.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_4edda3329333.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_5c5b999ce404.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_5e08a5ee547b.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_64b22032f99b.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_68e916f8d646.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_6c9b272b6fd8.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_7b05bc9e8a80.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_9543fd8af0d2.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_96caa3eb2a1e.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_9af67c8fa5fa.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_9e6e2a8cc977.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_a0d2ea3e89de.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_a2601259dfd5.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_a5968c72650a.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_a945a8a0ea8a.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_b0a147928f5f.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_b819d7fbb236.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_baec349e104f.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_c2844ff3b379.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_d876ae880f1a.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_d99ec43829b9.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_f24d25193b8f.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
+        <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
+          <%= image_tag "reference/post_production/img_fd9b38d31cb4.jpeg", class: "w-full h-full object-cover", alt: "Interior design project" %>
+        </div>
       </div>
-
-      <div class="rounded-xl overflow-hidden bg-gray-200 aspect-[4/3] flex items-center justify-center">
-        <span class="text-gray-400">[ Project Image ]</span>
-      </div>
-
-      <div class="rounded-xl overflow-hidden bg-gray-200 aspect-[4/3] flex items-center justify-center">
-        <span class="text-gray-400">[ Project Image ]</span>
-      </div>
-
-      <div class="rounded-xl overflow-hidden bg-gray-200 aspect-[4/3] flex items-center justify-center">
-        <span class="text-gray-400">[ Project Image ]</span>
-      </div>
-
-      <div class="rounded-xl overflow-hidden bg-gray-200 aspect-[4/3] flex items-center justify-center">
-        <span class="text-gray-400">[ Project Image ]</span>
-      </div>
-
-      <div class="rounded-xl overflow-hidden bg-gray-200 aspect-[4/3] flex items-center justify-center">
-        <span class="text-gray-400">[ Project Image ]</span>
-      </div>
-
     </div>
   </div>
 </section>

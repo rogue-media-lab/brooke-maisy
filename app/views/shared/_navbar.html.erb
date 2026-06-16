@@ -5,9 +5,7 @@
       <%# Brand - Brooke & Maisy Text Logo %>
       <div class="flex items-center">
         <%= link_to root_path, class: "flex items-center" do %>
-          <span class="text-lg font-display font-semibold tracking-wide text-navy-900">
-            BROOKE & MAISY
-          </span>
+          <%= image_tag "LOGO1.png", alt: "Brooke & Maisy Interior Designs", class: "h-18 w-auto" %>
         <% end %>
       </div>
 
@@ -25,6 +23,16 @@
               class: "text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
         <%= link_to "Client Portal", client_portal_path,
               class: "text-olive-500 hover:text-navy-800 hover:bg-olive-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+
+        <% if user_signed_in? %>
+          <span class="text-gray-500 px-3 py-2 text-sm font-medium"><%= current_user.display_name %></span>
+          <% if current_user.admin? %>
+            <%= link_to "Admin", admin_root_path,
+                  class: "text-olive-600 hover:text-navy-800 hover:bg-olive-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+          <% end %>
+          <%= button_to "Sign out", destroy_user_session_path, method: :delete,
+                class: "text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer" %>
+        <% end %>
       </div>
 
       <%# CTA Button - Book Consultation %>
@@ -68,6 +76,19 @@
             class: "block text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
       <%= link_to "Client Portal", client_portal_path,
             class: "block text-olive-500 hover:text-emerald-700 hover:bg-emerald-50 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+
+      <% if user_signed_in? %>
+        <div class="px-3 py-2 border-t border-gray-200 mt-1">
+          <p class="text-sm font-medium text-gray-900"><%= current_user.display_name %></p>
+          <% if current_user.admin? %>
+            <%= link_to "Admin", admin_root_path,
+                  class: "block text-olive-600 hover:text-emerald-700 hover:bg-emerald-50 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+          <% end %>
+          <%= button_to "Sign out", destroy_user_session_path, method: :delete,
+                class: "block text-left text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer bg-transparent border-0 w-full" %>
+        </div>
+      <% end %>
+
       <%= link_to "Book Consultation", contact_path,
             class: "block bg-olive-500 hover:bg-pastel-sky text-white hover:text-navy-800 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
     </div>
