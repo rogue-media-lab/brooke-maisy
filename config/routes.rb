@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  devise_for :users
+  # Invitation-only: registration disabled. Clients are created by an admin.
+  devise_for :users, skip: [ :registrations ]
   # Error pages
   match "/404", to: "errors#not_found",             via: :all
   match "/422", to: "errors#unprocessable_entity",  via: :all
@@ -14,7 +15,27 @@ Rails.application.routes.draw do
   get "services", to: "pages#services"
   get "portfolio", to: "pages#portfolio"
   get "contact", to: "pages#contact"
-  get "client-portal", to: "pages#client_portal"
   get "trade-network", to: "pages#trade_network"
-  get "project-dashboard", to: "pages#project_dashboard"
+
+  # Authenticated client portal (real, data-driven)
+  namespace :client do
+    resources :projects, only: [ :index, :show ]
+  end
+
+  # Admin area — Brooke manages clients, projects, and updates.
+  namespace :admin do
+    root "dashboard#index"
+    resources :clients do
+      member do
+        post :resend_invite
+      end
+    end
+    resources :projects do
+      resources :project_updates, only: [ :create, :destroy ]
+    end
+  end
+
+  # Public "client-portal" link routes into the authenticated portal.
+  # Devise redirects to sign-in if not logged in.
+  get "client-portal", to: redirect("/client/projects")
 end

@@ -1,5 +1,6 @@
 class PagesController < ApplicationController
   def home
+    @featured_projects = Project.complete.recent.limit(3).with_attached_photos
   end
 
   def about
@@ -9,17 +10,12 @@ class PagesController < ApplicationController
   end
 
   def portfolio
+    @projects = Project.complete.recent.with_attached_photos
   end
 
   def contact
   end
 
-  def client_portal
-  end
-
   def trade_network
-  end
-
-  def project_dashboard
   end
 end

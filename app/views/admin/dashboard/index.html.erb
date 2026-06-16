@@ -1,0 +1,73 @@
+<% content_for(:title, "Dashboard - Brooke & Maisy Admin") %>
+
+<div class="mb-8">
+  <h1 class="font-serif text-3xl font-semibold text-navy-900">Dashboard</h1>
+  <p class="text-gray-500 mt-1">Overview of your design business.</p>
+</div>
+
+<%# Stat cards %>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <% [
+       { label: "Clients", value: @client_count, sub: "total" },
+       { label: "Projects", value: @project_count, sub: "all time" },
+       { label: "Active", value: @active_count, sub: "in progress" },
+       { label: "Complete", value: @complete_count, sub: "delivered" }
+     ].each do |stat| %>
+    <div class="bg-white rounded-xl border border-olive-100 p-5">
+      <p class="text-xs font-medium uppercase tracking-wider text-gray-400"><%= stat[:label] %></p>
+      <p class="font-serif text-3xl font-semibold text-olive-500 mt-1"><%= stat[:value] %></p>
+      <p class="text-xs text-gray-400 mt-1"><%= stat[:sub] %></p>
+    </div>
+  <% end %>
+</div>
+
+<div class="grid lg:grid-cols-2 gap-6">
+  <%# Recent projects %>
+  <div class="bg-white rounded-xl border border-olive-100">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-olive-100">
+      <h2 class="font-serif text-lg font-semibold text-navy-900">Recent Projects</h2>
+      <%= link_to "View all", admin_projects_path, class: "text-sm text-olive-500 hover:text-olive-400 font-medium" %>
+    </div>
+    <% if @recent_projects.any? %>
+      <ul>
+        <% @recent_projects.each do |project| %>
+          <li class="border-b border-gray-50 last:border-0">
+            <%= link_to admin_project_path(project), class: "flex items-center justify-between px-5 py-3 hover:bg-cream-50" do %>
+              <div>
+                <p class="text-sm font-medium text-navy-900"><%= project.title %></p>
+                <p class="text-xs text-gray-400"><%= project.user.display_name %></p>
+              </div>
+              <%= render "admin/shared/status_badge", status: project.status %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="px-5 py-6 text-sm text-gray-400">No projects yet.</p>
+    <% end %>
+  </div>
+
+  <%# Recent updates %>
+  <div class="bg-white rounded-xl border border-olive-100">
+    <div class="px-5 py-4 border-b border-olive-100">
+      <h2 class="font-serif text-lg font-semibold text-navy-900">Recent Updates</h2>
+    </div>
+    <% if @recent_updates.any? %>
+      <ul>
+        <% @recent_updates.each do |update| %>
+          <li class="px-5 py-3 border-b border-gray-50 last:border-0">
+            <div class="flex items-start justify-between gap-3">
+              <p class="text-sm text-gray-700 line-clamp-2"><%= update.body %></p>
+              <% unless update.visible_to_client %>
+                <span class="text-[10px] uppercase tracking-wide text-amber-700 bg-pastel-peach px-2 py-0.5 rounded-full whitespace-nowrap">Internal</span>
+              <% end %>
+            </div>
+            <p class="text-xs text-gray-400 mt-1"><%= update.project.title %> &middot; <%= update.created_at.strftime("%b %-d") %></p>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="px-5 py-6 text-sm text-gray-400">No updates yet.</p>
+    <% end %>
+  </div>
+</div>
