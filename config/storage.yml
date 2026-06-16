@@ -13,3 +13,5 @@ cloudflare:
   region: auto
   endpoint: <%= ENV.fetch("R2_ENDPOINT", "") %>
   bucket: brooke-maisy
+  request_checksum_calculation: "when_required"
+  response_checksum_validation: "when_supported"
