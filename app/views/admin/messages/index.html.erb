@@ -1,0 +1,63 @@
+<% content_for(:title, "Messages - Brooke & Maisy Admin") %>
+
+<div class="mb-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="font-serif text-3xl font-semibold text-theme-500">Messages</h1>
+      <p class="text-gray-500 mt-1">Contact form submissions from prospective clients.</p>
+    </div>
+    <% unread_count = Message.unread.count %>
+    <% if unread_count > 0 %>
+      <span class="bg-theme-400 text-white text-sm font-medium px-3 py-1 rounded-full">
+        <%= pluralize(unread_count, "unread") %>
+      </span>
+    <% end %>
+  </div>
+</div>
+
+<div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+  <% if @messages.any? %>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-theme-100/50">
+          <tr>
+            <th class="px-5 py-3 font-medium text-gray-500">Name</th>
+            <th class="px-5 py-3 font-medium text-gray-500">Email</th>
+            <th class="px-5 py-3 font-medium text-gray-500">Service</th>
+            <th class="px-5 py-3 font-medium text-gray-500">Date</th>
+            <th class="px-5 py-3 font-medium text-gray-500">Status</th>
+            <th class="px-5 py-3 font-medium text-gray-500 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          <% @messages.each do |message| %>
+            <tr class="hover:bg-theme-100/30 <%= "bg-theme-100/20" unless message.read? %>">
+              <td class="px-5 py-3 font-medium text-theme-500">
+                <%= link_to message.name, admin_message_path(message), class: "hover:underline" %>
+              </td>
+              <td class="px-5 py-3 text-gray-600"><%= message.email %></td>
+              <td class="px-5 py-3 text-gray-600"><%= message.service.presence || "—" %></td>
+              <td class="px-5 py-3 text-gray-400 whitespace-nowrap"><%= message.created_at.strftime("%b %-d, %Y") %></td>
+              <td class="px-5 py-3 whitespace-nowrap">
+                <% if message.read? %>
+                  <span class="text-xs text-gray-400">Read</span>
+                <% else %>
+                  <span class="text-xs font-medium text-theme-500 bg-theme-200 px-2 py-0.5 rounded-full">New</span>
+                <% end %>
+              </td>
+              <td class="px-5 py-3 text-right">
+                <%= button_to "Delete", admin_message_path(message), method: :delete,
+                      data: { turbo_confirm: "Delete this message?" },
+                      class: "text-xs text-red-500 hover:text-red-700 font-medium bg-transparent border-0 cursor-pointer" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="px-5 py-12 text-center">
+      <p class="text-gray-400 text-sm">No messages yet.</p>
+    </div>
+  <% end %>
+</div>

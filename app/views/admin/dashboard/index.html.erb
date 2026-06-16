@@ -6,16 +6,23 @@
 </div>
 
 <%# Stat cards %>
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
   <% [
        { label: "Clients", value: @client_count, sub: "total" },
        { label: "Projects", value: @project_count, sub: "all time" },
        { label: "Active", value: @active_count, sub: "in progress" },
-       { label: "Complete", value: @complete_count, sub: "delivered" }
+       { label: "Complete", value: @complete_count, sub: "delivered" },
+       { label: "Messages", value: @unread_messages, sub: "unread", link: admin_messages_path }
      ].each do |stat| %>
     <div class="bg-white rounded-xl border border-theme-100 p-5">
       <p class="text-xs font-medium uppercase tracking-wider text-gray-400"><%= stat[:label] %></p>
-      <p class="font-serif text-3xl font-semibold text-theme-500 mt-1"><%= stat[:value] %></p>
+      <% if stat[:link] %>
+        <%= link_to stat[:link], class: "block mt-1" do %>
+          <p class="font-serif text-3xl font-semibold text-theme-500"><%= stat[:value] %></p>
+        <% end %>
+      <% else %>
+        <p class="font-serif text-3xl font-semibold text-theme-500 mt-1"><%= stat[:value] %></p>
+      <% end %>
       <p class="text-xs text-gray-400 mt-1"><%= stat[:sub] %></p>
     </div>
   <% end %>

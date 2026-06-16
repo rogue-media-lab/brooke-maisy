@@ -1,0 +1,45 @@
+<% content_for(:title, "Message - Brooke & Maisy Admin") %>
+
+<div class="mb-8">
+  <div class="flex items-center gap-3">
+    <%= link_to "← Back to messages", admin_messages_path, class: "text-sm text-theme-500 hover:text-theme-400 font-medium" %>
+  </div>
+</div>
+
+<div class="bg-white rounded-xl border border-theme-100 p-8">
+  <div class="flex items-start justify-between mb-6">
+    <div>
+      <h1 class="font-serif text-2xl font-semibold text-theme-500"><%= @message.name %></h1>
+      <p class="text-sm text-gray-400 mt-1"><%= @message.email %></p>
+    </div>
+    <% unless @message.read? %>
+      <span class="text-xs font-medium text-theme-500 bg-theme-200 px-2 py-0.5 rounded-full">New</span>
+    <% end %>
+  </div>
+
+  <div class="grid sm:grid-cols-3 gap-6 mb-8 pb-8 border-b border-theme-100">
+    <div>
+      <p class="text-xs font-medium uppercase tracking-wider text-gray-400 mb-1">Phone</p>
+      <p class="text-sm text-gray-700"><%= @message.phone.presence || "—" %></p>
+    </div>
+    <div>
+      <p class="text-xs font-medium uppercase tracking-wider text-gray-400 mb-1">Service</p>
+      <p class="text-sm text-gray-700"><%= @message.service.presence || "—" %></p>
+    </div>
+    <div>
+      <p class="text-xs font-medium uppercase tracking-wider text-gray-400 mb-1">Received</p>
+      <p class="text-sm text-gray-700"><%= @message.created_at.strftime("%B %-d, %Y at %I:%M %p") %></p>
+    </div>
+  </div>
+
+  <div>
+    <p class="text-xs font-medium uppercase tracking-wider text-gray-400 mb-2">Message</p>
+    <div class="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap"><%= @message.body %></div>
+  </div>
+
+  <div class="mt-8 pt-6 border-t border-theme-100 flex justify-end">
+    <%= button_to "Delete message", admin_message_path(@message), method: :delete,
+          data: { turbo_confirm: "Delete this message?" },
+          class: "text-sm text-red-500 hover:text-red-700 font-medium bg-transparent border-0 cursor-pointer" %>
+  </div>
+</div>

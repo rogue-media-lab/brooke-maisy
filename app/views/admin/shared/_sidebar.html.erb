@@ -17,6 +17,13 @@
     <p class="px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300">Manage</p>
     <%= link_to "Projects", admin_projects_path, class: nav_link.call(admin_projects_path, request.path.start_with?(admin_projects_path)) %>
     <%= link_to "Clients", admin_clients_path, class: nav_link.call(admin_clients_path, request.path.start_with?(admin_clients_path)) %>
+    <% unread = Message.unread.count %>
+    <%= link_to admin_messages_path, class: nav_link.call(admin_messages_path, request.path.start_with?(admin_messages_path)) do %>
+      Messages
+      <% if unread > 0 %>
+        <span class="ml-auto bg-theme-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"><%= unread %></span>
+      <% end %>
+    <% end %>
   </nav>
 
   <div class="px-4 py-4 border-t border-white/10">

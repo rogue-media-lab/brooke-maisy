@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   get "services", to: "pages#services"
   get "portfolio", to: "pages#portfolio"
   get "contact", to: "pages#contact"
+  resources :messages, only: [ :create ]
   get "trade-network", to: "pages#trade_network"
 
   # Authenticated client portal (real, data-driven)
@@ -33,6 +34,7 @@ Rails.application.routes.draw do
     resources :projects do
       resources :project_updates, only: [ :create, :destroy ]
     end
+    resources :messages, only: [ :index, :show, :destroy ]
   end
 
   # Public "client-portal" link routes into the authenticated portal.
