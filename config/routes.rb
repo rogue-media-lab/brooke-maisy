@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  devise_for :users
+  # Invitation-only: registration disabled. Clients are created by an admin.
+  devise_for :users, skip: [ :registrations ]
   # Error pages
   match "/404", to: "errors#not_found",             via: :all
   match "/422", to: "errors#unprocessable_entity",  via: :all

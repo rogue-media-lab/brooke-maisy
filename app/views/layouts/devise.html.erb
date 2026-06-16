@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Brooke & Maisy Interior Designs" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="Client portal — Brooke & Maisy Interior Designs">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-cream-50 text-gray-900 font-sans min-h-screen flex flex-col">
+    <div class="fixed top-6 right-4 z-50 space-y-2" data-controller="flash-messages">
+      <%= render "shared/flash_messages" %>
+    </div>
+
+    <main class="flex-grow flex items-center justify-center px-4 py-12">
+      <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+          <%= link_to root_path, class: "inline-block" do %>
+            <span class="font-serif text-3xl font-semibold text-olive-500 tracking-tight">Brooke &amp; Maisy</span>
+          <% end %>
+          <p class="mt-1 text-sm uppercase tracking-[0.2em] text-olive-400">Interior Designs</p>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xl border border-olive-100 p-8">
+          <%= yield %>
+        </div>
+
+        <p class="mt-6 text-center text-xs text-gray-400">
+          Client access is by invitation. Need help signing in?
+          <%= link_to "Contact us", contact_path, class: "text-olive-500 hover:text-olive-400 underline underline-offset-2" %>.
+        </p>
+      </div>
+    </main>
+  </body>
+</html>
