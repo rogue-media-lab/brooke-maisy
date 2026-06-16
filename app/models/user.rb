@@ -10,4 +10,15 @@ class User < ApplicationRecord
   has_many :projects, dependent: :destroy
 
   validates :role, presence: true
+
+  scope :clients, -> { where(role: "client").order(:name) }
+
+  # Friendly display name: the name if set, otherwise the email's local part.
+  def display_name
+    name.presence || email.split("@").first.titleize
+  end
+
+  def first_name
+    display_name.split.first
+  end
 end

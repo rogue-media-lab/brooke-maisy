@@ -22,6 +22,19 @@ Rails.application.routes.draw do
     resources :projects, only: [ :index, :show ]
   end
 
+  # Admin area — Brooke manages clients, projects, and updates.
+  namespace :admin do
+    root "dashboard#index"
+    resources :clients do
+      member do
+        post :resend_invite
+      end
+    end
+    resources :projects do
+      resources :project_updates, only: [ :create, :destroy ]
+    end
+  end
+
   # Public "client-portal" link routes into the authenticated portal.
   # Devise redirects to sign-in if not logged in.
   get "client-portal", to: redirect("/client/projects")

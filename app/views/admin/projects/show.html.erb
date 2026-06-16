@@ -1,0 +1,116 @@
+<% content_for(:title, "#{@project.title} - Admin") %>
+
+<%= link_to admin_projects_path, class: "inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-olive-500 mb-4" do %>
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+  All projects
+<% end %>
+
+<div class="flex items-start justify-between gap-4 mb-6">
+  <div>
+    <div class="flex items-center gap-3">
+      <h1 class="font-serif text-3xl font-semibold text-navy-900"><%= @project.title %></h1>
+      <%= render "admin/shared/status_badge", status: @project.status %>
+    </div>
+    <p class="text-gray-500 mt-1">
+      <%= link_to @project.user.display_name, admin_client_path(@project.user), class: "hover:text-olive-500" %>
+      <%= " · #{@project.address}" if @project.address.present? %>
+    </p>
+  </div>
+  <%= link_to "Edit", edit_admin_project_path(@project),
+        class: "text-sm font-medium px-3 py-2 rounded-lg bg-cream-50 border border-olive-100 hover:bg-olive-100 whitespace-nowrap" %>
+</div>
+
+<div class="grid lg:grid-cols-3 gap-6">
+  <%# Left: description, photos, updates %>
+  <div class="lg:col-span-2 space-y-6">
+    <% if @project.description.present? %>
+      <div class="bg-white rounded-xl border border-olive-100 p-6">
+        <h2 class="font-serif text-lg font-semibold text-navy-900 mb-2">Description</h2>
+        <p class="text-gray-700 leading-relaxed"><%= simple_format(@project.description) %></p>
+      </div>
+    <% end %>
+
+    <%# Photos %>
+    <div class="bg-white rounded-xl border border-olive-100 p-6">
+      <h2 class="font-serif text-lg font-semibold text-navy-900 mb-4">Photos</h2>
+      <% if @project.photos.attached? %>
+        <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+          <% @project.photos.each do |photo| %>
+            <div class="aspect-square rounded-lg overflow-hidden bg-gray-100">
+              <%= image_tag photo, class: "w-full h-full object-cover" %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-400">No photos yet. Add some when editing the project.</p>
+      <% end %>
+    </div>
+
+    <%# Updates timeline %>
+    <div class="bg-white rounded-xl border border-olive-100 p-6">
+      <h2 class="font-serif text-lg font-semibold text-navy-900 mb-4">Updates</h2>
+
+      <% if @updates.any? %>
+        <div class="space-y-3 mb-6">
+          <% @updates.each do |update| %>
+            <div class="flex items-start justify-between gap-3 rounded-lg border border-gray-100 px-4 py-3">
+              <div class="min-w-0">
+                <p class="text-sm text-gray-700"><%= simple_format(update.body) %></p>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="text-xs text-gray-400"><%= update.created_at.strftime("%b %-d, %Y") %></span>
+                  <% if update.visible_to_client %>
+                    <span class="text-[10px] uppercase tracking-wide text-emerald-700 bg-pastel-sage px-2 py-0.5 rounded-full">Client-visible</span>
+                  <% else %>
+                    <span class="text-[10px] uppercase tracking-wide text-amber-700 bg-pastel-peach px-2 py-0.5 rounded-full">Internal</span>
+                  <% end %>
+                </div>
+              </div>
+              <%= button_to admin_project_project_update_path(@project, update), method: :delete,
+                    form: { data: { turbo_confirm: "Delete this update?" } },
+                    class: "text-gray-300 hover:text-red-500 bg-transparent border-0 p-1 cursor-pointer" do %>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-400 mb-6">No updates yet.</p>
+      <% end %>
+
+      <%# Post a new update %>
+      <%= form_with model: [ :admin, @project, @new_update ], class: "border-t border-olive-100 pt-5 space-y-3" do |f| %>
+        <%= f.label :body, "Post an update", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_area :body, rows: 3, placeholder: "What's the latest on this project?",
+              class: "w-full rounded-lg border border-olive-200 px-3 py-2.5 text-sm focus:border-olive-400 focus:ring-2 focus:ring-olive-200 focus:outline-none" %>
+        <div class="flex items-center justify-between">
+          <label class="flex items-center gap-2 text-sm text-gray-600">
+            <%= f.check_box :visible_to_client, class: "h-4 w-4 rounded border-olive-300 text-olive-500 focus:ring-olive-300" %>
+            Visible to client
+          </label>
+          <%= f.submit "Post update",
+                class: "bg-olive-500 hover:bg-olive-400 text-white text-sm font-semibold px-4 py-2 rounded-lg cursor-pointer transition-colors" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Right: meta + danger zone %>
+  <div class="space-y-4">
+    <div class="bg-white rounded-xl border border-olive-100 p-5">
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Details</h3>
+      <dl class="space-y-2 text-sm">
+        <div class="flex justify-between"><dt class="text-gray-500">Status</dt><dd class="font-medium text-navy-900"><%= @project.status.titleize %></dd></div>
+        <div class="flex justify-between"><dt class="text-gray-500">Client</dt><dd class="font-medium text-navy-900"><%= @project.user.display_name %></dd></div>
+        <div class="flex justify-between"><dt class="text-gray-500">Created</dt><dd class="text-gray-600"><%= @project.created_at.strftime("%b %-d, %Y") %></dd></div>
+        <div class="flex justify-between"><dt class="text-gray-500">Updates</dt><dd class="text-gray-600"><%= @project.project_updates.count %></dd></div>
+      </dl>
+    </div>
+
+    <div class="bg-white rounded-xl border border-red-100 p-5">
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-red-400 mb-3">Danger zone</h3>
+      <%= button_to "Delete project", admin_project_path(@project), method: :delete,
+            form: { data: { turbo_confirm: "Delete \"#{@project.title}\" and all its updates? This cannot be undone." } },
+            class: "w-full text-sm font-medium px-3 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 cursor-pointer border-0" %>
+    </div>
+  </div>
+</div>
