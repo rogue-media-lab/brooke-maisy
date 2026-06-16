@@ -31,8 +31,8 @@ class Admin::ProjectsController < Admin::BaseController
 
   def update
     if params[:project][:remove_photos].present?
-      ids_to_remove = params[:project][:remove_photos]
-      @project.photos.select { |p| ids_to_remove.include?(p.signed_id) }.each(&:purge)
+      ids_to_remove = params[:project][:remove_photos].reject(&:blank?)
+      @project.photos.select { |p| ids_to_remove.include?(p.signed_id) }.each(&:purge) if ids_to_remove.any?
     end
 
     if @project.update(project_params)
@@ -54,6 +54,6 @@ class Admin::ProjectsController < Admin::BaseController
   end
 
   def project_params
-    params.require(:project).permit(:user_id, :title, :description, :status, :address, photos: [], remove_photos: [])
+    params.require(:project).permit(:user_id, :title, :description, :status, :address, photos: [])
   end
 end
