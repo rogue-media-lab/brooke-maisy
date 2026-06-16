@@ -80,3 +80,4 @@ end
 gem "letter_opener", group: :development
 gem "devise"
 gem "pundit"
+gem "aws-sdk-s3", require: false
