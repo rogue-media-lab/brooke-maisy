@@ -7,5 +7,7 @@ class User < ApplicationRecord
 
   enum :role, { client: "client", admin: "admin" }, default: "client"
 
+  has_many :projects, dependent: :destroy
+
   validates :role, presence: true
 end

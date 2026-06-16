@@ -15,7 +15,14 @@ Rails.application.routes.draw do
   get "services", to: "pages#services"
   get "portfolio", to: "pages#portfolio"
   get "contact", to: "pages#contact"
-  get "client-portal", to: "pages#client_portal"
   get "trade-network", to: "pages#trade_network"
-  get "project-dashboard", to: "pages#project_dashboard"
+
+  # Authenticated client portal (real, data-driven)
+  namespace :client do
+    resources :projects, only: [ :index, :show ]
+  end
+
+  # Public "client-portal" link routes into the authenticated portal.
+  # Devise redirects to sign-in if not logged in.
+  get "client-portal", to: redirect("/client/projects")
 end

@@ -14,12 +14,6 @@ class PagesController < ApplicationController
   def contact
   end
 
-  def client_portal
-  end
-
   def trade_network
-  end
-
-  def project_dashboard
   end
 end
