@@ -1,8 +1,8 @@
 <% content_for(:title, "Portfolio - Brooke & Maisy Interior Designs") %>
 
-<section class="bg-cream-50 py-16 lg:py-20">
+<section class="bg-theme-100 py-16 lg:py-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h1 class="text-4xl lg:text-5xl font-semibold text-navy-900 mb-4" style="letter-spacing: -1px;">Portfolio</h1>
+    <h1 class="text-4xl lg:text-5xl font-semibold text-theme-500 mb-4" style="letter-spacing: -1px;">Portfolio</h1>
     <p class="text-xl text-gray-600 mb-12 max-w-2xl">
       Recent projects. A collection of our favorite transformations. Each one is unique and designed to fit the your vision and lifestyle.
     </p>
@@ -11,8 +11,8 @@
       <% @projects.each do |project| %>
         <div class="mb-16">
           <div class="flex items-center gap-3 mb-6">
-            <h2 class="text-2xl lg:text-3xl font-semibold text-navy-900"><%= project.title %></h2>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+            <h2 class="text-2xl lg:text-3xl font-semibold text-theme-500"><%= project.title %></h2>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-theme-200 text-theme-500">
               <%= project.status.titleize %>
             </span>
           </div>
@@ -37,7 +37,7 @@
 
     <%# Reference & Inspiration Gallery %>
     <div class="border-t border-gray-200 pt-16 mt-16">
-      <h2 class="text-2xl lg:text-3xl font-semibold text-navy-900 mb-8">Design Inspiration</h2>
+      <h2 class="text-2xl lg:text-3xl font-semibold text-theme-500 mb-8">Design Inspiration</h2>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 relative cursor-pointer hover:opacity-90 transition-opacity" data-action="click->lightbox#open">
           <%= image_tag "reference/bathroom-inspiration-20260524.jpg", class: "w-full h-full object-cover", alt: "Interior design reference" %>
@@ -183,13 +183,13 @@
 </section>
 
 <%# CTA Section %>
-<section class="bg-navy-900 text-white py-16 lg:py-20">
+<section class="bg-theme-500 text-white py-16 lg:py-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
     <h2 class="text-3xl lg:text-4xl font-semibold mb-4" style="letter-spacing: -1px;">Want to see more?</h2>
     <p class="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
       Book a consultation and I can show you more examples
     </p>
     <%= link_to "Book a Consultation", contact_path,
-          class: "inline-block bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-md font-medium text-lg transition-colors" %>
+          class: "inline-block bg-theme-400 hover:bg-theme-500 text-white px-8 py-4 rounded-md font-medium text-lg transition-colors" %>
   </div>
 </section>

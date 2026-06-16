@@ -1,31 +1,31 @@
 <%
   nav_link = ->(path, active) {
     base = "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
-    active ? "#{base} bg-olive-400 text-white" : "#{base} text-olive-100 hover:bg-white/10 hover:text-white"
+    active ? "#{base} bg-theme-400 text-white" : "#{base} text-theme-100 hover:bg-white/10 hover:text-white"
   }
 %>
-<aside class="w-64 bg-navy-900 flex flex-col flex-shrink-0">
+<aside class="w-64 bg-theme-500 flex flex-col flex-shrink-0">
   <div class="px-6 py-6 border-b border-white/10">
     <p class="font-serif text-xl font-semibold text-white">Brooke &amp; Maisy</p>
-    <p class="text-xs uppercase tracking-[0.18em] text-olive-200 mt-0.5">Admin</p>
+    <p class="text-xs uppercase tracking-[0.18em] text-theme-200 mt-0.5">Admin</p>
   </div>
 
   <nav class="flex-1 px-3 py-4 space-y-1">
-    <p class="px-4 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-olive-300">Overview</p>
+    <p class="px-4 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300">Overview</p>
     <%= link_to "Dashboard", admin_root_path, class: nav_link.call(admin_root_path, request.path == admin_root_path) %>
 
-    <p class="px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-olive-300">Manage</p>
+    <p class="px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300">Manage</p>
     <%= link_to "Projects", admin_projects_path, class: nav_link.call(admin_projects_path, request.path.start_with?(admin_projects_path)) %>
     <%= link_to "Clients", admin_clients_path, class: nav_link.call(admin_clients_path, request.path.start_with?(admin_clients_path)) %>
   </nav>
 
   <div class="px-4 py-4 border-t border-white/10">
     <p class="text-sm text-white font-medium"><%= current_user.display_name %></p>
-    <p class="text-xs text-olive-200 mb-3 truncate"><%= current_user.email %></p>
+    <p class="text-xs text-theme-200 mb-3 truncate"><%= current_user.email %></p>
     <div class="flex flex-col gap-1.5">
-      <%= link_to "View site", root_path, class: "text-xs text-olive-200 hover:text-white" %>
+      <%= link_to "View site", root_path, class: "text-xs text-theme-200 hover:text-white" %>
       <%= button_to "Sign out", destroy_user_session_path, method: :delete,
-            class: "text-left text-xs text-olive-200 hover:text-white bg-transparent border-0 p-0 cursor-pointer" %>
+            class: "text-left text-xs text-theme-200 hover:text-white bg-transparent border-0 p-0 cursor-pointer" %>
     </div>
   </div>
 </aside>

@@ -1,15 +1,15 @@
 <%
   status_styles = {
-    "discovery"   => { label: "Discovery",    badge: "bg-pastel-sky text-blue-700" },
-    "design"      => { label: "Design",       badge: "bg-pastel-lavender text-purple-700" },
-    "in_progress" => { label: "In Progress",  badge: "bg-pastel-peach text-amber-700" },
-    "complete"    => { label: "Complete",     badge: "bg-pastel-sage text-emerald-700" }
+    "discovery"   => { label: "Discovery",    badge: "bg-theme-200 text-theme-500" },
+    "design"      => { label: "Design",       badge: "bg-theme-200 text-theme-500" },
+    "in_progress" => { label: "In Progress",  badge: "bg-theme-200 text-theme-500" },
+    "complete"    => { label: "Complete",     badge: "bg-theme-200 text-theme-500" }
   }
   style = status_styles[project.status] || { label: project.status.to_s.titleize, badge: "bg-gray-100 text-gray-700" }
 %>
-<%= link_to client_project_path(project), class: "block bg-cream-50 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-olive-200" do %>
+<%= link_to client_project_path(project), class: "block bg-theme-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-theme-200" do %>
   <div class="flex items-start justify-between gap-3 mb-3">
-    <h2 class="text-xl font-serif font-semibold text-navy-900"><%= project.title %></h2>
+    <h2 class="text-xl font-serif font-semibold text-theme-500"><%= project.title %></h2>
     <span class="text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap <%= style[:badge] %>"><%= style[:label] %></span>
   </div>
   <% if project.address.present? %>
@@ -18,7 +18,7 @@
   <% if project.description.present? %>
     <p class="text-gray-600 text-sm line-clamp-2"><%= project.description %></p>
   <% end %>
-  <div class="mt-4 flex items-center gap-1.5 text-olive-500 text-sm font-medium">
+  <div class="mt-4 flex items-center gap-1.5 text-theme-500 text-sm font-medium">
     View project
     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

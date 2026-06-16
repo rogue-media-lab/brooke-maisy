@@ -1,34 +1,34 @@
 <% content_for(:title, "#{@client.display_name} - Admin") %>
 
-<%= link_to admin_clients_path, class: "inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-olive-500 mb-4" do %>
+<%= link_to admin_clients_path, class: "inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-theme-500 mb-4" do %>
   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
   All clients
 <% end %>
 
 <div class="flex items-start justify-between mb-8">
   <div>
-    <h1 class="font-serif text-3xl font-semibold text-navy-900"><%= @client.display_name %></h1>
+    <h1 class="font-serif text-3xl font-semibold text-theme-500"><%= @client.display_name %></h1>
     <p class="text-gray-500 mt-1"><%= @client.email %></p>
   </div>
   <div class="flex gap-2">
-    <%= link_to "Edit", edit_admin_client_path(@client), class: "text-sm font-medium px-3 py-2 rounded-lg bg-cream-50 border border-olive-100 hover:bg-olive-100" %>
+    <%= link_to "Edit", edit_admin_client_path(@client), class: "text-sm font-medium px-3 py-2 rounded-lg bg-theme-100 border border-theme-100 hover:bg-theme-100" %>
     <%= button_to "Resend invite", resend_invite_admin_client_path(@client),
-          class: "text-sm font-medium px-3 py-2 rounded-lg bg-cream-50 border border-olive-100 hover:bg-olive-100 cursor-pointer" %>
+          class: "text-sm font-medium px-3 py-2 rounded-lg bg-theme-100 border border-theme-100 hover:bg-theme-100 cursor-pointer" %>
   </div>
 </div>
 
 <div class="flex items-center justify-between mb-4">
-  <h2 class="font-serif text-xl font-semibold text-navy-900">Projects</h2>
+  <h2 class="font-serif text-xl font-semibold text-theme-500">Projects</h2>
   <%= link_to "New project", new_admin_project_path(client_id: @client.id),
-        class: "text-sm font-semibold text-olive-500 hover:text-olive-400" %>
+        class: "text-sm font-semibold text-theme-500 hover:text-theme-400" %>
 </div>
 
-<div class="bg-white rounded-xl border border-olive-100 overflow-hidden">
+<div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
   <% if @projects.any? %>
     <% @projects.each do |project| %>
-      <%= link_to admin_project_path(project), class: "flex items-center justify-between px-5 py-4 border-b border-gray-50 last:border-0 hover:bg-cream-50" do %>
+      <%= link_to admin_project_path(project), class: "flex items-center justify-between px-5 py-4 border-b border-gray-50 last:border-0 hover:bg-theme-100" do %>
         <div>
-          <p class="font-medium text-navy-900"><%= project.title %></p>
+          <p class="font-medium text-theme-500"><%= project.title %></p>
           <% if project.address.present? %><p class="text-xs text-gray-400"><%= project.address %></p><% end %>
         </div>
         <%= render "admin/shared/status_badge", status: project.status %>
@@ -39,8 +39,8 @@
   <% end %>
 </div>
 
-<div class="mt-8 pt-6 border-t border-olive-100">
+<div class="mt-8 pt-6 border-t border-theme-100">
   <%= button_to "Remove client", admin_client_path(@client), method: :delete,
         form: { data: { turbo_confirm: "Remove #{@client.display_name} and all their projects? This cannot be undone." } },
-        class: "text-sm font-medium px-3 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 cursor-pointer border-0" %>
+        class: "text-sm font-medium px-3 py-2 rounded-lg bg-theme-100 text-theme-500 hover:bg-theme-100 cursor-pointer border-0" %>
 </div>

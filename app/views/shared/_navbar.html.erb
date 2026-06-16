@@ -1,4 +1,4 @@
-<nav class="sticky top-0 z-40 bg-cream-50 border-b border-gray-200" data-controller="navbar">
+<nav class="sticky top-0 z-40 bg-theme-100 border-b border-gray-200" data-controller="navbar">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between h-20">
 
@@ -22,13 +22,13 @@
         <%= link_to "Contact", contact_path,
               class: "text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
         <%= link_to "Client Portal", client_portal_path,
-              class: "text-olive-500 hover:text-navy-800 hover:bg-olive-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+              class: "text-theme-500 hover:text-theme-400 hover:bg-theme-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
 
         <% if user_signed_in? %>
           <span class="text-gray-500 px-3 py-2 text-sm font-medium"><%= current_user.display_name %></span>
           <% if current_user.admin? %>
             <%= link_to "Admin", admin_root_path,
-                  class: "text-olive-600 hover:text-navy-800 hover:bg-olive-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+                  class: "text-theme-400 hover:text-theme-400 hover:bg-theme-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
           <% end %>
           <%= button_to "Sign out", destroy_user_session_path, method: :delete,
                 class: "text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer" %>
@@ -38,7 +38,7 @@
       <%# CTA Button - Book Consultation %>
       <div class="hidden sm:flex sm:items-center">
         <%= link_to "Book Consultation", contact_path,
-              class: "bg-olive-500 hover:bg-pastel-sky text-white hover:text-navy-800 px-4 py-2 rounded-md text-sm font-medium transition-colors" %>
+              class: "bg-theme-500 hover:bg-theme-200 text-white hover:text-theme-400 px-4 py-2 rounded-md text-sm font-medium transition-colors" %>
       </div>
 
       <%# Mobile menu button %>
@@ -75,14 +75,14 @@
       <%= link_to "Contact", contact_path,
             class: "block text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
       <%= link_to "Client Portal", client_portal_path,
-            class: "block text-olive-500 hover:text-emerald-700 hover:bg-emerald-50 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+            class: "block text-theme-500 hover:text-theme-500 hover:bg-theme-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
 
       <% if user_signed_in? %>
         <div class="px-3 py-2 border-t border-gray-200 mt-1">
           <p class="text-sm font-medium text-gray-900"><%= current_user.display_name %></p>
           <% if current_user.admin? %>
             <%= link_to "Admin", admin_root_path,
-                  class: "block text-olive-600 hover:text-emerald-700 hover:bg-emerald-50 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+                  class: "block text-theme-400 hover:text-theme-500 hover:bg-theme-100 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
           <% end %>
           <%= button_to "Sign out", destroy_user_session_path, method: :delete,
                 class: "block text-left text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer bg-transparent border-0 w-full" %>
@@ -90,7 +90,7 @@
       <% end %>
 
       <%= link_to "Book Consultation", contact_path,
-            class: "block bg-olive-500 hover:bg-pastel-sky text-white hover:text-navy-800 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
+            class: "block bg-theme-500 hover:bg-theme-200 text-white hover:text-theme-400 px-3 py-2 rounded-md text-sm font-medium transition-colors" %>
     </div>
   </div>
 </nav>

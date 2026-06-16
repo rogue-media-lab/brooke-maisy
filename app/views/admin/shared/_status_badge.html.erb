@@ -1,9 +1,9 @@
 <%
   styles = {
-    "discovery"   => { label: "Discovery",   badge: "bg-pastel-sky text-blue-700" },
-    "design"      => { label: "Design",      badge: "bg-pastel-lavender text-purple-700" },
-    "in_progress" => { label: "In Progress", badge: "bg-pastel-peach text-amber-700" },
-    "complete"    => { label: "Complete",    badge: "bg-pastel-sage text-emerald-700" }
+    "discovery"   => { label: "Discovery",   badge: "bg-theme-200 text-theme-500" },
+    "design"      => { label: "Design",      badge: "bg-theme-200 text-theme-500" },
+    "in_progress" => { label: "In Progress", badge: "bg-theme-200 text-theme-500" },
+    "complete"    => { label: "Complete",    badge: "bg-theme-200 text-theme-500" }
   }
   s = styles[status] || { label: status.to_s.titleize, badge: "bg-gray-100 text-gray-700" }
 %>

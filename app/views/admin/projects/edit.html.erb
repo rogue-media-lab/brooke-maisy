@@ -1,12 +1,12 @@
 <% content_for(:title, "Edit #{@project.title} - Admin") %>
 
-<%= link_to admin_project_path(@project), class: "inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-olive-500 mb-4" do %>
+<%= link_to admin_project_path(@project), class: "inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-theme-500 mb-4" do %>
   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
   Back to project
 <% end %>
 
-<h1 class="font-serif text-3xl font-semibold text-navy-900 mb-6">Edit project</h1>
+<h1 class="font-serif text-3xl font-semibold text-theme-500 mb-6">Edit project</h1>
 
-<div class="bg-white rounded-xl border border-olive-100 p-6 max-w-2xl">
+<div class="bg-white rounded-xl border border-theme-100 p-6 max-w-2xl">
   <%= render "form", project: @project, submit_label: "Save changes" %>
 </div>

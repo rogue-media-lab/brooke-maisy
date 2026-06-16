@@ -8,15 +8,15 @@
 %>
 
 <%# Header %>
-<section class="bg-cream-50 py-12">
+<section class="bg-theme-100 py-12">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <%= link_to client_projects_path, class: "inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-olive-500 mb-4" do %>
+    <%= link_to client_projects_path, class: "inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-theme-500 mb-4" do %>
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
       All projects
     <% end %>
-    <h1 class="text-3xl lg:text-4xl font-serif font-semibold text-navy-900 tracking-tight"><%= @project.title %></h1>
+    <h1 class="text-3xl lg:text-4xl font-serif font-semibold text-theme-500 tracking-tight"><%= @project.title %></h1>
     <% if @project.address.present? %>
       <p class="text-gray-600 mt-1"><%= @project.address %></p>
     <% end %>
@@ -26,19 +26,19 @@
 <%# Status / progress %>
 <section class="bg-white py-10">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="bg-cream-50 rounded-xl p-6 shadow-sm">
+    <div class="bg-theme-100 rounded-xl p-6 shadow-sm">
       <div class="flex items-center justify-between mb-2">
         <div class="text-sm text-gray-500">Current Stage</div>
         <div class="text-xs text-gray-500"><%= progress_pct %>% complete</div>
       </div>
-      <div class="text-2xl font-serif font-semibold text-navy-900 mb-4"><%= status_labels[@project.status] %></div>
+      <div class="text-2xl font-serif font-semibold text-theme-500 mb-4"><%= status_labels[@project.status] %></div>
       <div class="w-full bg-gray-200 rounded-full h-2">
-        <div class="bg-olive-400 h-2 rounded-full transition-all" style="width: <%= progress_pct %>%;"></div>
+        <div class="bg-theme-400 h-2 rounded-full transition-all" style="width: <%= progress_pct %>%;"></div>
       </div>
       <div class="mt-4 flex flex-wrap gap-x-6 gap-y-2">
         <% status_order.each_with_index do |s, i| %>
-          <div class="flex items-center gap-1.5 text-sm <%= i <= current_index ? 'text-olive-500 font-medium' : 'text-gray-400' %>">
-            <span class="w-2 h-2 rounded-full <%= i <= current_index ? 'bg-olive-400' : 'bg-gray-300' %>"></span>
+          <div class="flex items-center gap-1.5 text-sm <%= i <= current_index ? 'text-theme-500 font-medium' : 'text-gray-400' %>">
+            <span class="w-2 h-2 rounded-full <%= i <= current_index ? 'bg-theme-400' : 'bg-gray-300' %>"></span>
             <%= status_labels[s] %>
           </div>
         <% end %>
@@ -51,8 +51,8 @@
 <% if @project.description.present? %>
   <section class="bg-white pb-6">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="bg-white rounded-xl p-6 border border-olive-100">
-        <h2 class="text-lg font-serif font-semibold text-navy-900 mb-2">About this project</h2>
+      <div class="bg-white rounded-xl p-6 border border-theme-100">
+        <h2 class="text-lg font-serif font-semibold text-theme-500 mb-2">About this project</h2>
         <p class="text-gray-700 leading-relaxed"><%= simple_format(@project.description) %></p>
       </div>
     </div>
@@ -63,7 +63,7 @@
 <% if @project.photos.attached? %>
   <section class="bg-white pb-6">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-2xl font-serif font-semibold text-navy-900 mb-6">Project Photos</h2>
+      <h2 class="text-2xl font-serif font-semibold text-theme-500 mb-6">Project Photos</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <% @project.photos.each do |photo| %>
           <div class="aspect-square rounded-lg overflow-hidden bg-gray-100 shadow-sm">
@@ -76,20 +76,20 @@
 <% end %>
 
 <%# Updates timeline %>
-<section class="bg-cream-50 py-12">
+<section class="bg-theme-100 py-12">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="text-2xl font-serif font-semibold text-navy-900 mb-6">Recent Updates</h2>
+    <h2 class="text-2xl font-serif font-semibold text-theme-500 mb-6">Recent Updates</h2>
     <% if @updates.any? %>
       <div class="space-y-4">
         <% @updates.each do |update| %>
           <div class="bg-white rounded-lg p-4 shadow-sm flex items-start gap-4">
-            <div class="w-10 h-10 rounded-lg bg-olive-100 flex items-center justify-center flex-shrink-0">
-              <svg class="w-5 h-5 text-olive-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-10 h-10 rounded-lg bg-theme-100 flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-theme-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
             </div>
             <div class="flex-1">
-              <p class="text-navy-900"><%= simple_format(update.body) %></p>
+              <p class="text-theme-500"><%= simple_format(update.body) %></p>
               <p class="text-gray-500 text-sm mt-1"><%= update.created_at.strftime("%B %-d, %Y") %></p>
             </div>
           </div>

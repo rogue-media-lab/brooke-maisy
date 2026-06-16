@@ -1,6 +1,6 @@
 <% content_for(:title, "#{@project.title} - Admin") %>
 
-<%= link_to admin_projects_path, class: "inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-olive-500 mb-4" do %>
+<%= link_to admin_projects_path, class: "inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-theme-500 mb-4" do %>
   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
   All projects
 <% end %>
@@ -8,31 +8,31 @@
 <div class="flex items-start justify-between gap-4 mb-6">
   <div>
     <div class="flex items-center gap-3">
-      <h1 class="font-serif text-3xl font-semibold text-navy-900"><%= @project.title %></h1>
+      <h1 class="font-serif text-3xl font-semibold text-theme-500"><%= @project.title %></h1>
       <%= render "admin/shared/status_badge", status: @project.status %>
     </div>
     <p class="text-gray-500 mt-1">
-      <%= link_to @project.user.display_name, admin_client_path(@project.user), class: "hover:text-olive-500" %>
+      <%= link_to @project.user.display_name, admin_client_path(@project.user), class: "hover:text-theme-500" %>
       <%= " · #{@project.address}" if @project.address.present? %>
     </p>
   </div>
   <%= link_to "Edit", edit_admin_project_path(@project),
-        class: "text-sm font-medium px-3 py-2 rounded-lg bg-cream-50 border border-olive-100 hover:bg-olive-100 whitespace-nowrap" %>
+        class: "text-sm font-medium px-3 py-2 rounded-lg bg-theme-100 border border-theme-100 hover:bg-theme-100 whitespace-nowrap" %>
 </div>
 
 <div class="grid lg:grid-cols-3 gap-6">
   <%# Left: description, photos, updates %>
   <div class="lg:col-span-2 space-y-6">
     <% if @project.description.present? %>
-      <div class="bg-white rounded-xl border border-olive-100 p-6">
-        <h2 class="font-serif text-lg font-semibold text-navy-900 mb-2">Description</h2>
+      <div class="bg-white rounded-xl border border-theme-100 p-6">
+        <h2 class="font-serif text-lg font-semibold text-theme-500 mb-2">Description</h2>
         <p class="text-gray-700 leading-relaxed"><%= simple_format(@project.description) %></p>
       </div>
     <% end %>
 
     <%# Photos %>
-    <div class="bg-white rounded-xl border border-olive-100 p-6">
-      <h2 class="font-serif text-lg font-semibold text-navy-900 mb-4">Photos</h2>
+    <div class="bg-white rounded-xl border border-theme-100 p-6">
+      <h2 class="font-serif text-lg font-semibold text-theme-500 mb-4">Photos</h2>
       <% if @project.photos.attached? %>
         <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
           <% @project.photos.each do |photo| %>
@@ -47,8 +47,8 @@
     </div>
 
     <%# Updates timeline %>
-    <div class="bg-white rounded-xl border border-olive-100 p-6">
-      <h2 class="font-serif text-lg font-semibold text-navy-900 mb-4">Updates</h2>
+    <div class="bg-white rounded-xl border border-theme-100 p-6">
+      <h2 class="font-serif text-lg font-semibold text-theme-500 mb-4">Updates</h2>
 
       <% if @updates.any? %>
         <div class="space-y-3 mb-6">
@@ -59,9 +59,9 @@
                 <div class="flex items-center gap-2 mt-1">
                   <span class="text-xs text-gray-400"><%= update.created_at.strftime("%b %-d, %Y") %></span>
                   <% if update.visible_to_client %>
-                    <span class="text-[10px] uppercase tracking-wide text-emerald-700 bg-pastel-sage px-2 py-0.5 rounded-full">Client-visible</span>
+                    <span class="text-[10px] uppercase tracking-wide text-theme-500 bg-theme-200 px-2 py-0.5 rounded-full">Client-visible</span>
                   <% else %>
-                    <span class="text-[10px] uppercase tracking-wide text-amber-700 bg-pastel-peach px-2 py-0.5 rounded-full">Internal</span>
+                    <span class="text-[10px] uppercase tracking-wide text-theme-500 bg-theme-200 px-2 py-0.5 rounded-full">Internal</span>
                   <% end %>
                 </div>
               </div>
@@ -78,17 +78,17 @@
       <% end %>
 
       <%# Post a new update %>
-      <%= form_with model: [ :admin, @project, @new_update ], class: "border-t border-olive-100 pt-5 space-y-3" do |f| %>
+      <%= form_with model: [ :admin, @project, @new_update ], class: "border-t border-theme-100 pt-5 space-y-3" do |f| %>
         <%= f.label :body, "Post an update", class: "block text-sm font-medium text-gray-700" %>
         <%= f.text_area :body, rows: 3, placeholder: "What's the latest on this project?",
-              class: "w-full rounded-lg border border-olive-200 px-3 py-2.5 text-sm focus:border-olive-400 focus:ring-2 focus:ring-olive-200 focus:outline-none" %>
+              class: "w-full rounded-lg border border-theme-200 px-3 py-2.5 text-sm focus:border-theme-400 focus:ring-2 focus:ring-theme-200 focus:outline-none" %>
         <div class="flex items-center justify-between">
           <label class="flex items-center gap-2 text-sm text-gray-600">
-            <%= f.check_box :visible_to_client, class: "h-4 w-4 rounded border-olive-300 text-olive-500 focus:ring-olive-300" %>
+            <%= f.check_box :visible_to_client, class: "h-4 w-4 rounded border-theme-300 text-theme-500 focus:ring-theme-300" %>
             Visible to client
           </label>
           <%= f.submit "Post update",
-                class: "bg-olive-500 hover:bg-olive-400 text-white text-sm font-semibold px-4 py-2 rounded-lg cursor-pointer transition-colors" %>
+                class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2 rounded-lg cursor-pointer transition-colors" %>
         </div>
       <% end %>
     </div>
@@ -96,21 +96,21 @@
 
   <%# Right: meta + danger zone %>
   <div class="space-y-4">
-    <div class="bg-white rounded-xl border border-olive-100 p-5">
+    <div class="bg-white rounded-xl border border-theme-100 p-5">
       <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Details</h3>
       <dl class="space-y-2 text-sm">
-        <div class="flex justify-between"><dt class="text-gray-500">Status</dt><dd class="font-medium text-navy-900"><%= @project.status.titleize %></dd></div>
-        <div class="flex justify-between"><dt class="text-gray-500">Client</dt><dd class="font-medium text-navy-900"><%= @project.user.display_name %></dd></div>
+        <div class="flex justify-between"><dt class="text-gray-500">Status</dt><dd class="font-medium text-theme-500"><%= @project.status.titleize %></dd></div>
+        <div class="flex justify-between"><dt class="text-gray-500">Client</dt><dd class="font-medium text-theme-500"><%= @project.user.display_name %></dd></div>
         <div class="flex justify-between"><dt class="text-gray-500">Created</dt><dd class="text-gray-600"><%= @project.created_at.strftime("%b %-d, %Y") %></dd></div>
         <div class="flex justify-between"><dt class="text-gray-500">Updates</dt><dd class="text-gray-600"><%= @project.project_updates.count %></dd></div>
       </dl>
     </div>
 
     <div class="bg-white rounded-xl border border-red-100 p-5">
-      <h3 class="text-xs font-semibold uppercase tracking-wider text-red-400 mb-3">Danger zone</h3>
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-theme-400 mb-3">Danger zone</h3>
       <%= button_to "Delete project", admin_project_path(@project), method: :delete,
             form: { data: { turbo_confirm: "Delete \"#{@project.title}\" and all its updates? This cannot be undone." } },
-            class: "w-full text-sm font-medium px-3 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 cursor-pointer border-0" %>
+            class: "w-full text-sm font-medium px-3 py-2 rounded-lg bg-theme-100 text-theme-500 hover:bg-theme-100 cursor-pointer border-0" %>
     </div>
   </div>
 </div>
