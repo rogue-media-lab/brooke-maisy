@@ -9,17 +9,17 @@ class QuestionnaireSubmissionsControllerTest < ActionDispatch::IntegrationTest
         "time_zone" => "Eastern"
       },
       "household" => {
-        "members" => ["Two adults", "Children", "Pets"],
-        "children_status" => ["Children currently in the home"],
+        "members" => [ "Two adults", "Children", "Pets" ],
+        "children_status" => [ "Children currently in the home" ],
         "children_ages" => "10, 12",
-        "pet_types" => ["Dog(s)"],
+        "pet_types" => [ "Dog(s)" ],
         "pet_count" => "1"
       },
       "lifestyle" => {
         "work_from_home" => "1-2 days/week",
         "work_from_home_count" => "1",
         "host_guests" => "Occasionally",
-        "hosting_types" => ["Family gatherings"],
+        "hosting_types" => [ "Family gatherings" ],
         "type" => "Family-focused"
       }
     }
@@ -46,9 +46,9 @@ class QuestionnaireSubmissionsControllerTest < ActionDispatch::IntegrationTest
         "property_type" => "House",
         "size" => "1,000-2,000 sq ft / 93-186 sqm",
         "ownership" => "Own",
-        "spaces" => ["Living Room", "Dining Room", "Kitchen"],
-        "project_types" => ["Furnishing + layout refinement"],
-        "primary_goals" => ["Improve layout and flow", "Make the home feel cohesive"]
+        "spaces" => [ "Living Room", "Dining Room", "Kitchen" ],
+        "project_types" => [ "Furnishing + layout refinement" ],
+        "primary_goals" => [ "Improve layout and flow", "Make the home feel cohesive" ]
       }
     }
 
@@ -62,11 +62,11 @@ class QuestionnaireSubmissionsControllerTest < ActionDispatch::IntegrationTest
 
     priority_answers = {
       "priorities" => {
-        "top_priorities" => ["Comfortable everyday living", "Low clutter / better organization"],
+        "top_priorities" => [ "Comfortable everyday living", "Low clutter / better organization" ],
         "what_does_not_work" => "The living and dining areas feel disconnected."
       },
       "storage" => {
-        "challenges" => ["Entry/shoes/coats"],
+        "challenges" => [ "Entry/shoes/coats" ],
         "organization_preference" => "A mix of open + closed storage"
       },
       "space_use" => {
@@ -85,13 +85,13 @@ class QuestionnaireSubmissionsControllerTest < ActionDispatch::IntegrationTest
 
     design_answers = {
       "design" => {
-        "style_direction" => ["Transitional", "Scandinavian / Japandi"],
-        "mood" => ["Warm and cozy", "Light and airy"],
+        "style_direction" => [ "Transitional", "Scandinavian / Japandi" ],
+        "mood" => [ "Warm and cozy", "Light and airy" ],
         "contrast" => "Medium contrast",
         "color_preference" => "Neutral base with color accents",
         "colors_love" => "Warm neutrals and soft green",
         "colors_avoid" => "Harsh brights",
-        "materials" => ["Natural wood (medium/warm)", "Linen"],
+        "materials" => [ "Natural wood (medium/warm)", "Linen" ],
         "finish_preference" => "Satin",
         "pattern_preference" => "Some pattern, used sparingly",
         "walk_in_feeling" => "Warm, calm, and collected."
@@ -110,8 +110,8 @@ class QuestionnaireSubmissionsControllerTest < ActionDispatch::IntegrationTest
       "rooms" => [
         {
           "name" => "Living Room",
-          "functions" => ["Family time", "Entertaining"],
-          "current_issues" => ["Poor layout", "Not enough storage"],
+          "functions" => [ "Family time", "Entertaining" ],
+          "current_issues" => [ "Poor layout", "Not enough storage" ],
           "must_have_features" => "Built-in storage and comfortable seating.",
           "desired_atmosphere" => "Calm but durable for family use."
         }
@@ -119,20 +119,20 @@ class QuestionnaireSubmissionsControllerTest < ActionDispatch::IntegrationTest
       "budget" => {
         "estimated_budget" => "$25,000-$50,000",
         "approach" => "Some flexibility",
-        "invest_more" => ["Sofa and key seating"],
-        "save_on" => ["Accessories and decor"],
-        "open_to" => ["Vintage/secondhand items"]
+        "invest_more" => [ "Sofa and key seating" ],
+        "save_on" => [ "Accessories and decor" ],
+        "open_to" => [ "Vintage/secondhand items" ]
       },
       "logistics" => {
         "start_date" => "Fall 2026",
         "completion_date" => "Before holidays",
         "fixed_deadlines" => "Family gathering in December",
         "living_during_project" => "Yes",
-        "constraints" => ["Delivery restrictions"]
+        "constraints" => [ "Delivery restrictions" ]
       },
       "working_style" => {
-        "decision_making" => ["I'm moderately involved and approve key decisions"],
-        "concerns" => ["Budget overruns"],
+        "decision_making" => [ "I'm moderately involved and approve key decisions" ],
+        "concerns" => [ "Budget overruns" ],
         "anything_else" => "We want a home that feels elevated but lived in.",
         "questions" => "What is the expected timeline?"
       }
