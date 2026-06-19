@@ -1,0 +1,16 @@
+<div class="flex flex-col-reverse sm:flex-row justify-between gap-3 pt-4 border-t border-theme-100">
+  <% if @current_step > 1 %>
+    <%= submit_tag "Back", name: "previous_step",
+          class: "w-full sm:w-auto border border-theme-300 text-theme-500 hover:bg-theme-100 px-6 py-3 rounded-md font-medium transition-colors cursor-pointer" %>
+  <% end %>
+
+  <div class="flex-1 sm:flex-none">
+    <% if @current_step < QuestionnaireSubmissionsController::STEP_TITLES.length %>
+      <%= submit_tag "Continue", name: "next_step",
+            class: "w-full sm:w-auto bg-theme-500 hover:bg-theme-400 text-white px-6 py-3 rounded-md font-medium transition-colors cursor-pointer" %>
+    <% else %>
+      <%= f.submit "Submit Questionnaire",
+            class: "w-full sm:w-auto bg-theme-500 hover:bg-theme-400 text-white px-6 py-3 rounded-md font-medium transition-colors cursor-pointer" %>
+    <% end %>
+  </div>
+</div>

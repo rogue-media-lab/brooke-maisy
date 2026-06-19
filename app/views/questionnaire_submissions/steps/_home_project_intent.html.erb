@@ -1,0 +1,154 @@
+<div class="space-y-8">
+  <div>
+    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Step 2</p>
+    <h2 class="font-serif text-2xl font-semibold text-theme-500">Home & Project Intent</h2>
+    <p class="text-gray-600 mt-2">Tell us about the property, the spaces involved, and what kind of project you have in mind.</p>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">Property Snapshot</h3>
+
+    <%= render "questionnaire_submissions/radio_group",
+          section: "home",
+          key: "property_type",
+          label: "Type of property",
+          options: {
+            "House" => "House",
+            "Apartment" => "Apartment",
+            "Condo" => "Condo",
+            "Loft" => "Loft",
+            "Townhouse" => "Townhouse",
+            "Other" => "Other"
+          } %>
+
+    <div class="grid md:grid-cols-2 gap-5 mt-5">
+      <%= render "questionnaire_submissions/radio_group",
+            section: "home",
+            key: "size",
+            label: "Approximate size",
+            options: {
+              "Under 500 sq ft / 50 sqm" => "Under 500 sq ft / 50 sqm",
+              "500-1,000 sq ft / 50-93 sqm" => "500-1,000 sq ft / 50-93 sqm",
+              "1,000-2,000 sq ft / 93-186 sqm" => "1,000-2,000 sq ft / 93-186 sqm",
+              "2,000+ sq ft / 186+ sqm" => "2,000+ sq ft / 186+ sqm"
+            } %>
+
+      <%= render "questionnaire_submissions/radio_group",
+            section: "home",
+            key: "ownership",
+            label: "Do you own or rent?",
+            options: {
+              "Own" => "Own",
+              "Rent" => "Rent"
+            } %>
+    </div>
+
+    <%= render "questionnaire_submissions/textarea_field",
+          name: "questionnaire_submission[answers][home][rent_restrictions]",
+          label: "Rent restrictions",
+          value: questionnaire_value("home", "rent_restrictions"),
+          rows: 3,
+          placeholder: "If renting, list any restrictions we should know about." %>
+
+    <%= render "questionnaire_submissions/checkbox_group",
+          section: "home",
+          key: "constraints",
+          label: "Constraints or existing conditions",
+          options: {
+            "Limited natural light" => "Limited natural light",
+            "Low ceilings" => "Low ceilings",
+            "Awkward layout" => "Awkward layout",
+            "Structural/immovable walls" => "Structural/immovable walls",
+            "Building rules / HOA restrictions" => "Building rules / HOA restrictions",
+            "Noise issues" => "Noise issues",
+            "Other" => "Other"
+          } %>
+
+    <%= render "questionnaire_submissions/textarea_field",
+          name: "questionnaire_submission[answers][home][other_constraints]",
+          label: "Other constraints",
+          value: questionnaire_value("home", "other_constraints"),
+          rows: 3,
+          placeholder: "Add details about constraints or existing conditions." %>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">Areas Included</h3>
+
+    <%= render "questionnaire_submissions/checkbox_group",
+          section: "home",
+          key: "spaces",
+          label: "Spaces included in this project",
+          options: {
+            "Entry / Hallway" => "Entry / Hallway",
+            "Living Room" => "Living Room",
+            "Dining Room" => "Dining Room",
+            "Kitchen" => "Kitchen",
+            "Bedroom(s)" => "Bedroom(s)",
+            "Bathroom(s)" => "Bathroom(s)",
+            "Home Office" => "Home Office",
+            "Laundry / Utility" => "Laundry / Utility",
+            "Media / Entertainment" => "Media / Entertainment",
+            "Outdoor Space" => "Outdoor Space",
+            "Other" => "Other"
+          } %>
+
+    <%= render "questionnaire_submissions/text_field",
+          name: "questionnaire_submission[answers][home][other_spaces]",
+          label: "Other spaces",
+          value: questionnaire_value("home", "other_spaces"),
+          placeholder: "List any additional spaces" %>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">Project Type</h3>
+
+    <%= render "questionnaire_submissions/checkbox_group",
+          section: "home",
+          key: "project_types",
+          label: "What type of project is this?",
+          options: {
+            "Styling and decoration only" => "Styling and decoration only",
+            "Furnishing + layout refinement" => "Furnishing + layout refinement",
+            "Space planning / layout optimization" => "Space planning / layout optimization",
+            "Partial renovation" => "Partial renovation",
+            "Full renovation" => "Full renovation",
+            "New construction" => "New construction",
+            "Addition/extension" => "Addition/extension",
+            "Other" => "Other"
+          } %>
+
+    <%= render "questionnaire_submissions/text_field",
+          name: "questionnaire_submission[answers][home][other_project_types]",
+          label: "Other project type",
+          value: questionnaire_value("home", "other_project_types"),
+          placeholder: "Describe any other project type" %>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">Project Goals</h3>
+
+    <%= render "questionnaire_submissions/checkbox_group",
+          section: "home",
+          key: "primary_goals",
+          label: "Primary goals",
+          options: {
+            "Improve layout and flow" => "Improve layout and flow",
+            "Increase storage and organization" => "Increase storage and organization",
+            "Update finishes/materials" => "Update finishes/materials",
+            "Improve lighting" => "Improve lighting",
+            "Improve comfort" => "Improve comfort",
+            "Make the home feel cohesive" => "Make the home feel cohesive",
+            "Create a more elevated look" => "Create a more elevated look",
+            "Prepare for a life change" => "Prepare for a life change",
+            "Prepare for resale/rental" => "Prepare for resale/rental",
+            "Other" => "Other"
+          } %>
+
+    <%= render "questionnaire_submissions/text_field",
+          name: "questionnaire_submission[answers][home][other_goals]",
+          label: "Other goals",
+          value: questionnaire_value("home", "other_goals"),
+          placeholder: "List any additional goals" %>
+  </div>
+</div>

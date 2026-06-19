@@ -1,0 +1,17 @@
+<% help ||= nil %>
+
+<fieldset class="space-y-3">
+  <legend class="text-sm font-semibold text-gray-700"><%= label %></legend>
+  <% if help.present? %>
+    <p class="text-xs text-gray-500"><%= help %></p>
+  <% end %>
+  <div class="grid sm:grid-cols-2 gap-3 mt-3">
+    <% field_path = "#{section}][#{key}" %>
+    <% options.each do |value, option_label| %>
+      <label class="flex items-start gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 transition-colors hover:border-theme-300 <%= "border-theme-400 bg-theme-100" if questionnaire_checked?(section, key, value) %>">
+        <%= check_box_tag "questionnaire_submission[answers][#{field_path}][]", value, questionnaire_checked?(section, key, value), class: "mt-0.5 h-4 w-4 rounded border-gray-300 text-theme-500 focus:ring-theme-400" %>
+        <span><%= option_label %></span>
+      </label>
+    <% end %>
+  </div>
+</fieldset>

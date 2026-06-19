@@ -1,0 +1,158 @@
+<div class="space-y-8">
+  <div>
+    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Step 4</p>
+    <h2 class="font-serif text-2xl font-semibold text-theme-500">Design Direction & Aesthetic Preferences</h2>
+    <p class="text-gray-600 mt-2">This is where the feeling of the project starts to come into focus.</p>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">Style Direction</h3>
+
+    <%= render "questionnaire_submissions/checkbox_group",
+          section: "design",
+          key: "style_direction",
+          label: "Choose up to 3 styles",
+          help: "Pick the styles that feel closest to your taste.",
+          options: {
+            "Modern / Contemporary" => "Modern / Contemporary",
+            "Minimal" => "Minimal",
+            "Scandinavian / Japandi" => "Scandinavian / Japandi",
+            "Mid-Century Modern" => "Mid-Century Modern",
+            "Classic / Traditional" => "Classic / Traditional",
+            "Transitional" => "Transitional",
+            "Mediterranean" => "Mediterranean",
+            "Industrial (refined)" => "Industrial (refined)",
+            "Eclectic (curated)" => "Eclectic (curated)",
+            "Art Deco" => "Art Deco",
+            "Coastal" => "Coastal",
+            "Other" => "Other"
+          } %>
+
+    <%= render "questionnaire_submissions/text_field",
+          name: "questionnaire_submission[answers][design][other_style]",
+          label: "Other style direction",
+          value: questionnaire_value("design", "other_style"),
+          placeholder: "Describe any other style direction" %>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">Overall Mood</h3>
+
+    <%= render "questionnaire_submissions/checkbox_group",
+          section: "design",
+          key: "mood",
+          label: "The home should feel",
+          options: {
+            "Calm and serene" => "Calm and serene",
+            "Warm and cozy" => "Warm and cozy",
+            "Light and airy" => "Light and airy",
+            "Refined and elegant" => "Refined and elegant",
+            "Bold and expressive" => "Bold and expressive",
+            "Grounded and natural" => "Grounded and natural",
+            "Sophisticated and editorial" => "Sophisticated and editorial",
+            "Playful and creative" => "Playful and creative"
+          } %>
+
+    <%= render "questionnaire_submissions/radio_group",
+          section: "design",
+          key: "contrast",
+          label: "Contrast level",
+          options: {
+            "Soft and tonal" => "Soft and tonal",
+            "Medium contrast" => "Medium contrast",
+            "High contrast" => "High contrast"
+          } %>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">Color Preferences</h3>
+
+    <%= render "questionnaire_submissions/radio_group",
+          section: "design",
+          key: "color_preference",
+          label: "Your color preference is",
+          options: {
+            "Mostly neutral" => "Mostly neutral",
+            "Neutral base with color accents" => "Neutral base with color accents",
+            "Comfortable with bold color" => "Comfortable with bold color"
+          } %>
+
+    <div class="grid md:grid-cols-2 gap-5 mt-5">
+      <%= render "questionnaire_submissions/textarea_field",
+            name: "questionnaire_submission[answers][design][colors_love]",
+            label: "Colors you love",
+            value: questionnaire_value("design", "colors_love"),
+            rows: 4,
+            placeholder: "List colors, tones, or palettes you are drawn to." %>
+
+      <%= render "questionnaire_submissions/textarea_field",
+            name: "questionnaire_submission[answers][design][colors_avoid]",
+            label: "Colors you want to avoid",
+            value: questionnaire_value("design", "colors_avoid"),
+            rows: 4,
+            placeholder: "List colors or tones you want to avoid." %>
+    </div>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">Materials & Finishes</h3>
+
+    <%= render "questionnaire_submissions/checkbox_group",
+          section: "design",
+          key: "materials",
+          label: "Materials you are drawn to",
+          options: {
+            "Natural wood (light)" => "Natural wood (light)",
+            "Natural wood (medium/warm)" => "Natural wood (medium/warm)",
+            "Natural wood (dark)" => "Natural wood (dark)",
+            "Stone (marble/limestone/granite, etc.)" => "Stone (marble/limestone/granite, etc.)",
+            "Concrete / microcement" => "Concrete / microcement",
+            "Metal (brass)" => "Metal (brass)",
+            "Metal (chrome/nickel)" => "Metal (chrome/nickel)",
+            "Metal (black)" => "Metal (black)",
+            "Glass" => "Glass",
+            "Natural fibers (linen/wool/jute/cotton)" => "Natural fibers (linen/wool/jute/cotton)",
+            "Leather" => "Leather",
+            "Velvet / plush fabrics" => "Velvet / plush fabrics",
+            "Ceramic / porcelain" => "Ceramic / porcelain",
+            "Terrazzo" => "Terrazzo",
+            "Other" => "Other"
+          } %>
+
+    <%= render "questionnaire_submissions/text_field",
+          name: "questionnaire_submission[answers][design][other_materials]",
+          label: "Other materials",
+          value: questionnaire_value("design", "other_materials"),
+          placeholder: "List any other materials" %>
+
+    <div class="grid md:grid-cols-2 gap-5 mt-5">
+      <%= render "questionnaire_submissions/radio_group",
+            section: "design",
+            key: "finish_preference",
+            label: "Finish preference",
+            options: {
+              "Matte" => "Matte",
+              "Satin" => "Satin",
+              "Glossy" => "Glossy",
+              "A balanced mix" => "A balanced mix"
+            } %>
+
+      <%= render "questionnaire_submissions/radio_group",
+            section: "design",
+            key: "pattern_preference",
+            label: "Pattern preference",
+            options: {
+              "Prefer solids" => "Prefer solids",
+              "Some pattern, used sparingly" => "Some pattern, used sparingly",
+              "I love pattern and visual interest" => "I love pattern and visual interest"
+            } %>
+    </div>
+
+    <%= render "questionnaire_submissions/textarea_field",
+          name: "questionnaire_submission[answers][design][walk_in_feeling]",
+          label: "How do you want your home to feel the moment you walk in?",
+          value: questionnaire_value("design", "walk_in_feeling"),
+          rows: 4,
+          placeholder: "Describe the emotion, energy, and atmosphere." %>
+  </div>
+</div>

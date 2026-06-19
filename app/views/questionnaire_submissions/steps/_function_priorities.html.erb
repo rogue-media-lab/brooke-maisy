@@ -1,0 +1,99 @@
+<div class="space-y-8">
+  <div>
+    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Step 3</p>
+    <h2 class="font-serif text-2xl font-semibold text-theme-500">Function, Needs & Priorities</h2>
+    <p class="text-gray-600 mt-2">Help us separate the must-haves from the nice-to-haves so the design works for daily life.</p>
+  </div>
+
+  <div>
+    <%= render "questionnaire_submissions/checkbox_group",
+          section: "priorities",
+          key: "top_priorities",
+          label: "Select your top 3-5 priorities",
+          help: "Choose the priorities that matter most for this project.",
+          options: {
+            "Better flow and functionality" => "Better flow and functionality",
+            "Comfortable everyday living" => "Comfortable everyday living",
+            "Durability and easy maintenance" => "Durability and easy maintenance",
+            "Low clutter / better organization" => "Low clutter / better organization",
+            "Beautiful, elevated aesthetics" => "Beautiful, elevated aesthetics",
+            "Better lighting (natural + artificial)" => "Better lighting (natural + artificial)",
+            "Flexibility/multi-purpose spaces" => "Flexibility/multi-purpose spaces",
+            "Budget clarity and control" => "Budget clarity and control",
+            "Sustainability" => "Sustainability",
+            "Kid/pet-friendly choices" => "Kid/pet-friendly choices"
+          } %>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">Storage & Organization</h3>
+
+    <%= render "questionnaire_submissions/checkbox_group",
+          section: "storage",
+          key: "challenges",
+          label: "Your biggest storage challenges",
+          options: {
+            "Entry/shoes/coats" => "Entry/shoes/coats",
+            "Kitchen/pantry" => "Kitchen/pantry",
+            "Closets/wardrobes" => "Closets/wardrobes",
+            "Bathroom storage" => "Bathroom storage",
+            "Laundry/cleaning supplies" => "Laundry/cleaning supplies",
+            "Toys/kid items" => "Toys/kid items",
+            "Home office/paperwork" => "Home office/paperwork",
+            "Seasonal storage" => "Seasonal storage",
+            "Other" => "Other"
+          } %>
+
+    <%= render "questionnaire_submissions/textarea_field",
+          name: "questionnaire_submission[answers][storage][other_challenges]",
+          label: "Other storage challenges",
+          value: questionnaire_value("storage", "other_challenges"),
+          rows: 3,
+          placeholder: "Describe any storage challenges not listed above." %>
+
+    <%= render "questionnaire_submissions/radio_group",
+          section: "storage",
+          key: "organization_preference",
+          label: "Your organization preference is",
+          options: {
+            "Mostly hidden storage" => "Mostly hidden storage",
+            "A mix of open + closed storage" => "A mix of open + closed storage",
+            "I like items displayed" => "I like items displayed (open shelving, decor, collections)"
+          } %>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">Space Use Preferences</h3>
+
+    <%= render "questionnaire_submissions/radio_group",
+          section: "space_use",
+          key: "preference",
+          label: "Which feels more like you?",
+          options: {
+            "Open, flowing spaces" => "Open, flowing spaces",
+            "More defined, separated rooms" => "More defined, separated rooms",
+            "A balance of both" => "A balance of both"
+          } %>
+
+    <%= render "questionnaire_submissions/radio_group",
+          section: "space_use",
+          key: "maintenance_preference",
+          label: "Maintenance preference",
+          options: {
+            "Low-maintenance only" => "Low-maintenance only",
+            "Balanced" => "Balanced",
+            "Willing to maintain for beauty" => "Willing to maintain for beauty (within reason)"
+          } %>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">High-Value Open Question</h3>
+
+    <%= render "questionnaire_submissions/textarea_field",
+          name: "questionnaire_submission[answers][priorities][what_does_not_work]",
+          label: "What currently does not work well in your home?",
+          value: questionnaire_value("priorities", "what_does_not_work"),
+          rows: 5,
+          placeholder: "Be specific: layout, lighting, storage, daily friction points..." %>
+  </div>
+</div>

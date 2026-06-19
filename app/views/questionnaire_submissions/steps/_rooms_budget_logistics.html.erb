@@ -1,0 +1,213 @@
+<div class="space-y-8">
+  <div>
+    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Step 5</p>
+    <h2 class="font-serif text-2xl font-semibold text-theme-500">Rooms, Budget & Logistics</h2>
+    <p class="text-gray-600 mt-2">Finish with room-level details, budget expectations, timeline, and how you like to work with a designer.</p>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5">
+      <div>
+        <h3 class="font-serif text-xl font-semibold text-theme-500">Room-Specific Notes</h3>
+        <p class="text-sm text-gray-500 mt-1">Add one card per room included in the project.</p>
+      </div>
+      <button type="button" data-action="repeatable-room#add"
+              class="w-full sm:w-auto border border-theme-300 text-theme-500 hover:bg-theme-100 px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer">
+        Add another room
+      </button>
+    </div>
+
+    <div data-controller="repeatable-room" data-repeatable-room-target="rooms" class="space-y-5">
+      <% rooms_for_form = questionnaire_rooms.presence || [ {} ] %>
+      <% rooms_for_form.each_with_index do |room, index| %>
+        <%= render "questionnaire_submissions/room_fields", room: room, index: index %>
+      <% end %>
+
+      <template data-repeatable-room-target="template">
+        <%= render "questionnaire_submissions/room_fields", room: {}, index: "__INDEX__" %>
+      </template>
+    </div>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">Budget & Investment</h3>
+
+    <%= render "questionnaire_submissions/text_field",
+          name: "questionnaire_submission[answers][budget][estimated_budget]",
+          label: "Estimated total project budget",
+          value: questionnaire_value("budget", "estimated_budget"),
+          placeholder: "$25,000, $50,000+, not sure yet..." %>
+
+    <div class="grid md:grid-cols-2 gap-5 mt-5">
+      <%= render "questionnaire_submissions/radio_group",
+            section: "budget",
+            key: "approach",
+            label: "Budget approach",
+            options: {
+              "Firm limit" => "Firm limit",
+              "Some flexibility" => "Some flexibility",
+              "Not sure yet" => "Not sure yet"
+            } %>
+
+      <%= render "questionnaire_submissions/checkbox_group",
+            section: "budget",
+            key: "invest_more",
+            label: "Where are you comfortable investing more?",
+            options: {
+              "Custom work / built-ins" => "Custom work / built-ins",
+              "Sofa and key seating" => "Sofa and key seating",
+              "Bed and mattress" => "Bed and mattress",
+              "Lighting" => "Lighting",
+              "Rugs" => "Rugs",
+              "Window treatments" => "Window treatments",
+              "Art / statement pieces" => "Art / statement pieces",
+              "Kitchen finishes" => "Kitchen finishes",
+              "Bathroom finishes" => "Bathroom finishes",
+              "Other" => "Other"
+            } %>
+    </div>
+
+    <%= render "questionnaire_submissions/textarea_field",
+          name: "questionnaire_submission[answers][budget][other_invest]",
+          label: "Other areas to invest more",
+          value: questionnaire_value("budget", "other_invest"),
+          rows: 3,
+          placeholder: "List any other investment priorities." %>
+
+    <%= render "questionnaire_submissions/checkbox_group",
+          section: "budget",
+          key: "save_on",
+          label: "Where would you prefer to save?",
+          options: {
+            "Accessories and decor" => "Accessories and decor",
+            "Secondary furniture pieces" => "Secondary furniture pieces",
+            "Finishes in low-visibility areas" => "Finishes in low-visibility areas",
+            "Secondhand/vintage where possible" => "Secondhand/vintage where possible",
+            "Other" => "Other"
+          } %>
+
+    <%= render "questionnaire_submissions/textarea_field",
+          name: "questionnaire_submission[answers][budget][other_save]",
+          label: "Other areas to save",
+          value: questionnaire_value("budget", "other_save"),
+          rows: 3,
+          placeholder: "List any other places you prefer to save." %>
+
+    <%= render "questionnaire_submissions/checkbox_group",
+          section: "budget",
+          key: "open_to",
+          label: "Are you open to",
+          options: {
+            "Vintage/secondhand items" => "Vintage/secondhand items",
+            "Custom fabrication" => "Custom fabrication",
+            "Longer lead times for quality pieces" => "Longer lead times for quality pieces",
+            "Trade-only vendors (if applicable)" => "Trade-only vendors (if applicable)"
+          } %>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">Timeline & Practical Notes</h3>
+
+    <div class="grid md:grid-cols-2 gap-5">
+      <%= render "questionnaire_submissions/text_field",
+            name: "questionnaire_submission[answers][logistics][start_date]",
+            label: "Ideal start date",
+            value: questionnaire_value("logistics", "start_date"),
+            placeholder: "Spring 2026, after move-in, flexible..." %>
+
+      <%= render "questionnaire_submissions/text_field",
+            name: "questionnaire_submission[answers][logistics][completion_date]",
+            label: "Target completion date",
+            value: questionnaire_value("logistics", "completion_date"),
+            placeholder: "Before holiday hosting, summer, flexible..." %>
+    </div>
+
+    <%= render "questionnaire_submissions/textarea_field",
+          name: "questionnaire_submission[answers][logistics][fixed_deadlines]",
+          label: "Any fixed deadlines?",
+          value: questionnaire_value("logistics", "fixed_deadlines"),
+          rows: 3,
+          placeholder: "Move-in, event, travel, family gathering..." %>
+
+    <%= render "questionnaire_submissions/radio_group",
+          section: "logistics",
+          key: "living_during_project",
+          label: "Will you be living in the home during the project?",
+          options: {
+            "Yes" => "Yes",
+            "No" => "No",
+            "Not sure" => "Not sure"
+          } %>
+
+    <%= render "questionnaire_submissions/checkbox_group",
+          section: "logistics",
+          key: "constraints",
+          label: "Logistical constraints",
+          options: {
+            "Building / HOA rules" => "Building / HOA rules",
+            "Delivery restrictions" => "Delivery restrictions",
+            "Limited parking/loading" => "Limited parking/loading",
+            "Elevator access/time slots" => "Elevator access/time slots",
+            "Other" => "Other"
+          } %>
+
+    <%= render "questionnaire_submissions/textarea_field",
+          name: "questionnaire_submission[answers][logistics][other_constraints]",
+          label: "Other logistical constraints",
+          value: questionnaire_value("logistics", "other_constraints"),
+          rows: 3,
+          placeholder: "Add any other practical constraints." %>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">Working Style & Final Questions</h3>
+
+    <%= render "questionnaire_submissions/checkbox_group",
+          section: "working_style",
+          key: "decision_making",
+          label: "Decision-making style",
+          options: {
+            "I prefer multiple options" => "I prefer multiple options",
+            "I prefer your top recommendation" => "I prefer your top recommendation",
+            "I'm very involved and want frequent input" => "I'm very involved and want frequent input",
+            "I'm moderately involved and approve key decisions" => "I'm moderately involved and approve key decisions",
+            "I prefer minimal involvement and trust the process" => "I prefer minimal involvement and trust the process"
+          } %>
+
+    <%= render "questionnaire_submissions/checkbox_group",
+          section: "working_style",
+          key: "concerns",
+          label: "Biggest concern about this project",
+          options: {
+            "Budget overruns" => "Budget overruns",
+            "Timeline delays" => "Timeline delays",
+            "Making the wrong choices" => "Making the wrong choices",
+            "Disruption during the project" => "Disruption during the project",
+            "Not feeling 'like me' in the final result" => "Not feeling 'like me' in the final result",
+            "Other" => "Other"
+          } %>
+
+    <%= render "questionnaire_submissions/textarea_field",
+          name: "questionnaire_submission[answers][working_style][other_concerns]",
+          label: "Other concerns",
+          value: questionnaire_value("working_style", "other_concerns"),
+          rows: 3,
+          placeholder: "Describe any other concerns." %>
+
+    <div class="grid md:grid-cols-2 gap-5 mt-5">
+      <%= render "questionnaire_submissions/textarea_field",
+            name: "questionnaire_submission[answers][working_style][anything_else]",
+            label: "Anything else you'd like us to know?",
+            value: questionnaire_value("working_style", "anything_else"),
+            rows: 4,
+            placeholder: "Tell us about your lifestyle, vision, or must-haves." %>
+
+      <%= render "questionnaire_submissions/textarea_field",
+            name: "questionnaire_submission[answers][working_style][questions]",
+            label: "Questions for us about the design process",
+            value: questionnaire_value("working_style", "questions"),
+            rows: 4,
+            placeholder: "What would you like to know before we begin?" %>
+    </div>
+  </div>
+</div>

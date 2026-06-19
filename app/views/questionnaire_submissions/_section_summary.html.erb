@@ -1,0 +1,11 @@
+<div class="rounded-xl border border-theme-100 bg-theme-50 p-5">
+  <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4"><%= title %></h3>
+  <dl class="grid md:grid-cols-2 gap-4 text-sm">
+    <% details.each do |label, value| %>
+      <div class="<%= "md:col-span-2" if value.to_s.include?("\n") %>">
+        <dt class="text-xs font-semibold uppercase tracking-wider text-gray-400"><%= label %></dt>
+        <dd class="text-gray-700 mt-1 whitespace-pre-wrap"><%= value %></dd>
+      </div>
+    <% end %>
+  </dl>
+</div>

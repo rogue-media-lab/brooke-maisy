@@ -1,0 +1,48 @@
+<% content_for(:title, "Client Questionnaire - Brooke & Maisy Interior Designs") %>
+
+<section class="bg-theme-100 py-12 lg:py-16">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-10">
+      <p class="text-sm font-semibold uppercase tracking-wider text-theme-500">Client Intake</p>
+      <h1 class="font-serif text-4xl lg:text-5xl font-semibold text-theme-500 mt-2">Client Questionnaire</h1>
+      <p class="text-gray-600 mt-4 max-w-2xl mx-auto">
+        Help us understand your home, lifestyle, priorities, and design direction before our first conversation.
+      </p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-theme-100 p-5 lg:p-8">
+      <%= form_with model: @submission, url: questionnaire_submissions_path, method: :post, class: "space-y-8" do |f| %>
+        <%= hidden_field_tag :current_step, @current_step %>
+        <%= render "progress" %>
+
+        <% if @submission.errors.any? %>
+          <div class="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            <p class="font-semibold mb-1">Please complete the highlighted section.</p>
+            <ul class="list-disc pl-5 space-y-1">
+              <% @submission.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <% case @current_step %>
+        <% when 1 %>
+          <%= render "questionnaire_submissions/steps/contact_lifestyle", f: f %>
+        <% when 2 %>
+          <%= render "questionnaire_submissions/steps/home_project_intent", f: f %>
+        <% when 3 %>
+          <%= render "questionnaire_submissions/steps/function_priorities", f: f %>
+        <% when 4 %>
+          <%= render "questionnaire_submissions/steps/design_direction", f: f %>
+        <% when 5 %>
+          <%= render "questionnaire_submissions/steps/rooms_budget_logistics", f: f %>
+        <% else %>
+          <%= render "summary", f: f %>
+        <% end %>
+
+        <%= render "form_actions", f: f %>
+      <% end %>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,181 @@
+<div class="space-y-8">
+  <div>
+    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Step 1</p>
+    <h2 class="font-serif text-2xl font-semibold text-theme-500">Contact & Lifestyle Overview</h2>
+    <p class="text-gray-600 mt-2">Start with the basics: how to reach you, who lives in the home, and how your household moves through the week.</p>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-5">
+    <div class="space-y-2">
+      <%= f.label :name, "Full name(s)", class: "block text-sm font-medium text-gray-700" %>
+      <%= f.text_field :name, class: "w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-theme-400 focus:border-theme-400", placeholder: "Your name(s)" %>
+    </div>
+
+    <div class="space-y-2">
+      <%= f.label :email, "Email address", class: "block text-sm font-medium text-gray-700" %>
+      <%= f.email_field :email, class: "w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-theme-400 focus:border-theme-400", placeholder: "you@example.com" %>
+    </div>
+
+    <div class="space-y-2">
+      <%= f.label :phone, "Phone number", class: "block text-sm font-medium text-gray-700" %>
+      <%= f.telephone_field :phone, class: "w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-theme-400 focus:border-theme-400", placeholder: "(555) 123-4567" %>
+    </div>
+
+    <%= render "questionnaire_submissions/text_field",
+          name: "questionnaire_submission[answers][contact][project_address]",
+          label: "Project address",
+          value: questionnaire_value("contact", "project_address"),
+          placeholder: "City, neighborhood, or full address" %>
+  </div>
+
+  <div>
+    <fieldset class="space-y-3">
+      <legend class="text-sm font-semibold text-gray-700">Preferred method of communication</legend>
+      <div class="grid sm:grid-cols-2 gap-3 mt-3">
+        <% ["Email", "Phone call", "WhatsApp", "Video call"].each do |option| %>
+          <label class="flex items-start gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 transition-colors hover:border-theme-300 <%= "border-theme-400 bg-theme-100" if @submission.preferred_contact == option %>">
+            <%= radio_button_tag "questionnaire_submission[preferred_contact]", option, @submission.preferred_contact == option, class: "mt-0.5 h-4 w-4 border-gray-300 text-theme-500 focus:ring-theme-400" %>
+            <span><%= option %></span>
+          </label>
+        <% end %>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-5">
+    <%= render "questionnaire_submissions/textarea_field",
+          name: "questionnaire_submission[answers][contact][best_times]",
+          label: "Best days/times to reach you",
+          value: questionnaire_value("contact", "best_times"),
+          rows: 3,
+          placeholder: "Weekday mornings, evenings after 6 PM..." %>
+
+    <%= render "questionnaire_submissions/text_field",
+          name: "questionnaire_submission[answers][contact][time_zone]",
+          label: "Time zone",
+          value: questionnaire_value("contact", "time_zone"),
+          placeholder: "Eastern, Central, etc." %>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">Household</h3>
+
+    <%= render "questionnaire_submissions/checkbox_group",
+          section: "household",
+          key: "members",
+          label: "Who lives in the home?",
+          options: {
+            "One adult" => "One adult",
+            "Two adults" => "Two adults",
+            "Children" => "Children",
+            "Pets" => "Pets",
+            "Other family members" => "Other family members"
+          } %>
+
+    <div class="grid md:grid-cols-2 gap-5 mt-5">
+      <%= render "questionnaire_submissions/checkbox_group",
+            section: "household",
+            key: "children_status",
+            label: "Children",
+            options: {
+              "No children" => "No children",
+              "Children currently in the home" => "Children currently in the home",
+              "Planning children in the near future" => "Planning children in the near future"
+            } %>
+
+      <%= render "questionnaire_submissions/text_field",
+            name: "questionnaire_submission[answers][household][children_ages]",
+            label: "Children ages",
+            value: questionnaire_value("household", "children_ages"),
+            placeholder: "Ages, if applicable" %>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-5 mt-5">
+      <%= render "questionnaire_submissions/radio_group",
+            section: "household",
+            key: "pets",
+            label: "Pets",
+            options: {
+              "No pets" => "No pets",
+              "Yes" => "Yes"
+            } %>
+
+      <%= render "questionnaire_submissions/checkbox_group",
+            section: "household",
+            key: "pet_types",
+            label: "Pet types",
+            options: {
+              "Dog(s)" => "Dog(s)",
+              "Cat(s)" => "Cat(s)",
+              "Other" => "Other"
+            } %>
+
+      <%= render "questionnaire_submissions/text_field",
+            name: "questionnaire_submission[answers][household][pet_count]",
+            label: "How many pets",
+            value: questionnaire_value("household", "pet_count"),
+            placeholder: "Number" %>
+    </div>
+  </div>
+
+  <div class="border-t border-theme-100 pt-6">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">Lifestyle & Routines</h3>
+
+    <div class="grid md:grid-cols-2 gap-5">
+      <%= render "questionnaire_submissions/radio_group",
+            section: "lifestyle",
+            key: "work_from_home",
+            label: "Do you work from home?",
+            options: {
+              "No" => "No",
+              "Occasionally" => "Occasionally",
+              "1-2 days/week" => "1-2 days/week",
+              "3-5 days/week" => "3-5 days/week"
+            } %>
+
+      <%= render "questionnaire_submissions/text_field",
+            name: "questionnaire_submission[answers][lifestyle][work_from_home_count]",
+            label: "How many people work from home",
+            value: questionnaire_value("lifestyle", "work_from_home_count"),
+            placeholder: "Number of people" %>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-5 mt-5">
+      <%= render "questionnaire_submissions/radio_group",
+            section: "lifestyle",
+            key: "host_guests",
+            label: "Do you host guests?",
+            options: {
+              "Rarely" => "Rarely",
+              "Occasionally" => "Occasionally",
+              "Monthly" => "Monthly",
+              "Weekly" => "Weekly",
+              "Frequently" => "Frequently"
+            } %>
+
+      <%= render "questionnaire_submissions/checkbox_group",
+            section: "lifestyle",
+            key: "hosting_types",
+            label: "What type of hosting?",
+            options: {
+              "Casual get-togethers" => "Casual get-togethers",
+              "Family gatherings" => "Family gatherings",
+              "Dinner parties" => "Dinner parties",
+              "Overnight guests" => "Overnight guests"
+            } %>
+    </div>
+
+    <%= render "questionnaire_submissions/radio_group",
+          section: "lifestyle",
+          key: "type",
+          label: "Your lifestyle is mostly",
+          options: {
+            "Quiet and private" => "Quiet and private",
+            "Social and entertaining" => "Social and entertaining",
+            "Family-focused" => "Family-focused",
+            "Work-focused" => "Work-focused",
+            "Creative/hobby-centered" => "Creative/hobby-centered",
+            "A mix of the above" => "A mix of the above"
+          } %>
+  </div>
+</div>

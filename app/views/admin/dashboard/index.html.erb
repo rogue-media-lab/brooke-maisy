@@ -12,7 +12,8 @@
        { label: "Projects", value: @project_count, sub: "all time" },
        { label: "Active", value: @active_count, sub: "in progress" },
        { label: "Complete", value: @complete_count, sub: "delivered" },
-       { label: "Messages", value: @unread_messages, sub: "unread", link: admin_messages_path }
+       { label: "Messages", value: @unread_messages, sub: "unread", link: admin_messages_path },
+       { label: "Questionnaires", value: @unread_questionnaires, sub: "unread", link: admin_questionnaire_submissions_path }
      ].each do |stat| %>
     <div class="bg-white rounded-xl border border-theme-100 p-5">
       <p class="text-xs font-medium uppercase tracking-wider text-gray-400"><%= stat[:label] %></p>

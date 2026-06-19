@@ -1,0 +1,140 @@
+<% content_for(:title, "Questionnaire - Brooke & Maisy Admin") %>
+
+<div class="mb-8">
+  <div class="flex items-center justify-between gap-3">
+    <%= link_to "← Back to questionnaires", admin_questionnaire_submissions_path, class: "text-sm text-theme-500 hover:text-theme-400 font-medium" %>
+    <% unless @submission.read? %>
+      <span class="text-xs font-medium text-theme-500 bg-theme-200 px-2 py-0.5 rounded-full">New</span>
+    <% end %>
+  </div>
+</div>
+
+<div class="bg-white rounded-xl border border-theme-100 p-5 lg:p-8">
+  <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-8 pb-8 border-b border-theme-100">
+    <div>
+      <h1 class="font-serif text-2xl font-semibold text-theme-500"><%= @submission.name %></h1>
+      <p class="text-sm text-gray-400 mt-1"><%= @submission.email %></p>
+    </div>
+    <div class="grid sm:grid-cols-3 gap-4 text-sm">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Phone</p>
+        <p class="text-gray-700 mt-1"><%= @submission.phone.presence || "—" %></p>
+      </div>
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Preferred contact</p>
+        <p class="text-gray-700 mt-1"><%= @submission.preferred_contact.presence || "—" %></p>
+      </div>
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Received</p>
+        <p class="text-gray-700 mt-1"><%= @submission.created_at.strftime("%B %-d, %Y at %I:%M %p") %></p>
+      </div>
+    </div>
+  </div>
+
+  <%= render "questionnaire_submissions/section_summary", title: "Lifestyle", details: {
+    "Household" => questionnaire_display_value("household", "members"),
+    "Children" => questionnaire_display_value("household", "children_status"),
+    "Children ages" => questionnaire_display_value("household", "children_ages"),
+    "Pets" => questionnaire_display_value("household", "pet_types"),
+    "Pet count" => questionnaire_display_value("household", "pet_count"),
+    "Work from home" => questionnaire_display_value("lifestyle", "work_from_home"),
+    "Host guests" => questionnaire_display_value("lifestyle", "host_guests"),
+    "Hosting types" => questionnaire_display_value("lifestyle", "hosting_types"),
+    "Lifestyle type" => questionnaire_display_value("lifestyle", "type")
+  } %>
+
+  <div class="mt-6">
+    <%= render "questionnaire_submissions/section_summary", title: "Home & Project Intent", details: {
+      "Property type" => questionnaire_display_value("home", "property_type"),
+      "Size" => questionnaire_display_value("home", "size"),
+      "Ownership" => questionnaire_display_value("home", "ownership"),
+      "Constraints" => questionnaire_display_value("home", "constraints"),
+      "Spaces included" => questionnaire_display_value("home", "spaces"),
+      "Project types" => questionnaire_display_value("home", "project_types"),
+      "Primary goals" => questionnaire_display_value("home", "primary_goals")
+    } %>
+  </div>
+
+  <div class="mt-6">
+    <%= render "questionnaire_submissions/section_summary", title: "Function & Priorities", details: {
+      "Top priorities" => questionnaire_display_value("priorities", "top_priorities"),
+      "Storage challenges" => questionnaire_display_value("storage", "challenges"),
+      "Organization preference" => questionnaire_display_value("storage", "organization_preference"),
+      "Space use preference" => questionnaire_display_value("space_use", "preference"),
+      "Maintenance preference" => questionnaire_display_value("space_use", "maintenance_preference"),
+      "What does not work" => questionnaire_display_value("priorities", "what_does_not_work")
+    } %>
+  </div>
+
+  <div class="mt-6">
+    <%= render "questionnaire_submissions/section_summary", title: "Design Direction", details: {
+      "Style direction" => questionnaire_display_value("design", "style_direction"),
+      "Mood" => questionnaire_display_value("design", "mood"),
+      "Contrast" => questionnaire_display_value("design", "contrast"),
+      "Color preference" => questionnaire_display_value("design", "color_preference"),
+      "Colors loved" => questionnaire_display_value("design", "colors_love"),
+      "Colors to avoid" => questionnaire_display_value("design", "colors_avoid"),
+      "Materials" => questionnaire_display_value("design", "materials"),
+      "Finish preference" => questionnaire_display_value("design", "finish_preference"),
+      "Pattern preference" => questionnaire_display_value("design", "pattern_preference"),
+      "Walk-in feeling" => questionnaire_display_value("design", "walk_in_feeling")
+    } %>
+  </div>
+
+  <div class="mt-6 rounded-xl border border-theme-100 bg-theme-50 p-5">
+    <h3 class="font-serif text-xl font-semibold text-theme-500 mb-4">Rooms</h3>
+    <% questionnaire_rooms.each_with_index do |room, index| %>
+      <div class="<%= "border-t border-theme-100 pt-5 mt-5" unless index.zero? %>">
+        <h4 class="font-medium text-theme-500 mb-3">Room <%= index + 1 %>: <%= questionnaire_room_display_value(room, "name") %></h4>
+        <dl class="grid md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <dt class="text-xs font-semibold uppercase tracking-wider text-gray-400">Primary function</dt>
+            <dd class="text-gray-700 mt-1"><%= questionnaire_room_display_value(room, "functions") %></dd>
+          </div>
+          <div>
+            <dt class="text-xs font-semibold uppercase tracking-wider text-gray-400">Current issues</dt>
+            <dd class="text-gray-700 mt-1"><%= questionnaire_room_display_value(room, "current_issues") %></dd>
+          </div>
+          <div class="md:col-span-2">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-gray-400">Must-have features</dt>
+            <dd class="text-gray-700 mt-1 whitespace-pre-wrap"><%= questionnaire_room_display_value(room, "must_have_features") %></dd>
+          </div>
+          <div class="md:col-span-2">
+            <dt class="text-xs font-semibold uppercase tracking-wider text-gray-400">Desired atmosphere</dt>
+            <dd class="text-gray-700 mt-1 whitespace-pre-wrap"><%= questionnaire_room_display_value(room, "desired_atmosphere") %></dd>
+          </div>
+        </dl>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-6">
+    <%= render "questionnaire_submissions/section_summary", title: "Budget, Timeline & Logistics", details: {
+      "Estimated budget" => questionnaire_display_value("budget", "estimated_budget"),
+      "Budget approach" => questionnaire_display_value("budget", "approach"),
+      "Invest more" => questionnaire_display_value("budget", "invest_more"),
+      "Save on" => questionnaire_display_value("budget", "save_on"),
+      "Open to" => questionnaire_display_value("budget", "open_to"),
+      "Start date" => questionnaire_display_value("logistics", "start_date"),
+      "Completion date" => questionnaire_display_value("logistics", "completion_date"),
+      "Fixed deadlines" => questionnaire_display_value("logistics", "fixed_deadlines"),
+      "Living during project" => questionnaire_display_value("logistics", "living_during_project"),
+      "Logistical constraints" => questionnaire_display_value("logistics", "constraints")
+    } %>
+  </div>
+
+  <div class="mt-6">
+    <%= render "questionnaire_submissions/section_summary", title: "Working Style & Final Questions", details: {
+      "Decision-making" => questionnaire_display_value("working_style", "decision_making"),
+      "Concerns" => questionnaire_display_value("working_style", "concerns"),
+      "Anything else" => questionnaire_display_value("working_style", "anything_else"),
+      "Questions for us" => questionnaire_display_value("working_style", "questions")
+    } %>
+  </div>
+
+  <div class="mt-8 pt-6 border-t border-theme-100 flex justify-end">
+    <%= button_to "Delete questionnaire", admin_questionnaire_submission_path(@submission), method: :delete,
+          data: { turbo_confirm: "Delete this questionnaire?" },
+          class: "text-sm text-red-500 hover:text-red-700 font-medium bg-transparent border-0 cursor-pointer" %>
+  </div>
+</div>

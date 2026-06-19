@@ -1,0 +1,29 @@
+<nav aria-label="Questionnaire progress" class="bg-white rounded-xl border border-theme-100 p-4 shadow-sm">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Questionnaire Progress</p>
+      <p class="text-theme-500 font-medium mt-1">Step <%= @current_step %> of <%= QuestionnaireSubmissionsController::STEP_TITLES.length %></p>
+    </div>
+    <p class="text-sm text-gray-500">
+      <%= QuestionnaireSubmissionsController::STEP_TITLES[@current_step - 1] %>
+    </p>
+  </div>
+
+  <ol class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+    <% QuestionnaireSubmissionsController::STEP_TITLES.each_with_index do |title, index| %>
+      <% step_number = index + 1 %>
+      <% state = step_number < @current_step ? "complete" : step_number == @current_step ? "current" : "upcoming" %>
+      <li class="relative">
+        <div class="flex items-center gap-2">
+          <span class="flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold
+            <%= state == "complete" ? "bg-theme-500 text-white" : state == "current" ? "bg-theme-400 text-white" : "bg-theme-100 text-gray-500" %>">
+            <%= step_number %>
+          </span>
+          <span class="text-xs font-medium <%= state == "upcoming" ? "text-gray-400" : "text-theme-500" %>">
+            <%= title %>
+          </span>
+        </div>
+      </li>
+    <% end %>
+  </ol>
+</nav>
