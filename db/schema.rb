@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_18_191406) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_21_214532) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,6 +42,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_191406) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "color_swatches", force: :cascade do |t|
+    t.string "brand"
+    t.datetime "created_at", null: false
+    t.bigint "design_presentation_id", null: false
+    t.string "finish"
+    t.string "hex_code", null: false
+    t.string "name", null: false
+    t.integer "position", default: 0, null: false
+    t.string "room"
+    t.datetime "updated_at", null: false
+    t.index ["design_presentation_id"], name: "index_color_swatches_on_design_presentation_id"
+  end
+
+  create_table "design_presentations", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "position", default: 0, null: false
+    t.bigint "project_id", null: false
+    t.datetime "published_at"
+    t.string "status", default: "draft", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id", "status"], name: "index_design_presentations_on_project_id_and_status"
+    t.index ["project_id"], name: "index_design_presentations_on_project_id"
+  end
+
   create_table "messages", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -51,6 +76,42 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_191406) do
     t.boolean "read", default: false
     t.string "service"
     t.datetime "updated_at", null: false
+  end
+
+  create_table "mood_board_items", force: :cascade do |t|
+    t.string "caption"
+    t.string "category"
+    t.datetime "created_at", null: false
+    t.bigint "mood_board_id", null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["mood_board_id"], name: "index_mood_board_items_on_mood_board_id"
+  end
+
+  create_table "mood_boards", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "design_presentation_id", null: false
+    t.string "name", null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["design_presentation_id"], name: "index_mood_boards_on_design_presentation_id"
+  end
+
+  create_table "product_selections", force: :cascade do |t|
+    t.text "client_notes"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.bigint "design_presentation_id", null: false
+    t.string "name", null: false
+    t.integer "position", default: 0, null: false
+    t.decimal "price", precision: 10, scale: 2
+    t.string "product_url"
+    t.integer "quantity"
+    t.string "room"
+    t.string "status", default: "proposed", null: false
+    t.datetime "updated_at", null: false
+    t.string "vendor"
+    t.index ["design_presentation_id"], name: "index_product_selections_on_design_presentation_id"
   end
 
   create_table "project_updates", force: :cascade do |t|
@@ -246,6 +307,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_191406) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "color_swatches", "design_presentations"
+  add_foreign_key "design_presentations", "projects"
+  add_foreign_key "mood_board_items", "mood_boards"
+  add_foreign_key "mood_boards", "design_presentations"
+  add_foreign_key "product_selections", "design_presentations"
   add_foreign_key "project_updates", "projects"
   add_foreign_key "projects", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

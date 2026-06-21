@@ -1,6 +1,7 @@
 class Project < ApplicationRecord
   belongs_to :user
   has_many :project_updates, dependent: :destroy
+  has_many :design_presentations, dependent: :destroy
   has_many_attached :photos
 
   enum :status, {
