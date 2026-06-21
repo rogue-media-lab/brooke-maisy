@@ -58,7 +58,7 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "brookenmaisy.com", protocol: "https" }
+  config.action_mailer.default_url_options = { host: "www.brookenmaisy.com", protocol: "https" }
 
   # Delivery via Gmail SMTP (app password from Heroku config vars).
   config.action_mailer.delivery_method = :smtp
