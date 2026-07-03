@@ -4,87 +4,30 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <h1 class="text-4xl lg:text-5xl font-semibold text-theme-500 mb-4">Let's Talk</h1>
     <p class="text-xl text-gray-600 mb-12 max-w-2xl">
-      Ready to transform your space? Get in touch to schedule your free consultation.
+      Ready to transform your space? Fill out the form below and we'll be in touch.
     </p>
 
-    <div class="grid lg:grid-cols-2 gap-12">
-
-      <%# Contact Info %>
-      <div>
-        <div class="mb-8">
-          <h2 class="text-2xl font-semibold text-theme-500 mb-4">Get in Touch</h2>
-          <p class="text-gray-600 leading-relaxed">
-            I'd love to hear about your project. Whether you're ready to start a full redesign or just want to explore ideas, let's chat.
-          </p>
-        </div>
-
-        <div class="space-y-6">
-          <div>
-            <h3 class="font-semibold text-theme-500 mb-1">Location</h3>
-            <p class="text-gray-600">Lake Wylie, SC</p>
-            <p class="text-gray-600">Serving the Greater Charlotte Area</p>
-          </div>
-
-          <div>
-            <h3 class="font-semibold text-theme-500 mb-1">Email</h3>
-            <a href="mailto:amanda@example.com" class="text-theme-400 hover:underline">amanda@brookenmaisy.com</a>
-          </div>
-
-          <div>
-            <h3 class="font-semibold text-theme-500 mb-1">Social</h3>
-            <div class="flex gap-4">
-              <a href="#" class="text-gray-600 hover:text-theme-500">Instagram</a>
-              <a href="#" class="text-gray-600 hover:text-theme-500">Facebook</a>
-            </div>
-          </div>
-        </div>
+    <%# HoneyBook embedded lead form — replace this placeholder with the embed code from HoneyBook %>
+    <%# Amanda: HoneyBook → Lead capture → Lead Forms → select form → Share → Code tab → Copy code %>
+    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-sm p-8">
+      <!-- HONEYBOOK_EMBED_PLACEHOLDER: Paste the embed <script> tag from HoneyBook here -->
+      <div class="text-center py-12 text-gray-400">
+        <p class="text-lg">Contact form coming soon.</p>
+        <p class="text-sm mt-2">Please email us at
+          <a href="mailto:kathryn@brookenmaisy.com" class="text-theme-400 hover:underline">kathryn@brookenmaisy.com</a>
+        </p>
       </div>
+      <!-- END HONEYBOOK_EMBED_PLACEHOLDER -->
+    </div>
 
-      <%# Contact Form %>
-      <div class="bg-white rounded-xl p-8 shadow-sm">
-        <h2 class="text-2xl font-semibold text-theme-500 mb-6">Send a Message</h2>
-
-        <div id="contact_form">
-          <%= form_with model: @message || Message.new, url: messages_path, local: true, class: "space-y-6" do |f| %>
-            <div>
-              <%= f.label :name, "Name", class: "block text-sm font-medium text-gray-700 mb-1" %>
-              <%= f.text_field :name, class: "w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-theme-400 focus:border-theme-400", placeholder: "Your name" %>
-            </div>
-
-            <div>
-              <%= f.label :email, "Email", class: "block text-sm font-medium text-gray-700 mb-1" %>
-              <%= f.email_field :email, class: "w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-theme-400 focus:border-theme-400", placeholder: "your@email.com" %>
-            </div>
-
-            <div>
-              <%= f.label :phone, "Phone (optional)", class: "block text-sm font-medium text-gray-700 mb-1" %>
-              <%= f.telephone_field :phone, class: "w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-theme-400 focus:border-theme-400", placeholder: "(555) 123-4567" %>
-            </div>
-
-            <div>
-              <%= f.label :service, "Interested Service", class: "block text-sm font-medium text-gray-700 mb-1" %>
-              <%= f.select :service, options_for_select(["Full Home Redesign", "Room Makeover", "Color & Styling", "Other"]), { include_blank: "Select a service" }, class: "w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-theme-400 focus:border-theme-400" %>
-            </div>
-
-            <div>
-              <%= f.label :body, "Tell us about your project", class: "block text-sm font-medium text-gray-700 mb-1" %>
-              <%= f.text_area :body, rows: 5, class: "w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-theme-400 focus:border-theme-400", placeholder: "Describe your space and what you'd like to achieve..." %>
-            </div>
-
-            <%= f.submit "Send Message", class: "w-full bg-theme-400 hover:bg-theme-500 text-white px-6 py-3 rounded-md font-medium transition-colors" %>
-          <% end %>
-        </div>
-
-        <div class="mt-8 rounded-xl border border-theme-200 bg-theme-50 p-6">
-          <h3 class="font-serif text-2xl font-semibold text-theme-500">Prefer a guided intake?</h3>
-          <p class="text-gray-600 mt-2">
-            Complete the Client Questionnaire to share your goals, style, rooms, budget, and logistics in more detail.
-          </p>
-          <%= link_to "Complete the Client Questionnaire", new_questionnaire_submission_path,
-                class: "inline-flex items-center justify-center mt-5 bg-theme-500 hover:bg-theme-400 text-white px-6 py-3 rounded-md font-medium transition-colors" %>
-        </div>
-      </div>
-
+    <%# Client Questionnaire CTA — different flow, still valuable %>
+    <div class="mt-8 max-w-2xl mx-auto rounded-xl border border-theme-200 bg-theme-50 p-6">
+      <h3 class="font-serif text-2xl font-semibold text-theme-500">Prefer a guided intake?</h3>
+      <p class="text-gray-600 mt-2">
+        Complete the Client Questionnaire to share your goals, style, rooms, budget, and logistics in more detail.
+      </p>
+      <%= link_to "Complete the Client Questionnaire", new_questionnaire_submission_path,
+            class: "inline-flex items-center justify-center mt-5 bg-theme-500 hover:bg-theme-400 text-white px-6 py-3 rounded-md font-medium transition-colors" %>
     </div>
   </div>
 </section>
