@@ -146,7 +146,7 @@ class QuestionnaireSubmissionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
     assert_select "h2", "Review & Submit"
 
-    assert_difference "QuestionnaireSubmission.count", 1 do
+    assert_no_difference "QuestionnaireSubmission.count" do
       post questionnaire_submissions_path, params: {
         current_step: "6",
         questionnaire_submission: { answers: {} }
@@ -156,6 +156,7 @@ class QuestionnaireSubmissionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal flash[:notice], "Thank you. Your client questionnaire has been submitted."
 
     submission = QuestionnaireSubmission.last
+    assert submission.completed?, "Expected final submission to be marked completed"
     assert_equal "Mason Roberts", submission.name
     assert_equal "mason@example.com", submission.email
     assert_equal "Lake Wylie, SC", submission.answers.dig("contact", "project_address")
