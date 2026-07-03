@@ -34,6 +34,29 @@ Rails.application.routes.draw do
     end
     resources :projects do
       resources :project_updates, only: [ :create, :destroy ]
+      resources :design_presentations do
+        resource :publication, only: [ :create, :destroy ]
+        resources :mood_boards do
+          member do
+            patch :move
+          end
+          resources :mood_board_items do
+            member do
+              patch :move
+            end
+          end
+        end
+        resources :product_selections do
+          member do
+            patch :move
+          end
+        end
+        resources :color_swatches do
+          member do
+            patch :move
+          end
+        end
+      end
     end
     resources :messages, only: [ :index, :show, :destroy ]
     resources :questionnaire_submissions, only: [ :index, :show, :destroy ]

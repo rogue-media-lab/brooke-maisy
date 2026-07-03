@@ -1,0 +1,8 @@
+<%= turbo_stream.replace dom_id(@product_selection) do %>
+  <%= render "admin/product_selections/product_selection_card", product: @product_selection, project: @project, presentation: @presentation %>
+<% end %>
+
+<%= turbo_stream.update "product_selection_form" do %>
+  <%= link_to "Add product", new_admin_project_design_presentation_product_selection_path(@project, @presentation),
+        class: "inline-flex items-center gap-1.5 text-sm text-theme-500 hover:text-theme-400 font-medium" %>
+<% end %>

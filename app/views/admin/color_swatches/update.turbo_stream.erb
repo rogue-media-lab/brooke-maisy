@@ -1,0 +1,8 @@
+<%= turbo_stream.replace dom_id(@color_swatch) do %>
+  <%= render "admin/color_swatches/color_swatch_card", swatch: @color_swatch, project: @project, presentation: @presentation %>
+<% end %>
+
+<%= turbo_stream.update "color_swatch_form" do %>
+  <%= link_to "Add color", new_admin_project_design_presentation_color_swatch_path(@project, @presentation),
+        class: "inline-flex items-center gap-1.5 text-sm text-theme-500 hover:text-theme-400 font-medium" %>
+<% end %>

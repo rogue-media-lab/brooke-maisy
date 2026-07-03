@@ -1,0 +1,9 @@
+<%# update.turbo_stream.erb: replace the card in place and reset the form slot. %>
+<%= turbo_stream.replace dom_id(@mood_board) do %>
+  <%= render "admin/mood_boards/mood_board_card", board: @mood_board, project: @project, presentation: @presentation %>
+<% end %>
+
+<%= turbo_stream.update "mood_board_form" do %>
+  <%= link_to "New mood board", new_admin_project_design_presentation_mood_board_path(@project, @presentation),
+        class: "inline-flex items-center gap-1.5 text-sm text-theme-500 hover:text-theme-400 font-medium" %>
+<% end %>

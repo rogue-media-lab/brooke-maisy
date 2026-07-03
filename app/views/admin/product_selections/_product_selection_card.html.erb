@@ -1,0 +1,46 @@
+<div class="flex items-center gap-4 bg-white rounded-lg border border-theme-100 p-4" id="<%= dom_id(product) %>">
+  <div class="w-16 h-16 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
+    <% if product.image.attached? %>
+      <%= image_tag product.image, class: "w-full h-full object-cover", loading: "lazy" %>
+    <% else %>
+      <div class="w-full h-full flex items-center justify-center text-gray-300">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+      </div>
+    <% end %>
+  </div>
+  <div class="flex-1 min-w-0">
+    <div class="flex items-center gap-2">
+      <h3 class="font-medium text-sm text-theme-500 truncate"><%= product.name %></h3>
+      <%= render "admin/shared/status_badge", status: product.status %>
+    </div>
+    <% if product.vendor.present? %>
+      <p class="text-xs text-gray-500"><%= product.vendor %></p>
+    <% end %>
+    <p class="text-xs text-gray-400 mt-0.5">
+      <%= number_to_currency(product.price) if product.price.present? %>
+      <%= "· Qty #{product.quantity}" if product.quantity.present? %>
+      <%= "· #{product.room}" if product.room.present? %>
+    </p>
+  </div>
+  <div class="flex items-center gap-1 flex-shrink-0">
+    <%= button_to move_admin_project_design_presentation_product_selection_path(project, presentation, product), method: :patch,
+          params: { direction: "up" },
+          class: "text-gray-300 hover:text-theme-500 bg-transparent border-0 p-1 cursor-pointer" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
+    <% end %>
+    <%= button_to move_admin_project_design_presentation_product_selection_path(project, presentation, product), method: :patch,
+          params: { direction: "down" },
+          class: "text-gray-300 hover:text-theme-500 bg-transparent border-0 p-1 cursor-pointer" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+    <% end %>
+    <%= link_to edit_admin_project_design_presentation_product_selection_path(project, presentation, product),
+          class: "text-gray-300 hover:text-theme-500 p-1", data: { turbo_frame: "product_selection_form" } do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+    <% end %>
+    <%= button_to admin_project_design_presentation_product_selection_path(project, presentation, product), method: :delete,
+          form: { data: { turbo_confirm: "Delete this product?" } },
+          class: "text-gray-300 hover:text-red-500 bg-transparent border-0 p-1 cursor-pointer" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+    <% end %>
+  </div>
+</div>

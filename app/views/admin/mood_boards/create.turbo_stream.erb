@@ -1,0 +1,11 @@
+<%# create.turbo_stream.erb: append the new card into the CSS grid and reset the form slot. %>
+<%= turbo_stream.append "mood_boards_grid" do %>
+  <%= render "admin/mood_boards/mood_board_card", board: @mood_board, project: @project, presentation: @presentation %>
+<% end %>
+
+<%= turbo_stream.remove "mood_boards_empty" %>
+
+<%= turbo_stream.update "mood_board_form" do %>
+  <%= link_to "New mood board", new_admin_project_design_presentation_mood_board_path(@project, @presentation),
+        class: "inline-flex items-center gap-1.5 text-sm text-theme-500 hover:text-theme-400 font-medium" %>
+<% end %>
