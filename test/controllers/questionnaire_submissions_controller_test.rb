@@ -81,7 +81,7 @@ class QuestionnaireSubmissionsControllerTest < ActionDispatch::IntegrationTest
       questionnaire_submission: { answers: priority_answers }
     }
     assert_response :unprocessable_entity
-    assert_select "h2", "Design Direction"
+    assert_select "h2", "Design Direction & Aesthetic Preferences"
 
     design_answers = {
       "design" => {

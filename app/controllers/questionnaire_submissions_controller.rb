@@ -3,7 +3,7 @@ class QuestionnaireSubmissionsController < ApplicationController
     "Contact & Lifestyle",
     "Home & Project Intent",
     "Function, Needs & Priorities",
-    "Design Direction",
+    "Design Direction & Aesthetic Preferences",
     "Rooms, Budget & Logistics",
     "Review"
   ].freeze
