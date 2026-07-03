@@ -2,7 +2,7 @@ class QuestionnaireSubmissionsController < ApplicationController
   STEP_TITLES = [
     "Contact & Lifestyle",
     "Home & Project Intent",
-    "Function & Priorities",
+    "Function, Needs & Priorities",
     "Design Direction",
     "Rooms, Budget & Logistics",
     "Review"
