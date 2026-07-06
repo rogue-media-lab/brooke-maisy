@@ -1,5 +1,15 @@
 <% content_for(:title, "Contact - Brooke & Maisy Interior Designs") %>
 
+<% content_for :head do %>
+  <link rel="preconnect" href="https://widget.honeybook.com">
+  <link rel="dns-prefetch" href="https://widget.honeybook.com">
+  <link rel="preload" as="script" href="https://widget.honeybook.com/assets_users_production/websiteplacements/placement-controller.min.js">
+  <script>
+    window._HB_ = window._HB_ || {};
+    window._HB_.pid = "6a4709f224b4aeff2feea1f4";
+  </script>
+<% end %>
+
 <section class="bg-theme-100 py-16 lg:py-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <h1 class="text-4xl lg:text-5xl font-semibold text-theme-500 mb-4">Let's Talk</h1>
@@ -7,27 +17,20 @@
       Ready to transform your space? Fill out the form below and we'll be in touch.
     </p>
 
-    <%# HoneyBook embedded lead form — replace this placeholder with the embed code from HoneyBook %>
-    <%# Amanda: HoneyBook → Lead capture → Lead Forms → select form → Share → Code tab → Copy code %>
-    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-sm p-8">
-      <!-- HONEYBOOK_EMBED_PLACEHOLDER: Paste the embed <script> tag from HoneyBook here -->
-      <div class="text-center py-12 text-gray-400">
-        <p class="text-lg">Contact form coming soon.</p>
-        <p class="text-sm mt-2">Please email us at
-          <a href="mailto:kathryn@brookenmaisy.com" class="text-theme-400 hover:underline">kathryn@brookenmaisy.com</a>
-        </p>
-      </div>
-      <!-- END HONEYBOOK_EMBED_PLACEHOLDER -->
+    <%# HoneyBook embedded lead form — powered by Stimulus controller (no raw script tags) %>
+    <div data-controller="honeybook" class="max-w-3xl mx-auto bg-white rounded-xl shadow-sm p-8">
+      <div class="hb-p-6a4709f224b4aeff2feea1f4-1"></div>
+      <img height="1" width="1" style="display:none" src="https://www.honeybook.com/p.png?pid=6a4709f224b4aeff2feea1f4" alt="">
     </div>
 
     <%# Client Questionnaire CTA — different flow, still valuable %>
-    <div class="mt-8 max-w-2xl mx-auto rounded-xl border border-theme-200 bg-theme-50 p-6">
+    <div class="mt-8 max-w-3xl mx-auto rounded-xl bg-white shadow-sm p-8">
       <h3 class="font-serif text-2xl font-semibold text-theme-500">Prefer a guided intake?</h3>
       <p class="text-gray-600 mt-2">
         Complete the Client Questionnaire to share your goals, style, rooms, budget, and logistics in more detail.
       </p>
       <%= link_to "Complete the Client Questionnaire", new_questionnaire_submission_path,
-            class: "inline-flex items-center justify-center mt-5 bg-theme-500 hover:bg-theme-400 text-white px-6 py-3 rounded-md font-medium transition-colors" %>
+            class: "inline-flex items-center justify-center mt-5 bg-[#007DB3] hover:bg-[#006699] text-white px-6 py-3 rounded-md font-medium transition-colors" %>
     </div>
   </div>
 </section>
