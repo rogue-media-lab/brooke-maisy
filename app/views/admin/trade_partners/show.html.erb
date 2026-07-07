@@ -65,8 +65,8 @@
       <div class="flex justify-between">
         <dt class="text-sm text-gray-500">Website</dt>
         <dd class="text-sm font-medium">
-          <% if @trade_partner.website.present? %>
-            <%= link_to @trade_partner.website, @trade_partner.website, class: "text-theme-400 hover:underline", target: "_blank" %>
+          <% if url = safe_external_url(@trade_partner.website) %>
+            <%= link_to url, url, class: "text-theme-400 hover:underline", target: "_blank", rel: "noopener" %>
           <% else %>
             <span class="text-gray-400">—</span>
           <% end %>
