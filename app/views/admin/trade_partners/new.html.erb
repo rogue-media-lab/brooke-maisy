@@ -1,0 +1,9 @@
+<% content_for(:title, "#{@trade_partner.persisted? ? "Edit" : "New"} Trade Partner - Admin") %>
+
+<div class="max-w-2xl">
+  <h1 class="font-serif text-3xl font-semibold text-theme-500 mb-8">
+    <%= @trade_partner.persisted? ? "Edit trade partner" : "Add trade partner" %>
+  </h1>
+
+  <%= render "form", trade_partner: @trade_partner %>
+</div>

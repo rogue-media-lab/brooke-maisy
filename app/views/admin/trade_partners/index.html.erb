@@ -1,0 +1,45 @@
+<% content_for(:title, "Trade Network - Admin") %>
+
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="font-serif text-3xl font-semibold text-theme-500">Trade Network</h1>
+    <p class="text-gray-500 mt-1"><%= pluralize(@trade_partners.size, "trade partner") %></p>
+  </div>
+  <%= link_to "Add trade partner", new_admin_trade_partner_path,
+        class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors" %>
+</div>
+
+<% if @trade_partners.any? %>
+  <div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+    <%# Header row %>
+    <div class="grid grid-cols-12 px-5 py-3 bg-theme-100 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+      <div class="col-span-3">Name</div>
+      <div class="col-span-2">Type</div>
+      <div class="col-span-2">Phone</div>
+      <div class="col-span-2">Rating</div>
+      <div class="col-span-2">Referred</div>
+      <div class="col-span-1 text-right">Active</div>
+    </div>
+    <% @trade_partners.each do |tp| %>
+      <%= link_to admin_trade_partner_path(tp), class: "grid grid-cols-12 px-5 py-4 items-center border-b border-gray-50 last:border-0 hover:bg-theme-100" do %>
+        <div class="col-span-3 font-medium text-theme-500"><%= tp.name %></div>
+        <div class="col-span-2 text-sm text-gray-500"><%= tp.trade_type_label %></div>
+        <div class="col-span-2 text-sm text-gray-500"><%= tp.phone.presence || "—" %></div>
+        <div class="col-span-2 text-sm text-gray-600"><%= tp.rating&.positive? ? tp.rating.to_f : "—" %></div>
+        <div class="col-span-2 text-sm text-gray-600"><%= tp.jobs_referred %></div>
+        <div class="col-span-1 text-right">
+          <% if tp.active? %>
+            <span class="inline-block w-2 h-2 rounded-full bg-green-500"></span>
+          <% else %>
+            <span class="inline-block w-2 h-2 rounded-full bg-gray-300"></span>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="bg-white rounded-xl border border-theme-100 px-5 py-12 text-center">
+    <p class="text-theme-500 font-medium">No trade partners yet</p>
+    <p class="text-gray-500 text-sm mt-1">Add trusted professionals you refer to clients.</p>
+  </div>
+<% end %>

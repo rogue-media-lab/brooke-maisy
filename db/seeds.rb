@@ -60,7 +60,55 @@ michael.projects.create!(
   description: "Dedicated work-from-home office with built-in shelving."
 )
 
+# Trade Partners — seed existing hardcoded data
+TradePartner.destroy_all
+
+TradePartner.create!(
+  name: "Mike's Painting",
+  trade_type: "painter",
+  phone: "(555) 234-5678",
+  description: "Specializes in interior repaints, cabinet painting, and color consultations.",
+  years_experience: 8,
+  rating: 4.9,
+  jobs_referred: 12,
+  display_order: 1
+)
+
+TradePartner.create!(
+  name: "Carolina Custom Carpentry",
+  trade_type: "carpenter",
+  phone: "(555) 345-6789",
+  description: "Custom cabinetry, built-in shelving, and millwork for high-end renovations.",
+  years_experience: 12,
+  rating: 5.0,
+  jobs_referred: 8,
+  display_order: 2
+)
+
+TradePartner.create!(
+  name: "Spark Electric",
+  trade_type: "electrician",
+  phone: "(555) 456-7890",
+  description: "Licensed electrician specializing in lighting design, panel upgrades, and smart home wiring.",
+  years_experience: 6,
+  rating: 4.8,
+  jobs_referred: 5,
+  display_order: 3
+)
+
+TradePartner.create!(
+  name: "Pipes & Plumbers Co",
+  trade_type: "plumber",
+  phone: "(555) 567-8901",
+  description: "Full-service plumbing for bathroom and kitchen renovations, water heater installation, and repairs.",
+  years_experience: 10,
+  rating: 4.7,
+  jobs_referred: 3,
+  display_order: 4
+)
+
 puts "\n=== Seed Summary ==="
+puts "Trade Partners: #{TradePartner.count}"
 puts "Admin users: #{User.where(role: 'admin').count}"
 puts "Client users: #{User.where(role: 'client').count}"
 puts "Projects: #{Project.count}"

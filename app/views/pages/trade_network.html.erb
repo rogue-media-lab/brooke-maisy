@@ -3,24 +3,21 @@
 <%# Header Section %>
 <section class="bg-theme-100 py-12">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-      <div>
-        <h1 class="text-3xl lg:text-4xl font-semibold text-theme-500" style="letter-spacing: -1px;">Trade Network</h1>
-        <p class="text-gray-600 mt-1">Trusted professionals I refer to clients</p>
-      </div>
-      <button class="bg-theme-400 hover:bg-theme-500 text-white px-5 py-2.5 rounded-md font-medium transition-colors">
-        + Add Trade
-      </button>
+    <div class="mb-8">
+      <h1 class="text-3xl lg:text-4xl font-semibold text-theme-500">Trade Network</h1>
+      <p class="text-gray-600 mt-1">Trusted professionals we refer to clients</p>
     </div>
 
     <%# Filter Buttons %>
     <div class="flex flex-wrap gap-2">
-      <button class="px-4 py-2 bg-theme-400 text-white rounded-md text-sm font-medium">All (12)</button>
-      <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200">Painters (4)</button>
-      <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200">Carpenters (3)</button>
-      <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200">Electricians (2)</button>
-      <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200">Plumbers (2)</button>
-      <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200">Other (1)</button>
+      <%= link_to "All (#{@trade_partners.count})", trade_network_path,
+            class: "px-4 py-2 rounded-md text-sm font-medium transition-colors #{params[:type].blank? ? 'bg-theme-400 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+      <% TradePartner::TRADE_TYPES.each do |type| %>
+        <% count = @trade_partners.select { |tp| tp.trade_type == type }.size %>
+        <% next if count.zero? %>
+        <%= link_to "#{type.titleize} (#{count})", trade_network_path(type: type),
+              class: "px-4 py-2 rounded-md text-sm font-medium transition-colors #{params[:type] == type ? 'bg-theme-400 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+      <% end %>
     </div>
   </div>
 </section>
@@ -28,156 +25,82 @@
 <%# Tradespeople Listings %>
 <section class="bg-theme-100 pb-12">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid md:grid-cols-2 gap-6">
-
-      <%# Mike's Painting %>
-      <div class="bg-white rounded-xl p-6 shadow-sm">
-        <div class="flex items-start gap-4">
-          <div class="w-14 h-14 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
-            <svg class="w-7 h-7 text-theme-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-            </svg>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-start justify-between">
-              <div>
-                <h3 class="text-lg font-semibold text-theme-500">Mike's Painting</h3>
-                <p class="text-gray-600 text-sm">Painter • 8 years experience</p>
-              </div>
-              <div class="flex items-center gap-1 text-theme-400">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+    <% if @trade_partners.any? %>
+      <div class="grid md:grid-cols-2 gap-6">
+        <% @trade_partners.each do |partner| %>
+          <div class="bg-white rounded-xl p-6 shadow-sm">
+            <div class="flex items-start gap-4">
+              <div class="w-14 h-14 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                <svg class="w-7 h-7 text-theme-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <span class="text-sm font-medium text-gray-700">4.9</span>
+              </div>
+              <div class="flex-1">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <h3 class="text-lg font-semibold text-theme-500"><%= partner.name %></h3>
+                    <p class="text-gray-600 text-sm">
+                      <%= partner.trade_type_label %>
+                      <% if partner.years_experience&.positive? %>
+                        • <%= pluralize(partner.years_experience, "year") %> experience
+                      <% end %>
+                    </p>
+                  </div>
+                  <% if partner.rating&.positive? %>
+                    <div class="flex items-center gap-1 text-theme-400">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                      <span class="text-sm font-medium text-gray-700"><%= partner.rating.to_f %></span>
+                    </div>
+                  <% end %>
+                </div>
+                <% if partner.description.present? %>
+                  <p class="text-gray-600 text-sm mt-2 mb-4"><%= partner.description %></p>
+                <% end %>
+                <div class="flex flex-wrap gap-3 mt-4">
+                  <% if partner.phone.present? %>
+                    <a href="tel:<%= partner.phone.gsub(/[^0-9]/, '') %>"
+                       class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.397 2.397a.965.965 0 01-.707.293H7.688a.965.965 0 01-.707-.293l-2.397-2.397A1 1 0 01.484 9.557l1.498 4.493a1 1 0 01.948.684H17a2 2 0 012 2v2" />
+                      </svg>
+                      <%= partner.phone %>
+                    </a>
+                  <% end %>
+                  <% if partner.email.present? %>
+                    <a href="mailto:<%= partner.email %>"
+                       class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      Email
+                    </a>
+                  <% end %>
+                  <% if partner.website.present? %>
+                    <a href="<%= partner.website %>" target="_blank" rel="noopener"
+                       class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      Website
+                    </a>
+                  <% end %>
+                  <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-md text-sm">
+                    <%= pluralize(partner.jobs_referred, "job") %> referred
+                  </span>
+                </div>
               </div>
             </div>
-            <p class="text-gray-600 text-sm mt-2 mb-4">Specializes in interior repaints, cabinet painting, and color consultations.</p>
-            <div class="flex flex-wrap gap-3">
-              <a href="tel:5552345678" class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.397 2.397a.965.965 0 01-.707.293H7.688a.965.965 0 01-.707-.293l-2.397-2.397A1 1 0 01.484 9.557l1.498 4.493a1 1 0 01.948.684H17a2 2 0 012 2v2" />
-                </svg>
-                (555) 234-5678
-              </a>
-              <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-md text-sm">
-                12 jobs referred
-              </span>
-            </div>
           </div>
-        </div>
+        <% end %>
       </div>
-
-      <%# Carolina Custom Carpentry %>
-      <div class="bg-white rounded-xl p-6 shadow-sm">
-        <div class="flex items-start gap-4">
-          <div class="w-14 h-14 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
-            <svg class="w-7 h-7 text-theme-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-start justify-between">
-              <div>
-                <h3 class="text-lg font-semibold text-theme-500">Carolina Custom Carpentry</h3>
-                <p class="text-gray-600 text-sm">Carpenter • 12 years experience</p>
-              </div>
-              <div class="flex items-center gap-1 text-theme-400">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-                <span class="text-sm font-medium text-gray-700">5.0</span>
-              </div>
-            </div>
-            <p class="text-gray-600 text-sm mt-2 mb-4">Custom cabinetry, built-in shelving, and millwork for high-end renovations.</p>
-            <div class="flex flex-wrap gap-3">
-              <a href="tel:5553456789" class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.397 2.397a.965.965 0 01-.707.293H7.688a.965.965 0 01-.707-.293l-2.397-2.397A1 1 0 01.484 9.557l1.498 4.493a1 1 0 01.948.684H17a2 2 0 012 2v2" />
-                </svg>
-                (555) 345-6789
-              </a>
-              <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-md text-sm">
-                8 jobs referred
-              </span>
-            </div>
-          </div>
-        </div>
+    <% else %>
+      <div class="text-center py-16">
+        <p class="text-gray-400 text-lg">No trade partners to show yet.</p>
+        <p class="text-gray-400 text-sm mt-1">Check back soon — we're building our network.</p>
       </div>
-
-      <%# Spark Electric %>
-      <div class="bg-white rounded-xl p-6 shadow-sm">
-        <div class="flex items-start gap-4">
-          <div class="w-14 h-14 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
-            <svg class="w-7 h-7 text-theme-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-start justify-between">
-              <div>
-                <h3 class="text-lg font-semibold text-theme-500">Spark Electric</h3>
-                <p class="text-gray-600 text-sm">Electrician • 6 years experience</p>
-              </div>
-              <div class="flex items-center gap-1 text-theme-400">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-                <span class="text-sm font-medium text-gray-700">4.8</span>
-              </div>
-            </div>
-            <p class="text-gray-600 text-sm mt-2 mb-4">Licensed electrician specializing in lighting design, panel upgrades, and smart home wiring.</p>
-            <div class="flex flex-wrap gap-3">
-              <a href="tel:5554567890" class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.397 2.397a.965.965 0 01-.707.293H7.688a.965.965 0 01-.707-.293l-2.397-2.397A1 1 0 01.484 9.557l1.498 4.493a1 1 0 01.948.684H17a2 2 0 012 2v2" />
-                </svg>
-                (555) 456-7890
-              </a>
-              <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-md text-sm">
-                5 jobs referred
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <%# Pipes & Plumbers Co %>
-      <div class="bg-white rounded-xl p-6 shadow-sm">
-        <div class="flex items-start gap-4">
-          <div class="w-14 h-14 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
-            <svg class="w-7 h-7 text-theme-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-            </svg>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-start justify-between">
-              <div>
-                <h3 class="text-lg font-semibold text-theme-500">Pipes & Plumbers Co</h3>
-                <p class="text-gray-600 text-sm">Plumber • 10 years experience</p>
-              </div>
-              <div class="flex items-center gap-1 text-theme-400">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-                <span class="text-sm font-medium text-gray-700">4.7</span>
-              </div>
-            </div>
-            <p class="text-gray-600 text-sm mt-2 mb-4">Full-service plumbing for bathroom and kitchen renovations, water heater installation, and repairs.</p>
-            <div class="flex flex-wrap gap-3">
-              <a href="tel:5555678901" class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.397 2.397a.965.965 0 01-.707.293H7.688a.965.965 0 01-.707-.293l-2.397-2.397A1 1 0 01.484 9.557l1.498 4.493a1 1 0 01.948.684H17a2 2 0 012 2v2" />
-                </svg>
-                (555) 567-8901
-              </a>
-              <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-md text-sm">
-                3 jobs referred
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <% end %>
   </div>
 </section>

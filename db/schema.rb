@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_21_214532) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_06_235906) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -289,6 +289,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_21_214532) do
     t.index ["expires_at"], name: "index_solid_queue_semaphores_on_expires_at"
     t.index ["key", "value"], name: "index_solid_queue_semaphores_on_key_and_value"
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
+  end
+
+  create_table "trade_partners", force: :cascade do |t|
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.integer "display_order", default: 0
+    t.string "email"
+    t.integer "jobs_referred", default: 0
+    t.string "name", null: false
+    t.string "phone"
+    t.decimal "rating", precision: 3, scale: 1, default: "0.0"
+    t.string "trade_type", default: "other", null: false
+    t.datetime "updated_at", null: false
+    t.string "website"
+    t.integer "years_experience", default: 0
   end
 
   create_table "users", force: :cascade do |t|

@@ -17,5 +17,7 @@ class PagesController < ApplicationController
   end
 
   def trade_network
+    @trade_partners = TradePartner.active.ordered
+    @trade_partners = @trade_partners.by_type(params[:type]) if params[:type].present?
   end
 end

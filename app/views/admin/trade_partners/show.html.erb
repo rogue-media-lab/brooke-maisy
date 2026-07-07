@@ -1,0 +1,84 @@
+<% content_for(:title, "#{@trade_partner.name} - Admin") %>
+
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="font-serif text-3xl font-semibold text-theme-500"><%= @trade_partner.name %></h1>
+    <p class="text-gray-500 mt-1"><%= @trade_partner.trade_type_label %></p>
+  </div>
+  <div class="flex items-center gap-3">
+    <%= link_to "Edit", edit_admin_trade_partner_path(@trade_partner),
+          class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors" %>
+    <%= button_to "Delete", admin_trade_partner_path(@trade_partner), method: :delete,
+          form: { data: { turbo_confirm: "Remove #{@trade_partner.name} from the trade network?" } },
+          class: "bg-red-500 hover:bg-red-600 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors" %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <%# Details card %>
+  <div class="bg-white rounded-xl border border-theme-100 p-6">
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Details</h3>
+    <dl class="space-y-3">
+      <div class="flex justify-between">
+        <dt class="text-sm text-gray-500">Trade type</dt>
+        <dd class="text-sm font-medium text-theme-500"><%= @trade_partner.trade_type_label %></dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-sm text-gray-500">Experience</dt>
+        <dd class="text-sm font-medium text-theme-500"><%= pluralize(@trade_partner.years_experience, "year") %></dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-sm text-gray-500">Rating</dt>
+        <dd class="text-sm font-medium text-theme-500">
+          <%= @trade_partner.rating&.positive? ? @trade_partner.rating.to_f : "—" %>
+        </dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-sm text-gray-500">Jobs referred</dt>
+        <dd class="text-sm font-medium text-theme-500"><%= @trade_partner.jobs_referred %></dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-sm text-gray-500">Status</dt>
+        <dd class="text-sm font-medium">
+          <% if @trade_partner.active? %>
+            <span class="text-green-600">Active</span>
+          <% else %>
+            <span class="text-gray-400">Inactive</span>
+          <% end %>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <%# Contact card %>
+  <div class="bg-white rounded-xl border border-theme-100 p-6">
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Contact</h3>
+    <dl class="space-y-3">
+      <div class="flex justify-between">
+        <dt class="text-sm text-gray-500">Phone</dt>
+        <dd class="text-sm font-medium text-theme-500"><%= @trade_partner.phone.presence || "—" %></dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-sm text-gray-500">Email</dt>
+        <dd class="text-sm font-medium text-theme-500"><%= @trade_partner.email.presence || "—" %></dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-sm text-gray-500">Website</dt>
+        <dd class="text-sm font-medium">
+          <% if @trade_partner.website.present? %>
+            <%= link_to @trade_partner.website, @trade_partner.website, class: "text-theme-400 hover:underline", target: "_blank" %>
+          <% else %>
+            <span class="text-gray-400">—</span>
+          <% end %>
+        </dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
+<% if @trade_partner.description.present? %>
+  <div class="mt-6 bg-white rounded-xl border border-theme-100 p-6">
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Description</h3>
+    <p class="text-gray-700 text-sm whitespace-pre-wrap"><%= @trade_partner.description %></p>
+  </div>
+<% end %>

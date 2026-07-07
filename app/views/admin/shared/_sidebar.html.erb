@@ -24,6 +24,7 @@
         <span class="ml-auto bg-theme-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"><%= unread %></span>
       <% end %>
     <% end %>
+    <%= link_to "Trade Network", admin_trade_partners_path, class: nav_link.call(admin_trade_partners_path, request.path.start_with?(admin_trade_partners_path)) %>
     <% unread_questionnaires = QuestionnaireSubmission.unread.count %>
     <%= link_to admin_questionnaire_submissions_path, class: nav_link.call(admin_questionnaire_submissions_path, request.path.start_with?(admin_questionnaire_submissions_path)) do %>
       Questionnaires

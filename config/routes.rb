@@ -60,6 +60,7 @@ Rails.application.routes.draw do
     end
     resources :messages, only: [ :index, :show, :destroy ]
     resources :questionnaire_submissions, only: [ :index, :show, :destroy ]
+    resources :trade_partners
   end
 
   # Public "client-portal" link routes into the authenticated portal.
