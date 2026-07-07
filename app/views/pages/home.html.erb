@@ -36,46 +36,35 @@
 <%# Services Section %>
 <section class="bg-theme-100 py-16 lg:py-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="text-3xl lg:text-4xl font-semibold text-theme-500 mb-12" style="letter-spacing: -1px;">Services</h2>
+    <h2 class="text-3xl lg:text-4xl font-semibold text-theme-500 mb-12">Services</h2>
 
     <div class="grid md:grid-cols-3 gap-8">
-
-      <div class="bg-white rounded-xl p-8 shadow-sm">
-        <div class="w-14 h-14 rounded-lg bg-gray-100 mb-5 flex items-center justify-center">
-          <svg class="w-7 h-7 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-          </svg>
+      <% @services.each do |service| %>
+        <div class="bg-white rounded-xl p-8 shadow-sm">
+          <div class="w-14 h-14 rounded-lg bg-gray-100 mb-5 flex items-center justify-center">
+            <% case service.icon_name %>
+            <% when "home" %>
+              <svg class="w-7 h-7 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+            <% when "paint", "brush" %>
+              <svg class="w-7 h-7 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+              </svg>
+            <% when "sparkles", "star" %>
+              <svg class="w-7 h-7 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+            <% else %>
+              <svg class="w-7 h-7 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+              </svg>
+            <% end %>
+          </div>
+          <h3 class="text-xl font-semibold text-theme-500 mb-3"><%= service.title %></h3>
+          <p class="text-gray-600 leading-relaxed"><%= service.description %></p>
         </div>
-        <h3 class="text-xl font-semibold text-theme-500 mb-3">Full Home Redesign</h3>
-        <p class="text-gray-600 leading-relaxed">
-          Complete transformation of your living spaces with thoughtful layouts, curated furnishings, and cohesive design.
-        </p>
-      </div>
-
-      <div class="bg-white rounded-xl p-8 shadow-sm">
-        <div class="w-14 h-14 rounded-lg bg-gray-100 mb-5 flex items-center justify-center">
-          <svg class="w-7 h-7 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-          </svg>
-        </div>
-        <h3 class="text-xl font-semibold text-theme-500 mb-3">Room Makeover</h3>
-        <p class="text-gray-600 leading-relaxed">
-          Focus on a single room to maximize impact. Perfect for updating your living room, bedroom, or kitchen.
-        </p>
-      </div>
-
-      <div class="bg-white rounded-xl p-8 shadow-sm">
-        <div class="w-14 h-14 rounded-lg bg-gray-100 mb-5 flex items-center justify-center">
-          <svg class="w-7 h-7 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-          </svg>
-        </div>
-        <h3 class="text-xl font-semibold text-theme-500 mb-3">Color & Styling</h3>
-        <p class="text-gray-600 leading-relaxed">
-          Color consultations, art arrangement, and finishing touches to bring your space to life.
-        </p>
-      </div>
-
+      <% end %>
     </div>
   </div>
 </section>

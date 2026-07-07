@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_06_235906) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_07_001617) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -147,6 +147,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_235906) do
     t.index ["created_at"], name: "index_questionnaire_submissions_on_created_at"
     t.index ["email"], name: "index_questionnaire_submissions_on_email"
     t.index ["status"], name: "index_questionnaire_submissions_on_status"
+  end
+
+  create_table "services", force: :cascade do |t|
+    t.boolean "active", default: true
+    t.text "bullet_points"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.integer "display_order", default: 0
+    t.string "icon_name"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "solid_cable_messages", force: :cascade do |t|

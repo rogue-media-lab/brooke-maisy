@@ -25,6 +25,7 @@
       <% end %>
     <% end %>
     <%= link_to "Trade Network", admin_trade_partners_path, class: nav_link.call(admin_trade_partners_path, request.path.start_with?(admin_trade_partners_path)) %>
+    <%= link_to "Services", admin_services_path, class: nav_link.call(admin_services_path, request.path.start_with?(admin_services_path)) %>
     <% unread_questionnaires = QuestionnaireSubmission.unread.count %>
     <%= link_to admin_questionnaire_submissions_path, class: nav_link.call(admin_questionnaire_submissions_path, request.path.start_with?(admin_questionnaire_submissions_path)) do %>
       Questionnaires

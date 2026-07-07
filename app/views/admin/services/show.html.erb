@@ -1,0 +1,67 @@
+<% content_for(:title, "#{@service.title} - Admin") %>
+
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="font-serif text-3xl font-semibold text-theme-500"><%= @service.title %></h1>
+    <p class="text-gray-500 mt-1">
+      <%= @service.active? ? "Active" : "Inactive" %>
+      <% if @service.icon_name.present? %> · <%= @service.icon_name %><% end %>
+    </p>
+  </div>
+  <div class="flex items-center gap-3">
+    <%= link_to "Edit", edit_admin_service_path(@service),
+          class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors" %>
+    <%= button_to "Delete", admin_service_path(@service), method: :delete,
+          form: { data: { turbo_confirm: "Remove #{@service.title}?" } },
+          class: "bg-red-500 hover:bg-red-600 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors" %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div class="bg-white rounded-xl border border-theme-100 p-6">
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Details</h3>
+    <dl class="space-y-3">
+      <div class="flex justify-between">
+        <dt class="text-sm text-gray-500">Icon</dt>
+        <dd class="text-sm font-medium text-theme-500"><%= @service.icon_name.presence || "—" %></dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-sm text-gray-500">Display order</dt>
+        <dd class="text-sm font-medium text-theme-500"><%= @service.display_order %></dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-sm text-gray-500">Status</dt>
+        <dd class="text-sm font-medium">
+          <% if @service.active? %>
+            <span class="text-green-600">Active</span>
+          <% else %>
+            <span class="text-gray-400">Inactive</span>
+          <% end %>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="bg-white rounded-xl border border-theme-100 p-6">
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Bullet Points</h3>
+    <% if @service.bullet_list.any? %>
+      <ul class="space-y-1.5">
+        <% @service.bullet_list.each do |point| %>
+          <li class="text-sm text-gray-700 flex items-start gap-2">
+            <span class="text-gray-300 mt-0.5">•</span>
+            <%= point %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-sm text-gray-400">None</p>
+    <% end %>
+  </div>
+</div>
+
+<% if @service.description.present? %>
+  <div class="mt-6 bg-white rounded-xl border border-theme-100 p-6">
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Description</h3>
+    <p class="text-gray-700 text-sm whitespace-pre-wrap"><%= @service.description %></p>
+  </div>
+<% end %>

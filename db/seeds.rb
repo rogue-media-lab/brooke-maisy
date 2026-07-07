@@ -107,7 +107,35 @@ TradePartner.create!(
   display_order: 4
 )
 
+# Services — seed existing hardcoded data
+Service.destroy_all
+
+Service.create!(
+  title: "Full Home Redesign",
+  description: "Complete transformation of your living spaces with thoughtful layouts, curated furnishings, and cohesive design.",
+  icon_name: "home",
+  bullet_points: "Complete space planning\nFurniture selection & procurement\nColor palette development\nLighting design\nArt & accessory styling",
+  display_order: 1
+)
+
+Service.create!(
+  title: "Room Makeover",
+  description: "Focus on a single room to maximize impact. Perfect for updating your living room, bedroom, or kitchen.",
+  icon_name: "sparkles",
+  bullet_points: "Space assessment\nFurniture layout optimization\nColor consultation\nDecor selection\nBudget planning",
+  display_order: 2
+)
+
+Service.create!(
+  title: "Color & Styling",
+  description: "Color consultations, art arrangement, and finishing touches to bring your space to life.",
+  icon_name: "paint",
+  bullet_points: "Color palette creation\nPaint selection\nArt arrangement\nAccessory styling\nFinish selections",
+  display_order: 3
+)
+
 puts "\n=== Seed Summary ==="
+puts "Services: #{Service.count}"
 puts "Trade Partners: #{TradePartner.count}"
 puts "Admin users: #{User.where(role: 'admin').count}"
 puts "Client users: #{User.where(role: 'client').count}"

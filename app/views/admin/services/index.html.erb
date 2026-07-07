@@ -1,0 +1,40 @@
+<% content_for(:title, "Services - Admin") %>
+
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="font-serif text-3xl font-semibold text-theme-500">Services</h1>
+    <p class="text-gray-500 mt-1"><%= pluralize(@services.size, "service") %></p>
+  </div>
+  <%= link_to "Add service", new_admin_service_path,
+        class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors" %>
+</div>
+
+<% if @services.any? %>
+  <div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+    <div class="grid grid-cols-12 px-5 py-3 bg-theme-100 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+      <div class="col-span-4">Title</div>
+      <div class="col-span-5">Description</div>
+      <div class="col-span-2">Order</div>
+      <div class="col-span-1 text-right">Active</div>
+    </div>
+    <% @services.each do |service| %>
+      <%= link_to admin_service_path(service), class: "grid grid-cols-12 px-5 py-4 items-center border-b border-gray-50 last:border-0 hover:bg-theme-100" do %>
+        <div class="col-span-4 font-medium text-theme-500 truncate pr-2"><%= service.title %></div>
+        <div class="col-span-5 text-sm text-gray-500 truncate pr-2"><%= truncate(service.description, length: 80) %></div>
+        <div class="col-span-2 text-sm text-gray-600"><%= service.display_order %></div>
+        <div class="col-span-1 text-right">
+          <% if service.active? %>
+            <span class="inline-block w-2 h-2 rounded-full bg-green-500"></span>
+          <% else %>
+            <span class="inline-block w-2 h-2 rounded-full bg-gray-300"></span>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="bg-white rounded-xl border border-theme-100 px-5 py-12 text-center">
+    <p class="text-theme-500 font-medium">No services yet</p>
+    <p class="text-gray-500 text-sm mt-1">Add the design services you offer.</p>
+  </div>
+<% end %>

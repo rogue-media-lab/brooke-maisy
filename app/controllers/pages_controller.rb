@@ -2,12 +2,14 @@ class PagesController < ApplicationController
   def home
     @featured_projects = Project.complete.recent.limit(3).with_attached_photos
     @featured_trade_partners = TradePartner.active.ordered.limit(3)
+    @services = Service.active.ordered
   end
 
   def about
   end
 
   def services
+    @services = Service.active.ordered
   end
 
   def portfolio
