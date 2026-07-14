@@ -134,10 +134,36 @@ Service.create!(
   display_order: 3
 )
 
+# Checklist Items — equipment/tools for installers
+ChecklistItem.destroy_all
+
+ChecklistItem.create!(name: "Cordless drill",               position: 1)
+ChecklistItem.create!(name: "Hand broom & dust pan",        position: 2)
+ChecklistItem.create!(name: "Ladders (step + extension)",   position: 3)
+ChecklistItem.create!(name: "Hardware kit (screws, anchors)", position: 4)
+ChecklistItem.create!(name: "Measuring tape",               position: 5)
+ChecklistItem.create!(name: "Drop cloths",                  position: 6)
+ChecklistItem.create!(name: "Level",                        position: 7)
+ChecklistItem.create!(name: "Stud finder",                  position: 8)
+ChecklistItem.create!(name: "First aid kit",                position: 9)
+
+# Tech/installer user for demo
+# (Destroyed above with User.destroy_all; recreate after admin + clients)
+tech = User.create!(
+  email: 'tech@brookeandmaisy.com',
+  name: 'Install Crew',
+  password: 'Password123!',
+  password_confirmation: 'Password123!',
+  role: 'tech'
+)
+puts "Created tech: #{tech.email}"
+
 puts "\n=== Seed Summary ==="
 puts "Services: #{Service.count}"
 puts "Trade Partners: #{TradePartner.count}"
+puts "Checklist Items: #{ChecklistItem.count}"
 puts "Admin users: #{User.where(role: 'admin').count}"
+puts "Tech users: #{User.where(role: 'tech').count}"
 puts "Client users: #{User.where(role: 'client').count}"
 puts "Projects: #{Project.count}"
 puts "Updates: #{ProjectUpdate.count}"

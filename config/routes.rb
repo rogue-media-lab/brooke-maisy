@@ -24,6 +24,11 @@ Rails.application.routes.draw do
     resources :projects, only: [ :index, :show ]
   end
 
+  # Tech/installer portal
+  namespace :tech do
+    root "dashboard#show"
+  end
+
   # Admin area — Brooke manages clients, projects, and updates.
   namespace :admin do
     root "dashboard#index"
@@ -62,9 +67,13 @@ Rails.application.routes.draw do
     resources :questionnaire_submissions, only: [ :index, :show, :destroy ]
     resources :trade_partners
     resources :services
+    resources :checklist_items
   end
 
   # Public "client-portal" link routes into the authenticated portal.
   # Devise redirects to sign-in if not logged in.
   get "client-portal", to: redirect("/client/projects")
+
+  # Tech portal shortcut
+  get "installer", to: redirect("/tech")
 end

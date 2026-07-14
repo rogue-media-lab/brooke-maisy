@@ -1,0 +1,165 @@
+<%# Tab navigation %>
+<div class="flex rounded-lg bg-white border border-gray-200 p-1 mb-4">
+  <button type="button" id="tab-job"
+          class="flex-1 py-2.5 text-sm font-semibold rounded-md transition-colors tab-btn tab-active"
+          data-tab="job-panel">
+    Job
+  </button>
+  <button type="button" id="tab-checklist"
+          class="flex-1 py-2.5 text-sm font-semibold rounded-md transition-colors tab-btn"
+          data-tab="checklist-panel">
+    Checklist
+  </button>
+</div>
+
+<%# ── Tab 1: Job ─────────────────────────────────────────── %>
+<div id="job-panel" class="tab-panel space-y-4">
+  <%# Project selector %>
+  <% if @projects.many? %>
+    <div>
+      <label for="project-select" class="block text-xs font-medium text-gray-500 mb-1">Project</label>
+      <%= select_tag :project_id,
+            options_from_collection_for_select(@projects, :id, :title, @project&.id),
+            id: "project-select",
+            class: "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm bg-white",
+            onchange: "window.location = this.value ? '/tech?project_id=' + this.value : '/tech'" %>
+    </div>
+  <% end %>
+
+  <% if @project %>
+    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <%# Client & Address %>
+      <div class="p-4 border-b border-gray-100">
+        <h2 class="font-serif text-lg font-semibold text-theme-500"><%= @project.title %></h2>
+        <p class="text-sm text-gray-500 mt-0.5"><%= @project.user.display_name %></p>
+      </div>
+
+      <% if @project.address.present? %>
+        <div class="p-4">
+          <p class="text-sm font-medium text-gray-700"><%= @project.address %></p>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=<%= u @project.address %>"
+             target="_blank"
+             class="inline-flex items-center gap-1 mt-2 text-sm font-medium text-theme-500 hover:text-theme-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+            </svg>
+            Open in Maps
+          </a>
+        </div>
+      <% end %>
+
+      <%# Map — geocode address via Nominatim on page load %>
+      <% if @project.address.present? %>
+        <div id="tech-map" style="height: 300px;" class="border-t border-gray-100"></div>
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script>
+          (function() {
+            var mapInstance = null;
+            var markerInstance = null;
+
+            function initTechMap() {
+              var mapEl = document.getElementById('tech-map');
+              if (!mapEl) return;
+              if (mapInstance) { mapInstance.remove(); mapInstance = null; markerInstance = null; }
+
+              mapInstance = L.map('tech-map').setView([34.9249, -81.0258], 6);
+              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+              }).addTo(mapInstance);
+
+              var address = <%= raw @project.address.to_json %>;
+              fetch('https://nominatim.openstreetmap.org/search?q='
+                    + encodeURIComponent(address) + '&format=json&limit=1',
+                    { headers: { 'User-Agent': 'BrookeMaisy/1.0' } })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                  if (data.length > 0) {
+                    var lat = parseFloat(data[0].lat);
+                    var lon = parseFloat(data[0].lon);
+                    mapInstance.setView([lat, lon], 15);
+                    markerInstance = L.marker([lat, lon]).addTo(mapInstance)
+                      .bindPopup(address).openPopup();
+                  }
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', initTechMap);
+            document.addEventListener('turbo:load', initTechMap);
+          })();
+        </script>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-xl border border-gray-200 p-8 text-center">
+      <p class="text-gray-500">No projects found.</p>
+    </div>
+  <% end %>
+</div>
+
+<%# ── Tab 2: Checklist ───────────────────────────────────── %>
+<div id="checklist-panel" class="tab-panel hidden space-y-4">
+  <% if @checklist_items.any? %>
+    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <% @checklist_items.each do |item| %>
+        <label class="flex items-center gap-3 px-4 py-3.5 border-b border-gray-50 last:border-0 active:bg-gray-50 cursor-pointer">
+          <input type="checkbox" class="checklist-check w-5 h-5 rounded border-gray-300 text-theme-500 focus:ring-theme-400">
+          <span class="text-sm font-medium text-gray-700"><%= item.name %></span>
+        </label>
+      <% end %>
+    </div>
+    <button type="button" id="reset-checklist"
+            class="w-full py-2.5 text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors bg-white border border-gray-200 rounded-lg">
+      Reset checklist
+    </button>
+  <% else %>
+    <div class="bg-white rounded-xl border border-gray-200 p-8 text-center">
+      <p class="text-gray-500">No checklist items yet.</p>
+    </div>
+  <% end %>
+</div>
+
+<%# ── Tab switching + checklist reset JS ─────────────────── %>
+<script>
+  (function() {
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.add('hidden'); });
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('tab-active'); });
+      var panel = document.getElementById(tabName);
+      var btn = document.querySelector('[data-tab="' + tabName + '"]');
+      if (panel) panel.classList.remove('hidden');
+      if (btn) btn.classList.add('tab-active');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { switchTab(this.dataset.tab); });
+      });
+
+      var resetBtn = document.getElementById('reset-checklist');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', function() {
+          document.querySelectorAll('.checklist-check').forEach(function(cb) { cb.checked = false; });
+        });
+      }
+    });
+
+    document.addEventListener('turbo:load', function() {
+      document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { switchTab(this.dataset.tab); });
+      });
+    });
+  })();
+</script>
+
+<style>
+  .tab-active {
+    background-color: #776B63;
+    color: white;
+  }
+  .tab-btn:not(.tab-active) {
+    color: #9CA3AF;
+    background: transparent;
+  }
+</style>

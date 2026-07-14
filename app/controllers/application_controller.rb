@@ -15,7 +15,13 @@ class ApplicationController < ActionController::Base
   private
 
   def resolve_layout
-    devise_controller? ? "devise" : "application"
+    if devise_controller?
+      "devise"
+    elsif request.path.start_with?("/tech")
+      "tech"
+    else
+      "application"
+    end
   end
 
   def user_not_authorized

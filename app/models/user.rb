@@ -5,13 +5,14 @@ class User < ApplicationRecord
   devise :database_authenticatable,
          :recoverable, :rememberable, :validatable
 
-  enum :role, { client: "client", admin: "admin" }, default: "client"
+  enum :role, { client: "client", tech: "tech", admin: "admin" }, default: "client"
 
   has_many :projects, dependent: :destroy
 
   validates :role, presence: true
 
   scope :clients, -> { where(role: "client").order(:name) }
+  scope :techs, -> { where(role: "tech").order(:name) }
 
   # Friendly display name: the name if set, otherwise the email's local part.
   def display_name
