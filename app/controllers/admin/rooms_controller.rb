@@ -23,9 +23,11 @@ class Admin::RoomsController < Admin::BaseController
   end
 
   def edit
+    @project = @room.project
   end
 
   def update
+    @project = @room.project
     if @room.update(room_params)
       redirect_to admin_project_room_path(@room.project, @room), notice: "Room updated."
     else
