@@ -1,0 +1,35 @@
+<% content_for(:title, "Promo Codes - Admin") %>
+
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="font-serif text-3xl font-semibold text-theme-500">Promo Codes</h1>
+    <p class="text-gray-500 mt-1"><%= pluralize(@promo_codes.size, "promo code") %></p>
+  </div>
+  <%= link_to "Add promo code", new_admin_promo_code_path,
+        class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors" %>
+</div>
+
+<% if @promo_codes.any? %>
+  <div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+    <div class="grid grid-cols-12 px-5 py-3 bg-theme-100 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+      <div class="col-span-3">Code</div>
+      <div class="col-span-2">Discount</div>
+      <div class="col-span-2">Min Purchase</div>
+      <div class="col-span-2">Expires</div>
+      <div class="col-span-2">Used</div>
+      <div class="col-span-1">Active</div>
+    </div>
+    <% @promo_codes.each do |pc| %>
+      <div class="grid grid-cols-12 px-5 py-4 items-center border-b border-gray-50 last:border-0 hover:bg-theme-100">
+        <div class="col-span-3 font-medium text-theme-500 font-mono"><%= pc.code %></div>
+        <div class="col-span-2 text-sm text-gray-600"><%= pc.discount_type == "percentage" ? "#{pc.discount_value.to_i}%" : number_to_currency(pc.discount_value) %></div>
+        <div class="col-span-2 text-sm text-gray-500"><%= pc.min_purchase ? number_to_currency(pc.min_purchase) : "—" %></div>
+        <div class="col-span-2 text-sm text-gray-500"><%= pc.expires_at&.strftime("%b %d, %Y") || "Never" %></div>
+        <div class="col-span-2 text-sm text-gray-500"><%= pc.usage_count || 0 %> / <%= pc.usage_limit || "∞" %></div>
+        <div class="col-span-1"><span class="inline-block w-2 h-2 rounded-full <%= pc.is_active ? 'bg-green-500' : 'bg-gray-300' %>"></span></div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="bg-white rounded-xl border border-theme-100 p-12 text-center text-gray-400"><p>No promo codes yet.</p></div>
+<% end %>

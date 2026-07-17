@@ -1,0 +1,39 @@
+Brooke & Maisy Interior Design
+================================
+
+Hi <%= @client.first_name %>,
+
+Thank you for the opportunity to quote your project. Here's the estimate
+for <%= @project.title %>.
+
+Quote #<%= @quote.id %>
+-----------------------
+
+<% @quote.quote_line_items.ordered.each do |item| %>
+  <%= item.product&.name || item.description || "Item" %>
+  <% if item.swatch %>Color: <%= item.swatch.name %><% end %>
+  <% if item.width && item.height %><%= item.width %>" × <%= item.height %>"<% end %>
+  Qty: <%= item.quantity %>  ×  <%= number_to_currency(item.unit_price || 0) %>  =  <%= number_to_currency(item.line_total || 0) %>
+
+<% end %>
+Subtotal:  <%= number_to_currency(@calculator[:subtotal]) %>
+<% if @calculator[:quote_discount] > 0 %>Discount:  −<%= number_to_currency(@calculator[:quote_discount]) %><% end %>
+Tax:       <%= number_to_currency(@calculator[:tax_amount]) %>
+─────────────────────────────────
+TOTAL:     <%= number_to_currency(@calculator[:grand_total]) %>
+
+<% if @quote.deposit_percentage %><%= @quote.deposit_percentage %>% deposit due at order: <%= number_to_currency(@calculator[:deposit_amount]) %><% end %>
+
+<% if @quote.notes.present? %>
+Notes:
+<%= @quote.notes %>
+<% end %>
+
+If you have any questions or would like to adjust anything, just reply
+to this email or give us a call.
+
+— Amanda & Kate
+  Brooke & Maisy Interior Design
+  1726 Gold Hill Rd. #1071, Fort Mill, SC 29708
+
+<% if @quote.valid_until %>Quote valid until <%= @quote.valid_until.strftime("%B %d, %Y") %>.<% end %>

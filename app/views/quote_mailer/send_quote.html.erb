@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+
+  <div style="text-align: center; margin-bottom: 30px;">
+    <h1 style="font-family: Georgia, serif; color: #776B63; margin: 0 0 4px; font-size: 24px;">Brooke &amp; Maisy</h1>
+    <p style="color: #999; font-size: 13px; margin: 0;">Interior Design &amp; Window Treatments</p>
+  </div>
+
+  <p style="font-size: 15px;">Hi <%= @client.first_name %>,</p>
+
+  <p style="font-size: 15px; line-height: 1.6;">
+    Thank you for the opportunity to quote your project. Here&rsquo;s the estimate
+    for <strong><%= @project.title %></strong>.
+  </p>
+
+  <div style="background: #F7F4EF; border-radius: 8px; padding: 20px; margin: 24px 0;">
+    <h2 style="font-family: Georgia, serif; color: #776B63; font-size: 18px; margin: 0 0 16px;">Quote #<%= @quote.id %></h2>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+      <thead>
+        <tr style="border-bottom: 2px solid #C8B8A8;">
+          <th style="text-align: left; padding: 8px 4px; color: #999; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">Product</th>
+          <th style="text-align: right; padding: 8px 4px; color: #999; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">Qty</th>
+          <th style="text-align: right; padding: 8px 4px; color: #999; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">Each</th>
+          <th style="text-align: right; padding: 8px 4px; color: #999; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @quote.quote_line_items.ordered.each do |item| %>
+          <tr style="border-bottom: 1px solid #E7DED1;">
+            <td style="padding: 10px 4px;">
+              <strong><%= item.product&.name || item.description || "Item" %></strong>
+              <% if item.swatch %>
+                <br><span style="font-size: 12px; color: #888;"><%= item.swatch.name %></span>
+              <% end %>
+              <% if item.width && item.height %>
+                <br><span style="font-size: 12px; color: #888;"><%= item.width %>″ × <%= item.height %>″</span>
+              <% end %>
+            </td>
+            <td style="text-align: right; padding: 10px 4px;"><%= item.quantity %></td>
+            <td style="text-align: right; padding: 10px 4px;"><%= number_to_currency(item.unit_price || 0) %></td>
+            <td style="text-align: right; padding: 10px 4px;"><%= number_to_currency(item.line_total || 0) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <table style="width: 100%; margin-top: 16px; font-size: 14px;">
+      <tr>
+        <td style="text-align: right; padding: 4px 4px; color: #888;">Subtotal</td>
+        <td style="text-align: right; padding: 4px 4px; width: 80px;"><%= number_to_currency(@calculator[:subtotal]) %></td>
+      </tr>
+      <% if @calculator[:quote_discount] > 0 %>
+        <tr>
+          <td style="text-align: right; padding: 4px 4px; color: #888;">Discount</td>
+          <td style="text-align: right; padding: 4px 4px; color: #c00;">−<%= number_to_currency(@calculator[:quote_discount]) %></td>
+        </tr>
+      <% end %>
+      <tr>
+        <td style="text-align: right; padding: 4px 4px; color: #888;">Tax</td>
+        <td style="text-align: right; padding: 4px 4px;"><%= number_to_currency(@calculator[:tax_amount]) %></td>
+      </tr>
+      <tr style="border-top: 2px solid #C8B8A8;">
+        <td style="text-align: right; padding: 10px 4px; font-weight: bold; color: #776B63; font-size: 16px;">Total</td>
+        <td style="text-align: right; padding: 10px 4px; font-weight: bold; color: #776B63; font-size: 16px;"><%= number_to_currency(@calculator[:grand_total]) %></td>
+      </tr>
+    </table>
+
+    <% if @quote.deposit_percentage %>
+      <div style="margin-top: 16px; padding: 12px; background: #fff; border-radius: 6px; text-align: center;">
+        <p style="font-size: 14px; color: #776B63; margin: 0;">
+          <strong><%= @quote.deposit_percentage %>% deposit due at order:</strong>
+          <%= number_to_currency(@calculator[:deposit_amount]) %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @quote.notes.present? %>
+    <div style="background: #fff; border: 1px solid #E7DED1; border-radius: 8px; padding: 16px; margin: 16px 0;">
+      <p style="font-size: 13px; color: #888; margin: 0 0 4px; text-transform: uppercase; letter-spacing: 1px;">Notes</p>
+      <p style="font-size: 14px; line-height: 1.6; margin: 0;"><%= simple_format(@quote.notes) %></p>
+    </div>
+  <% end %>
+
+  <p style="font-size: 14px; line-height: 1.6; margin-top: 24px;">
+    If you have any questions or would like to adjust anything, just reply to this email
+    or call us at the number below.
+  </p>
+
+  <p style="font-size: 14px; margin-top: 16px;">
+    — Amanda &amp; Kate<br>
+    <span style="color: #888;">Brooke &amp; Maisy Interior Design</span><br>
+    <span style="color: #888;">1726 Gold Hill Rd. #1071, Fort Mill, SC 29708</span>
+  </p>
+
+  <% if @quote.valid_until %>
+    <p style="font-size: 12px; color: #aaa; margin-top: 24px;">
+      This quote is valid until <%= @quote.valid_until.strftime("%B %d, %Y") %>.
+    </p>
+  <% end %>
+</body>
+</html>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_14_134731) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_17_175334) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -75,6 +75,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_134731) do
     t.index ["project_id"], name: "index_design_presentations_on_project_id"
   end
 
+  create_table "manufacturers", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.decimal "markup_override"
+    t.string "name"
+    t.text "notes"
+    t.decimal "trade_discount"
+    t.string "trade_program_url"
+    t.datetime "updated_at", null: false
+    t.string "website"
+  end
+
   create_table "messages", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -105,6 +116,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_134731) do
     t.index ["design_presentation_id"], name: "index_mood_boards_on_design_presentation_id"
   end
 
+  create_table "product_categories", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.decimal "markup_override"
+    t.string "name"
+    t.bigint "parent_id"
+    t.string "slug"
+    t.string "spec_template"
+    t.datetime "updated_at", null: false
+    t.index ["parent_id"], name: "index_product_categories_on_parent_id"
+  end
+
   create_table "product_selections", force: :cascade do |t|
     t.text "client_notes"
     t.datetime "created_at", null: false
@@ -120,6 +142,37 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_134731) do
     t.datetime "updated_at", null: false
     t.string "vendor"
     t.index ["design_presentation_id"], name: "index_product_selections_on_design_presentation_id"
+  end
+
+  create_table "product_swatches", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "product_id", null: false
+    t.bigint "swatch_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_product_swatches_on_product_id"
+    t.index ["swatch_id"], name: "index_product_swatches_on_swatch_id"
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.jsonb "documents"
+    t.jsonb "images"
+    t.boolean "is_active"
+    t.integer "lead_time_days"
+    t.bigint "manufacturer_id", null: false
+    t.string "name"
+    t.text "notes"
+    t.jsonb "pricing"
+    t.bigint "product_category_id", null: false
+    t.string "product_url"
+    t.jsonb "specs"
+    t.integer "tier"
+    t.string "unit"
+    t.datetime "updated_at", null: false
+    t.jsonb "videos"
+    t.index ["manufacturer_id"], name: "index_products_on_manufacturer_id"
+    t.index ["product_category_id"], name: "index_products_on_product_category_id"
   end
 
   create_table "project_updates", force: :cascade do |t|
@@ -142,6 +195,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_134731) do
     t.index ["user_id"], name: "index_projects_on_user_id"
   end
 
+  create_table "promo_codes", force: :cascade do |t|
+    t.string "code"
+    t.datetime "created_at", null: false
+    t.string "discount_type"
+    t.decimal "discount_value"
+    t.date "expires_at"
+    t.boolean "is_active"
+    t.decimal "min_purchase"
+    t.datetime "updated_at", null: false
+    t.integer "usage_count"
+    t.integer "usage_limit"
+  end
+
   create_table "questionnaire_submissions", force: :cascade do |t|
     t.jsonb "answers"
     t.datetime "created_at", null: false
@@ -155,6 +221,80 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_134731) do
     t.index ["created_at"], name: "index_questionnaire_submissions_on_created_at"
     t.index ["email"], name: "index_questionnaire_submissions_on_email"
     t.index ["status"], name: "index_questionnaire_submissions_on_status"
+  end
+
+  create_table "quote_line_items", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.string "discount_reason"
+    t.string "discount_type"
+    t.decimal "discount_value"
+    t.decimal "height"
+    t.decimal "line_total"
+    t.text "notes"
+    t.integer "position", default: 0, null: false
+    t.bigint "product_id"
+    t.integer "quantity", default: 1, null: false
+    t.bigint "quote_id", null: false
+    t.jsonb "selected_options"
+    t.integer "status", default: 0, null: false
+    t.bigint "swatch_id"
+    t.decimal "unit_cost"
+    t.decimal "unit_price"
+    t.datetime "updated_at", null: false
+    t.decimal "width"
+    t.bigint "window_id"
+    t.index ["product_id"], name: "index_quote_line_items_on_product_id"
+    t.index ["quote_id"], name: "index_quote_line_items_on_quote_id"
+    t.index ["swatch_id"], name: "index_quote_line_items_on_swatch_id"
+    t.index ["window_id"], name: "index_quote_line_items_on_window_id"
+  end
+
+  create_table "quote_revisions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "quote_id", null: false
+    t.jsonb "snapshot"
+    t.datetime "updated_at", null: false
+    t.integer "version_number"
+    t.index ["quote_id"], name: "index_quote_revisions_on_quote_id"
+  end
+
+  create_table "quotes", force: :cascade do |t|
+    t.decimal "adjusted_subtotal"
+    t.datetime "approved_at"
+    t.decimal "balance_due"
+    t.bigint "client_id", null: false
+    t.datetime "created_at", null: false
+    t.decimal "deposit_amount"
+    t.decimal "deposit_percentage"
+    t.decimal "grand_total"
+    t.text "notes"
+    t.bigint "project_id", null: false
+    t.bigint "promo_code_id"
+    t.string "quote_discount_reason"
+    t.string "quote_discount_type"
+    t.decimal "quote_discount_value"
+    t.datetime "sent_at"
+    t.integer "status", default: 0, null: false
+    t.decimal "subtotal"
+    t.decimal "tax_amount"
+    t.decimal "tax_rate"
+    t.datetime "updated_at", null: false
+    t.date "valid_until"
+    t.integer "version_number", default: 1, null: false
+    t.index ["client_id"], name: "index_quotes_on_client_id"
+    t.index ["project_id"], name: "index_quotes_on_project_id"
+    t.index ["promo_code_id"], name: "index_quotes_on_promo_code_id"
+  end
+
+  create_table "rooms", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.text "notes"
+    t.integer "position"
+    t.bigint "project_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_rooms_on_project_id"
   end
 
   create_table "services", force: :cascade do |t|
@@ -310,6 +450,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_134731) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
+  create_table "swatches", force: :cascade do |t|
+    t.string "category"
+    t.string "color_range"
+    t.datetime "created_at", null: false
+    t.string "hex"
+    t.string "image_url"
+    t.boolean "is_active"
+    t.boolean "is_new"
+    t.bigint "manufacturer_id", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+    t.index ["manufacturer_id"], name: "index_swatches_on_manufacturer_id"
+  end
+
   create_table "trade_partners", force: :cascade do |t|
     t.boolean "active", default: true
     t.datetime "created_at", null: false
@@ -340,19 +494,49 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_134731) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "windows", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.decimal "depth"
+    t.decimal "height"
+    t.string "mount_type"
+    t.string "name"
+    t.text "notes"
+    t.integer "position"
+    t.bigint "room_id", null: false
+    t.datetime "updated_at", null: false
+    t.decimal "width"
+    t.index ["room_id"], name: "index_windows_on_room_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "color_swatches", "design_presentations"
   add_foreign_key "design_presentations", "projects"
   add_foreign_key "mood_board_items", "mood_boards"
   add_foreign_key "mood_boards", "design_presentations"
+  add_foreign_key "product_categories", "product_categories", column: "parent_id"
   add_foreign_key "product_selections", "design_presentations"
+  add_foreign_key "product_swatches", "products"
+  add_foreign_key "product_swatches", "swatches"
+  add_foreign_key "products", "manufacturers"
+  add_foreign_key "products", "product_categories"
   add_foreign_key "project_updates", "projects"
   add_foreign_key "projects", "users"
+  add_foreign_key "quote_line_items", "products"
+  add_foreign_key "quote_line_items", "quotes"
+  add_foreign_key "quote_line_items", "swatches"
+  add_foreign_key "quote_line_items", "windows"
+  add_foreign_key "quote_revisions", "quotes"
+  add_foreign_key "quotes", "projects"
+  add_foreign_key "quotes", "promo_codes"
+  add_foreign_key "quotes", "users", column: "client_id"
+  add_foreign_key "rooms", "projects"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+  add_foreign_key "swatches", "manufacturers"
+  add_foreign_key "windows", "rooms"
 end

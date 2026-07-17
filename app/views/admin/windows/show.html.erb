@@ -1,0 +1,41 @@
+<% content_for(:title, "#{@window.name} — #{@room.name}") %>
+
+<div class="max-w-2xl mx-auto">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <%= link_to @room.project.title, admin_project_path(@room.project), class: "text-sm text-theme-500 hover:underline" %>
+        <span class="text-gray-300">/</span>
+        <%= link_to @room.name, admin_project_room_path(@room.project, @room), class: "text-sm text-theme-500 hover:underline" %>
+      </div>
+      <h1 class="font-serif text-2xl font-semibold text-theme-500"><%= @window.name %></h1>
+    </div>
+    <div class="flex gap-2">
+      <%= link_to "Edit", edit_admin_room_window_path(@room, @window), class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors" %>
+      <%= button_to "Delete", admin_room_window_path(@room, @window), method: :delete, data: { turbo_confirm: "Remove this window?" }, class: "bg-red-50 hover:bg-red-100 text-red-600 text-sm font-medium px-4 py-2 rounded-lg transition-colors" %>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+    <div class="p-8">
+      <dl class="grid grid-cols-2 gap-6">
+        <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Width</dt><dd class="text-sm text-gray-600"><%= @window.width %>″</dd></div>
+        <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Height</dt><dd class="text-sm text-gray-600"><%= @window.height %>″</dd></div>
+        <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Mount Type</dt><dd class="text-sm text-gray-600"><%= @window.mount_type&.titleize || "—" %></dd></div>
+        <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Depth</dt><dd class="text-sm text-gray-600"><%= @window.depth ? "#{@window.depth}″" : "—" %></dd></div>
+      </dl>
+      <% if @window.notes.present? %>
+        <div class="mt-6 pt-6 border-t border-gray-100">
+          <dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Notes</dt>
+          <dd class="text-sm text-gray-600 whitespace-pre-wrap"><%= @window.notes %></dd>
+        </div>
+      <% end %>
+      <% if @window.photo.attached? %>
+        <div class="mt-6 pt-6 border-t border-gray-100">
+          <dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Photo</dt>
+          <dd><%= image_tag @window.photo, class: "rounded-lg max-w-sm" %></dd>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

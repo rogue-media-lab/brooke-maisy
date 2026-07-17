@@ -1,0 +1,6 @@
+<% content_for(:title, "Edit Line Item") %>
+<div class="max-w-2xl mx-auto">
+  <div class="mb-6"><%= link_to admin_project_quote_path(@quote.project, @quote), class: "text-sm text-gray-400 hover:text-theme-500" do %>← Quote<% end %></div>
+  <h1 class="font-serif text-2xl font-semibold text-theme-500 mb-8">Edit Line Item</h1>
+  <div class="bg-white rounded-xl border border-theme-100 p-8"><%= render "form" %></div>
+</div>

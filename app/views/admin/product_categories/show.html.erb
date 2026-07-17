@@ -1,0 +1,33 @@
+<% content_for(:title, "#{@product_category.name} - Admin") %>
+
+<div class="max-w-3xl mx-auto">
+  <div class="flex items-center justify-between mb-8">
+    <%= link_to admin_product_categories_path, class: "text-sm text-gray-400 hover:text-theme-500 flex items-center gap-1" do %>
+      ← Categories
+    <% end %>
+    <div class="flex gap-2">
+      <%= link_to "Edit", edit_admin_product_category_path(@product_category), class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors" %>
+      <%= button_to "Delete", admin_product_category_path(@product_category), method: :delete,
+            data: { turbo_confirm: "Remove this category?" },
+            class: "bg-red-50 hover:bg-red-100 text-red-600 text-sm font-medium px-4 py-2 rounded-lg transition-colors" %>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+    <div class="p-8">
+      <h1 class="font-serif text-2xl font-semibold text-theme-500 mb-6"><%= @product_category.name %></h1>
+      <dl class="grid grid-cols-2 gap-6">
+        <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Slug</dt><dd class="text-sm text-gray-600 font-mono"><%= @product_category.slug %></dd></div>
+        <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Parent</dt><dd class="text-sm text-gray-600"><%= @product_category.parent&.name || "None (top-level)" %></dd></div>
+        <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Markup Override</dt><dd class="text-sm text-gray-600"><%= @product_category.markup_override ? "#{(@product_category.markup_override * 100).round}%" : "default" %></dd></div>
+        <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Products</dt><dd class="text-sm text-gray-600"><%= @product_category.products.count %></dd></div>
+      </dl>
+      <% if @product_category.children.any? %>
+        <div class="mt-6 pt-6 border-t border-gray-100">
+          <dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Subcategories</dt>
+          <dd class="space-y-1"><% @product_category.children.ordered.each do |child| %><div class="text-sm text-theme-500"><%= child.name %></div><% end %></dd>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

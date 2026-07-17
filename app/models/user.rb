@@ -8,6 +8,7 @@ class User < ApplicationRecord
   enum :role, { client: "client", tech: "tech", admin: "admin" }, default: "client"
 
   has_many :projects, dependent: :destroy
+  has_many :quotes, foreign_key: :client_id, dependent: :destroy
 
   validates :role, presence: true
 

@@ -1,0 +1,112 @@
+<% content_for(:title, "Quote — #{@quote.project.title}") %>
+
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <div class="flex items-center gap-2 mb-1">
+      <%= link_to @quote.project.title, admin_project_path(@quote.project), class: "text-sm text-theme-500 hover:underline" %>
+      <span class="text-gray-300">/</span>
+      <%= link_to "Quotes", admin_project_quotes_path(@quote.project), class: "text-sm text-theme-500 hover:underline" %>
+    </div>
+    <h1 class="font-serif text-2xl font-semibold text-theme-500">Quote #<%= @quote.id %></h1>
+    <p class="text-sm text-gray-400"><%= @quote.client&.display_name %> · v<%= @quote.version_number %></p>
+  </div>
+  <div class="flex gap-2">
+    <%= link_to "Preview", preview_admin_project_quote_path(@quote.project, @quote), class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors" %>
+    <% if @quote.draft? %>
+      <%= button_to "Send to client", send_quote_admin_project_quote_path(@quote.project, @quote), method: :post, class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors" %>
+    <% end %>
+  </div>
+</div>
+
+<%# Line Items %>
+<div class="bg-white rounded-xl border border-theme-100 overflow-hidden mb-8">
+  <div class="flex items-center justify-between px-5 py-3 bg-theme-100">
+    <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Line Items</span>
+    <%= link_to "Add item", new_admin_quote_quote_line_item_path(@quote), class: "text-xs text-theme-500 hover:underline" %>
+  </div>
+  <% if @quote.quote_line_items.any? %>
+    <div class="grid grid-cols-12 px-5 py-2 bg-gray-50 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+      <div class="col-span-4">Product</div>
+      <div class="col-span-2">Qty</div>
+      <div class="col-span-2">Unit Cost</div>
+      <div class="col-span-2">Unit Price</div>
+      <div class="col-span-2">Line Total</div>
+    </div>
+    <% @quote.quote_line_items.ordered.each do |item| %>
+      <div class="grid grid-cols-12 px-5 py-3 items-center border-b border-gray-50 last:border-0 hover:bg-theme-50">
+        <div class="col-span-4 text-sm font-medium text-theme-500"><%= item.product&.name || item.description || "—" %></div>
+        <div class="col-span-2 text-sm text-gray-600"><%= item.quantity %></div>
+        <div class="col-span-2 text-sm text-gray-500"><%= number_to_currency(item.unit_cost || 0) %></div>
+        <div class="col-span-2 text-sm text-gray-600"><%= number_to_currency(item.unit_price || 0) %></div>
+        <div class="col-span-2 text-sm text-gray-600 font-medium"><%= number_to_currency(item.line_total || 0) %></div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="p-8 text-center text-gray-400"><p>No line items yet. Add products to this quote.</p></div>
+  <% end %>
+</div>
+
+<%# Totals card %>
+<% if @calculator %>
+  <div class="grid grid-cols-3 gap-6">
+    <div class="bg-white rounded-xl border border-theme-100 p-6">
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Cost &amp; Revenue</h3>
+      <dl class="space-y-2">
+        <div class="flex justify-between text-sm"><dt class="text-gray-500">Total Cost</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:total_cost]) %></dd></div>
+        <div class="flex justify-between text-sm"><dt class="text-gray-500">Subtotal</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:subtotal]) %></dd></div>
+        <div class="flex justify-between text-sm"><dt class="text-gray-500">Quote Discount</dt><dd class="text-red-500">−<%= number_to_currency(@calculator[:quote_discount]) %></dd></div>
+        <div class="flex justify-between text-sm"><dt class="text-gray-500">Adjusted Subtotal</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:adjusted_subtotal]) %></dd></div>
+        <div class="flex justify-between text-sm"><dt class="text-gray-500">Tax</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:tax_amount]) %></dd></div>
+        <div class="flex justify-between text-sm pt-2 border-t border-gray-100"><dt class="font-semibold text-gray-700">Grand Total</dt><dd class="font-semibold text-theme-500"><%= number_to_currency(@calculator[:grand_total]) %></dd></div>
+      </dl>
+    </div>
+    <div class="bg-white rounded-xl border border-theme-100 p-6">
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Profit</h3>
+      <dl class="space-y-2">
+        <div class="flex justify-between text-sm"><dt class="text-gray-500">Gross Profit</dt><dd class="text-green-600 font-medium"><%= number_to_currency(@calculator[:gross_profit]) %></dd></div>
+        <div class="flex justify-between text-sm"><dt class="text-gray-500">Profit Margin</dt><dd class="text-green-600 font-medium"><%= @calculator[:profit_margin_pct] %>%</dd></div>
+        <div class="flex justify-between text-sm pt-2 border-t border-gray-100"><dt class="text-gray-500">Default Markup</dt><dd class="text-gray-700"><%= number_to_percentage(QuoteCalculator::DEFAULT_MARKUP * 100, precision: 0) %></dd></div>
+      </dl>
+    </div>
+    <div class="bg-white rounded-xl border border-theme-100 p-6">
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Deposit</h3>
+      <dl class="space-y-2">
+        <div class="flex justify-between text-sm"><dt class="text-gray-500">Deposit Due</dt><dd class="text-theme-500 font-medium"><%= number_to_currency(@calculator[:deposit_amount]) %></dd></div>
+        <div class="flex justify-between text-sm"><dt class="text-gray-500">Balance Due</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:balance_due]) %></dd></div>
+        <div class="flex justify-between text-sm pt-2 border-t border-gray-100"><dt class="text-gray-500">Items</dt><dd class="text-gray-700"><%= @quote.quote_line_items.count %></dd></div>
+      </dl>
+    </div>
+  </div>
+
+  <%# Per-line-item profitability %>
+  <% if @calculator[:line_items].any? %>
+    <div class="mt-6 bg-white rounded-xl border border-theme-100 overflow-hidden">
+      <div class="px-5 py-3 bg-theme-100">
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Line Item Profitability</span>
+      </div>
+      <div class="grid grid-cols-7 px-5 py-2 bg-gray-50 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+        <div class="col-span-2">Item</div>
+        <div>Cost</div>
+        <div>Retail</div>
+        <div>Discount</div>
+        <div>Line Total</div>
+        <div>Profit</div>
+      </div>
+      <% @quote.quote_line_items.ordered.zip(@calculator[:line_items]).each do |item, calc| %>
+        <div class="grid grid-cols-7 px-5 py-3 items-center border-b border-gray-50 last:border-0 hover:bg-theme-50 text-sm">
+          <div class="col-span-2 text-theme-500 font-medium"><%= item.product&.name || item.description || "Item" %></div>
+          <div class="text-gray-500"><%= number_to_currency(calc[:configured_cost]) %></div>
+          <div class="text-gray-600"><%= number_to_currency(calc[:suggested_retail]) %></div>
+          <div class="text-gray-500">
+            <% disc = calc[:suggested_retail] - calc[:adjusted_retail] %>
+            <%= disc > 0 ? "−#{number_to_currency(disc)}" : "—" %>
+          </div>
+          <div class="text-gray-700 font-medium"><%= number_to_currency(calc[:line_total]) %></div>
+          <div class="<%= (calc[:line_total] - calc[:configured_cost] * (item.quantity || 1)) >= 0 ? 'text-green-600' : 'text-red-500' %> font-medium">
+            <%= number_to_currency(calc[:line_total] - calc[:configured_cost] * (item.quantity || 1)) %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

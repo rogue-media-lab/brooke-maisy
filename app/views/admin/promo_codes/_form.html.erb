@@ -1,0 +1,42 @@
+<%= form_with model: [:admin, @promo_code], class: "space-y-6" do |f| %>
+  <div>
+    <%= f.label :code, class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_field :code, class: "w-full rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500 font-mono uppercase", required: true, placeholder: "SUMMER25" %>
+  </div>
+  <div class="grid grid-cols-2 gap-6">
+    <div>
+      <%= f.label :discount_type, "Discount Type", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.select :discount_type, [["Percentage", "percentage"], ["Fixed $", "fixed"]], {}, class: "w-full rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500", required: true %>
+    </div>
+    <div>
+      <%= f.label :discount_value, "Discount Value", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.number_field :discount_value, step: 0.01, class: "w-full rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500", required: true %>
+      <p class="text-xs text-gray-400 mt-1">% value (e.g., 25) or $ amount.</p>
+    </div>
+  </div>
+  <div class="grid grid-cols-2 gap-6">
+    <div>
+      <%= f.label :min_purchase, "Minimum Purchase", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.number_field :min_purchase, step: 0.01, class: "w-full rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500" %>
+    </div>
+    <div>
+      <%= f.label :expires_at, "Expires", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.date_field :expires_at, class: "w-full rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500" %>
+    </div>
+  </div>
+  <div class="grid grid-cols-2 gap-6">
+    <div>
+      <%= f.label :usage_limit, "Usage Limit", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.number_field :usage_limit, class: "w-full rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500" %>
+      <p class="text-xs text-gray-400 mt-1">Leave blank for unlimited.</p>
+    </div>
+    <div class="flex items-center pt-6">
+      <%= f.check_box :is_active, class: "rounded border-gray-300 text-theme-500 focus:ring-theme-500" %>
+      <%= f.label :is_active, "Active", class: "ml-2 text-sm text-gray-700" %>
+    </div>
+  </div>
+  <div class="flex gap-3">
+    <%= f.submit class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition-colors cursor-pointer" %>
+    <%= link_to "Cancel", admin_promo_codes_path, class: "text-sm text-gray-500 hover:text-gray-700 py-2.5" %>
+  </div>
+<% end %>

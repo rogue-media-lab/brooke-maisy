@@ -39,6 +39,16 @@ Rails.application.routes.draw do
     end
     resources :projects do
       resources :project_updates, only: [ :create, :destroy ]
+      resources :rooms do
+        resources :windows
+      end
+      resources :quotes do
+        member do
+          post :send_quote
+          get :preview
+        end
+        resources :quote_line_items, only: [ :new, :create, :edit, :update, :destroy ]
+      end
       resources :design_presentations do
         resource :publication, only: [ :create, :destroy ]
         resources :mood_boards do
@@ -68,6 +78,16 @@ Rails.application.routes.draw do
     resources :trade_partners
     resources :services
     resources :checklist_items
+    resources :manufacturers
+    resources :product_categories
+    resources :products do
+      get :search, on: :collection
+    end
+    resources :swatches
+    resources :promo_codes
+    resource :settings, only: [] do
+      get :margins, on: :member
+    end
   end
 
   # Public "client-portal" link routes into the authenticated portal.

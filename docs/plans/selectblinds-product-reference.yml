@@ -1,0 +1,308 @@
+# SelectBlinds Product Reference — Brooke & Maisy Seed Data
+# Compiled: 2026-07-17
+# Source: selectblinds.com product pages + collection pages
+#
+# This file serves as the source of truth for seeding the Brooke & Maisy
+# inventory database once Phase 1 models are built (Product, Manufacturer,
+# Swatch, ProductCategory, etc.)
+#
+# Each product entry has: specs (with upcharges), images, videos, documents,
+# colors/swatches, description, and pricing.
+
+manufacturer:
+  name: SelectBlinds
+  website: https://www.selectblinds.com
+  trade_program_url: https://www.selectblinds.com/pages/trade-program
+
+products:
+  # =========================================================================
+  # CELLULAR SHADES
+  # =========================================================================
+  - name: Cordless Blackout Cellular Shades
+    category: Cellular Shades
+    subcategory: Blackout
+    product_url: https://www.selectblinds.com/products/cordless-blackout-cellular-shades
+    base_price: 117.99
+    unit: per window
+    rating: 4.6
+    review_count: 1762
+
+    description: |
+      Enhance your living space with Cordless Blackout Cellular Shades from
+      Select Blinds, the perfect solution for creating a peaceful, energy-efficient
+      environment. These cellular blinds blackout styles block out light completely,
+      making them ideal for bedrooms, nurseries, or media rooms. Designed with a
+      cordless lift system, they combine safety, convenience, and sleek modern style.
+
+    features:
+      - "Light Control & Privacy: Blocks 99% of light, maximum privacy"
+      - "Energy Savings: 3/4\" honeycomb design enhances insulation"
+      - "Modern, Cordless Design: Clean, clutter-free look"
+      - "Durable & Easy to Maintain: High-quality materials, easy to clean"
+
+    specs:
+      type: cellular
+      cell_size: '3/4" honeycomb'
+      min_width: 13
+      max_width: 84
+      min_height: 12
+      max_height: 84
+      width_increment: '1/8"'
+      height_increment: '1/8"'
+      mount_types: [inside, outside]
+      lift_styles:
+        - { name: cordless, upcharge: 0 }
+        - { name: motorized_wand, upcharge: 87.17 }
+        - { name: automation, upcharge: 121.18 }
+      upgrades:
+        - { name: no_drill_click2fit, upcharge: 28.00 }
+        - { name: automation_extension_cable, upcharge: 7.81, requires: automation }
+        - { name: automation_bridge, upcharge: 155.78, requires: automation }
+      warranty_options:
+        - { name: "3_year_limited", upcharge: 0 }
+        - { name: "5_year_limited", upcharge: 9.43 }
+        - { name: "5_year_unlimited", upcharge: 18.87 }
+      constraints:
+        cordless: { min_inside_depth: 1.25, flush_depth: 2.25 }
+        motorized: { max_sqft: 24 }
+      headrail_depths:
+        cordless: 1.875
+        cord_loop: 2.125
+
+    colors:
+      - { name: Classic White, hex: "#F5F5F0" }
+      - { name: Cream, hex: "#F5E6D3" }
+      - { name: Pebble, hex: "#C4B9A8" }
+      - { name: Burlap, hex: "#B8A88A" }
+      - { name: Timeless Taupe, hex: "#A89984" }
+      - { name: Dark Brown, hex: "#5C4033" }
+      - { name: Ice Gray, hex: "#C8CDD0" }
+      - { name: Gorgeous Gray, hex: "#9E9E9E" }
+      - { name: Asphalt, hex: "#4F4F4F" }
+      - { name: Noir, hex: "#1A1A1A" }
+
+    images:
+      - { kind: room, alt: "Full room scene with blackout cellular shades" }
+      - { kind: detail, alt: "Close-up of blackout cellular fabric" }
+      - { kind: product, alt: "Product shot of blackout cellular shade" }
+      - { kind: swatch, alt: "Default swatch" }
+      - { kind: diagram, alt: "Honeycomb cell size comparison chart" }
+      - { kind: diagram, alt: "Product diagram" }
+
+    videos:
+      - { platform: youtube, video_id: yotcALbpwiU, title: "Installation Guide", kind: installation }
+      - { platform: youtube, video_id: DnRYCS7uyVs, title: "Product Overview", kind: overview }
+
+    documents:
+      - { title: "Installation Instructions", kind: installation, url: "https://www.selectblinds.com/cdn/shop/files/cordless-cellular-shades-installation-instructions.pdf" }
+      - { title: "Measure Instructions", kind: measurement, url: "https://www.selectblinds.com/cdn/shop/files/measure_worksheet.pdf" }
+      - { title: "Motorization Instructions", kind: installation, url: "https://www.selectblinds.com/cdn/shop/files/universal-motorization-solarpanel.pdf" }
+
+  # -------------------------------------------------------------------------
+  - name: Cordless Light Filtering Cellular Shades
+    category: Cellular Shades
+    subcategory: Light Filtering
+    product_url: https://www.selectblinds.com/products/cordless-light-filtering-cellular-shades
+    base_price: 71.99
+    unit: per window
+    rating: 4.8
+    review_count: 3737
+
+    description: |
+      Transform your space with the timeless elegance and functionality of
+      Cordless Light Filtering Cellular Shades from Select Blinds. These custom
+      shades provide a perfect balance of natural light and privacy, allowing
+      soft, diffused light to fill your home while keeping prying eyes at bay.
+
+    features:
+      - "Soft Natural Light: Gently diffuses sunlight, warm atmosphere"
+      - "Energy Savings: 3/4\" honeycomb structure improves insulation"
+      - "Safe & Stylish Cordless Design: Modern, child-safe"
+      - "Durable & Easy Maintenance: Premium materials, minimal upkeep"
+
+    specs:
+      type: cellular
+      cell_size: '3/4" honeycomb'
+      min_width: 13
+      max_width: 84
+      min_height: 12
+      max_height: 84
+      width_increment: '1/8"'
+      height_increment: '1/8"'
+      mount_types: [inside, outside]
+      lift_styles:
+        - { name: cordless, upcharge: 0 }
+        - { name: motorized_wand, upcharge: 147.19 }
+        - { name: automation, upcharge: 201.96 }
+      upgrades:
+        - { name: no_drill_click2fit, upcharge: 28.00 }
+      constraints:
+        cordless: { min_inside_depth: 1.25 }
+        motorized: { max_sqft: 24 }
+
+    colors:
+      - { name: Perfect White, hex: "#FAFAFA" }
+      - { name: Porcelain, hex: "#F0EDE8" }
+      - { name: Sand, hex: "#D4C5B2" }
+      - { name: Greige, hex: "#B8A99A" }
+      - { name: Taupe, hex: "#A08C7A" }
+      - { name: Cork, hex: "#B8976E" }
+      - { name: Brown, hex: "#6B4E3D" }
+
+    videos:
+      - { platform: youtube, video_id: yotcALbpwiU, title: "Installation Guide", kind: installation }
+      - { platform: youtube, video_id: DnRYCS7uyVs, title: "Product Overview", kind: overview }
+
+    documents:
+      - { title: "Installation Instructions", kind: installation, url: "https://www.selectblinds.com/cdn/shop/files/cordless-cellular-shades-installation-instructions.pdf" }
+      - { title: "Measure Instructions", kind: measurement, url: "https://www.selectblinds.com/cdn/shop/files/measure_worksheet.pdf" }
+
+  # =========================================================================
+  # ROLLER SHADES
+  # =========================================================================
+  - name: Classic Vinyl Blackout Roller Shades
+    category: Roller Shades
+    subcategory: Blackout
+    product_url: https://www.selectblinds.com/products/classic-vinyl-blackout-roller-shades
+    base_price: 41.99
+    unit: per window
+    rating: 4.4
+    review_count: 1734
+
+    description: |
+      Transform your living space with Classic Vinyl Blackout Roller Shades from
+      Select Blinds, the ideal solution for blackout performance, enhanced privacy,
+      and sleek style. Designed for versatility and durability, making them the
+      perfect blackout blinds for bedrooms, nurseries, home offices, and media rooms.
+
+    features:
+      - "Blackout Performance: Complete light blocking"
+      - "Sleek Vinyl Design: Easy to clean, moisture-resistant"
+      - "Cordless Operation: Clean look, child-safe"
+      - "Versatile: Ideal for bedrooms, media rooms, offices"
+
+    specs:
+      type: roller_shade
+      material: vinyl
+      light_control: blackout
+      mount_types: [inside, outside]
+      lift_styles:
+        - { name: cordless_lift, upcharge: 0 }
+        - { name: premium_cordless, upcharge: 54.70, description: "Pull down or push up gently to set the shade exactly where you want it" }
+      upgrades:
+        - { name: no_drill, upcharge: 28.00 }
+
+    colors:
+      - { name: White, hex: "#FFFFFF" }
+      - { name: Beige, hex: "#D4C5B2" }
+      - { name: Oat, hex: "#C4B5A0" }
+      - { name: Grey, hex: "#9E9E9E" }
+      - { name: Sparrow, hex: "#8B7D6B" }
+      - { name: Stone Brown, hex: "#6B5B4F" }
+      - { name: Hunter Green, hex: "#3B5E3B" }
+      - { name: Navy, hex: "#2C3E6B" }
+      - { name: Black, hex: "#1A1A1A" }
+
+    videos:
+      - { platform: youtube, video_id: yotcALbpwiU, title: "Installation Guide", kind: installation }
+      - { platform: youtube, video_id: XwfZDY6hdcg, title: "Roller Shade Overview", kind: overview }
+
+  # =========================================================================
+  # ROMAN SHADES
+  # =========================================================================
+  - name: Classic Roman Shades
+    category: Roman Shades
+    subcategory: Light Filtering
+    product_url: https://www.selectblinds.com/products/classic-roman-shades
+    base_price: 149.99
+    unit: per window
+    rating: 4.6
+    review_count: 606
+
+    description: |
+      Add sophistication and warmth to your home with Classic Roman Shades from
+      Select Blinds. These custom window treatments blend the soft elegance of
+      drapery with the functionality of shades, offering the perfect balance of
+      style and practicality.
+
+    features:
+      - "Soft, Elegant Fabrics: Linens, textured weaves, patterned prints"
+      - "Custom Fit: Handcrafted to order for seamless look"
+      - "Multiple Collections: Solid and Textured fabric options"
+      - "Easy DIY Installation: Most customers install in under 30 minutes"
+
+    specs:
+      type: roman_shade
+      fold_style: flat
+      mount_types: [inside, outside]
+      lift_styles:
+        - { name: continuous_cord_loop, upcharge: 0 }
+      upgrades:
+        - { name: no_drill, upcharge: 28.00 }
+
+    colors:
+      - { name: Textured White, hex: "#F5F5F0", collection: Solid }
+      - { name: Pearl White, hex: "#F8F6F0", collection: Solid }
+      - { name: Moonlit Ivory, hex: "#F0EDE0", collection: Solid }
+      - { name: White Linen, hex: "#F5F0E8", collection: Solid }
+      - { name: Ocean Mist, hex: "#C5D5D0", collection: Solid }
+      - { name: Stonewashed Linen, hex: "#D4C8B8", collection: Solid }
+      - { name: Golden Ecru, hex: "#E8D5B0", collection: Textured }
+      - { name: Almond Beige, hex: "#D8C8B0", collection: Textured }
+      - { name: Coconut Husk, hex: "#B8A080", collection: Textured }
+      - { name: Ashen Grey, hex: "#A8A098", collection: Textured }
+      - { name: Grey Moonstone, hex: "#9E9890", collection: Textured }
+      - { name: Raven Navy, hex: "#2C3040", collection: Textured }
+
+    videos:
+      - { platform: youtube, video_id: yotcALbpwiU, title: "Installation Guide", kind: installation }
+      - { platform: youtube, video_id: MgF39t9ZJvA, title: "Roman Shade Overview", kind: overview }
+
+  # =========================================================================
+  # ADDITIONAL PRODUCTS (from collection pages — not yet fully researched)
+  # =========================================================================
+  # The following are known products that need individual page research:
+  #
+  # Roller Shades (82 products total):
+  #   - Select Blackout Roller Shades
+  #   - Casual Room Darkening Roller Shades
+  #   - Casual Light Filtering Roller Shades
+  #
+  # Roman Shades (50 products total):
+  #   - Various fabric collections (Laura Ashley, William Morris, NYBG, etc.)
+  #
+  # Solar Shades (16 products total):
+  #   - Various openness levels and colors
+  #
+  # NOTE: Hex codes above are approximate. SelectBlinds does not publish
+  # official hex values. These should be replaced with actual measurements
+  # from physical swatch samples or manufacturer spec sheets.
+
+# =============================================================================
+# NOTES FOR SEED IMPLEMENTATION
+# =============================================================================
+#
+# 1. When the Phase 1 models are built, this YAML can be read by seeds.rb:
+#      data = YAML.load_file(Rails.root.join('db/seeds/selectblinds_products.yml'))
+#      manufacturer = Manufacturer.find_or_create_by!(name: data['manufacturer']['name'])
+#      data['products'].each do |p|
+#        category = ProductCategory.find_or_create_by!(name: p['category'])
+#        product = Product.create!(...)
+#        p['colors'].each { |c| Swatch.find_or_create_by!(...) }
+#      end
+#
+# 2. Images: SelectBlinds uses Shopify CDN. Image URLs follow patterns like:
+#    https://www.selectblinds.com/cdn/shop/files/ColorizedFullRoom_XXXXX.jpg
+#    These can be scraped or downloaded as reference. For seed data, we can
+#    store the URL pattern and fetch on demand, or use placeholder images.
+#
+# 3. Videos: YouTube IDs above can be embedded as:
+#    https://www.youtube.com/watch?v={video_id}
+#    Or the standard embed URL: https://www.youtube.com/embed/{video_id}
+#
+# 4. PDFs: The three documents above appear to be shared across all SelectBlinds
+#    products. Product-specific documents (if any) need per-page research.
+#
+# 5. Prices shown are "regular" base prices for a standard size (~24"x36").
+#    SelectBlinds pricing varies by size. The upcharge values were extracted
+#    from their live configurator and are current as of July 2026.

@@ -1,0 +1,63 @@
+<% content_for(:title, "#{@project.title} — Quotes") %>
+
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <div class="flex items-center gap-2 mb-1"><%= link_to @project.title, admin_project_path(@project), class: "text-sm text-theme-500 hover:underline" %><span class="text-gray-300">/</span><span class="text-sm text-gray-500">Quotes</span></div>
+    <p class="text-gray-500 text-sm"><%= pluralize(@quotes.size, "quote") %></p>
+  </div>
+  <%= link_to "New quote", new_admin_project_quote_path(@project),
+        class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors" %>
+</div>
+
+<%# Project profitability summary %>
+<% if @quotes.any? %>
+  <%
+    total_revenue = @quotes.sum { |q| q.grand_total || 0 }
+    total_cost = @quotes.sum { |q| q.quote_line_items.sum { |li| (li.unit_cost || 0) * (li.quantity || 1) } }
+    total_profit = total_revenue - total_cost
+  %>
+  <div class="grid grid-cols-3 gap-4 mb-6">
+    <div class="bg-white rounded-xl border border-theme-100 p-4">
+      <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Total Revenue</p>
+      <p class="text-lg font-bold text-theme-500"><%= number_to_currency(total_revenue) %></p>
+    </div>
+    <div class="bg-white rounded-xl border border-theme-100 p-4">
+      <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Total Cost</p>
+      <p class="text-lg font-bold text-gray-600"><%= number_to_currency(total_cost) %></p>
+    </div>
+    <div class="bg-white rounded-xl border border-theme-100 p-4">
+      <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Project Profit</p>
+      <p class="text-lg font-bold <%= total_profit >= 0 ? 'text-green-600' : 'text-red-500' %>">
+        <%= number_to_currency(total_profit) %>
+        <span class="text-xs font-normal text-gray-400">
+          (<%= total_revenue > 0 ? number_to_percentage(total_profit / total_revenue * 100, precision: 1) : "—" %>)
+        </span>
+      </p>
+    </div>
+  </div>
+<% end %>
+
+<% if @quotes.any? %>
+  <div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+    <div class="grid grid-cols-12 px-5 py-3 bg-theme-100 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+      <div class="col-span-2">Status</div>
+      <div class="col-span-3">Client</div>
+      <div class="col-span-2">Grand Total</div>
+      <div class="col-span-2">Line Items</div>
+      <div class="col-span-2">Created</div>
+      <div class="col-span-1"></div>
+    </div>
+    <% @quotes.each do |q| %>
+      <%= link_to admin_project_quote_path(@project, q), class: "grid grid-cols-12 px-5 py-4 items-center border-b border-gray-50 last:border-0 hover:bg-theme-100" do %>
+        <div class="col-span-2"><span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium <%= q.draft? ? 'bg-gray-100 text-gray-600' : q.sent? ? 'bg-blue-100 text-blue-700' : q.approved? ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' %>"><%= q.status&.titleize %></span></div>
+        <div class="col-span-3 text-sm text-theme-500 font-medium"><%= q.client&.display_name || "—" %></div>
+        <div class="col-span-2 text-sm text-gray-600"><%= number_to_currency(q.grand_total || 0) %></div>
+        <div class="col-span-2 text-sm text-gray-500"><%= q.quote_line_items.count %></div>
+        <div class="col-span-2 text-sm text-gray-500"><%= q.created_at.strftime("%b %d") %></div>
+        <div class="col-span-1 text-right text-gray-300 text-xs">→</div>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="bg-white rounded-xl border border-theme-100 p-12 text-center text-gray-400"><p>No quotes yet.</p></div>
+<% end %>

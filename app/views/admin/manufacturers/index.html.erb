@@ -1,0 +1,35 @@
+<% content_for(:title, "Manufacturers - Admin") %>
+
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="font-serif text-3xl font-semibold text-theme-500">Manufacturers</h1>
+    <p class="text-gray-500 mt-1"><%= pluralize(@manufacturers.size, "manufacturer") %></p>
+  </div>
+  <%= link_to "Add manufacturer", new_admin_manufacturer_path,
+        class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors" %>
+</div>
+
+<% if @manufacturers.any? %>
+  <div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+    <div class="grid grid-cols-12 px-5 py-3 bg-theme-100 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+      <div class="col-span-3">Name</div>
+      <div class="col-span-4">Website</div>
+      <div class="col-span-2">Trade Discount</div>
+      <div class="col-span-2">Markup Override</div>
+      <div class="col-span-1"></div>
+    </div>
+    <% @manufacturers.each do |m| %>
+      <%= link_to admin_manufacturer_path(m), class: "grid grid-cols-12 px-5 py-4 items-center border-b border-gray-50 last:border-0 hover:bg-theme-100" do %>
+        <div class="col-span-3 font-medium text-theme-500"><%= m.name %></div>
+        <div class="col-span-4 text-sm text-gray-500 truncate"><%= m.website.presence || "—" %></div>
+        <div class="col-span-2 text-sm text-gray-600"><%= m.trade_discount ? "#{(m.trade_discount * 100).round}%" : "—" %></div>
+        <div class="col-span-2 text-sm text-gray-600"><%= m.markup_override ? "#{(m.markup_override * 100).round}%" : "default" %></div>
+        <div class="col-span-1 text-right text-gray-300 text-xs">→</div>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="bg-white rounded-xl border border-theme-100 p-12 text-center text-gray-400">
+    <p>No manufacturers yet. Add one to start building your product catalog.</p>
+  </div>
+<% end %>
