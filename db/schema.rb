@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_17_213812) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_17_215406) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -206,6 +206,36 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_17_213812) do
     t.datetime "updated_at", null: false
     t.integer "usage_count"
     t.integer "usage_limit"
+  end
+
+  create_table "purchase_order_line_items", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "manufacturer_sku"
+    t.bigint "product_id", null: false
+    t.bigint "purchase_order_id", null: false
+    t.integer "quantity"
+    t.bigint "quote_line_item_id", null: false
+    t.integer "status"
+    t.decimal "total_cost"
+    t.decimal "unit_cost"
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_purchase_order_line_items_on_product_id"
+    t.index ["purchase_order_id"], name: "index_purchase_order_line_items_on_purchase_order_id"
+    t.index ["quote_line_item_id"], name: "index_purchase_order_line_items_on_quote_line_item_id"
+  end
+
+  create_table "purchase_orders", force: :cascade do |t|
+    t.date "actual_delivery"
+    t.datetime "created_at", null: false
+    t.date "expected_delivery"
+    t.bigint "manufacturer_id", null: false
+    t.text "notes"
+    t.date "order_date"
+    t.bigint "quote_id", null: false
+    t.integer "status"
+    t.datetime "updated_at", null: false
+    t.index ["manufacturer_id"], name: "index_purchase_orders_on_manufacturer_id"
+    t.index ["quote_id"], name: "index_purchase_orders_on_quote_id"
   end
 
   create_table "questionnaire_submissions", force: :cascade do |t|
@@ -524,6 +554,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_17_213812) do
   add_foreign_key "products", "product_categories"
   add_foreign_key "project_updates", "projects"
   add_foreign_key "projects", "users"
+  add_foreign_key "purchase_order_line_items", "products"
+  add_foreign_key "purchase_order_line_items", "purchase_orders"
+  add_foreign_key "purchase_order_line_items", "quote_line_items"
+  add_foreign_key "purchase_orders", "manufacturers"
+  add_foreign_key "purchase_orders", "quotes"
   add_foreign_key "quote_line_items", "products"
   add_foreign_key "quote_line_items", "quotes"
   add_foreign_key "quote_line_items", "swatches"

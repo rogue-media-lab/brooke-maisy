@@ -1,0 +1,39 @@
+<% content_for(:title, "New Purchase Order") %>
+
+<div class="max-w-2xl mx-auto">
+  <%= link_to admin_purchase_orders_path, class: "text-sm text-gray-400 hover:text-theme-500 mb-6 inline-block" do %>← Purchase Orders<% end %>
+  <h1 class="font-serif text-2xl font-semibold text-theme-500 mb-8">New Purchase Order</h1>
+
+  <%# Quick-create from approved items %>
+  <% if params[:quote_id].present? && @quote %>
+    <div class="bg-theme-50 rounded-xl border border-theme-200 p-6 mb-6">
+      <h2 class="text-sm font-semibold text-theme-500 mb-3">
+        Create from Quote #<%= @quote.id %> — <%= @quote.project.title %>
+      </h2>
+      <% grouped = @approved_items.group_by { |i| i.product&.manufacturer } %>
+      <% if grouped.any? %>
+        <p class="text-xs text-gray-500 mb-4">Select a manufacturer to auto-add approved items to the PO.</p>
+        <div class="space-y-2">
+          <% grouped.each do |manufacturer, items| %>
+            <% next unless manufacturer %>
+            <%= link_to new_admin_purchase_order_path(quote_id: @quote.id, manufacturer_id: manufacturer.id),
+                  class: "flex items-center justify-between bg-white hover:bg-theme-100 rounded-lg px-4 py-3 transition-colors border border-transparent hover:border-theme-200" do %>
+              <div>
+                <span class="text-sm font-medium text-theme-500"><%= manufacturer.name %></span>
+                <span class="text-xs text-gray-400 ml-2"><%= items.count %> approved item<%= "s" if items.count != 1 %></span>
+              </div>
+              <span class="text-xs text-gray-500"><%= number_to_currency(items.sum { |i| (i.unit_cost || 0) * (i.quantity || 1) }) %></span>
+            <% end %>
+          <% end %>
+          <div class="pt-2 border-t border-theme-200">
+            <p class="text-xs text-gray-400">Or create a blank PO using the form below.</p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="bg-white rounded-xl border border-theme-100 p-8">
+    <%= render "form" %>
+  </div>
+</div>

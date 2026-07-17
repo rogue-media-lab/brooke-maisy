@@ -103,6 +103,14 @@ Rails.application.routes.draw do
     end
     get "templates", to: "quotes#templates", as: :quote_templates
     post "templates/load", to: "quotes#load", as: :load_quote_templates
+    resources :purchase_orders do
+      member do
+        post :submit
+        post :confirm_delivery
+        post :mark_shipped
+        post :mark_received
+      end
+    end
   end
 
   # Public "client-portal" link routes into the authenticated portal.

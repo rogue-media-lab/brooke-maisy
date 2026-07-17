@@ -42,6 +42,7 @@
     <%= link_to "Swatches", admin_swatches_path, class: nav_link.call(admin_swatches_path, request.path.start_with?(admin_swatches_path)) %>
     <%= link_to "Promo Codes", admin_promo_codes_path, class: nav_link.call(admin_promo_codes_path, request.path.start_with?(admin_promo_codes_path)) %>
     <%= link_to "Templates", admin_quote_templates_path, class: nav_link.call(admin_quote_templates_path, request.path.start_with?("/admin/templates")) %>
+    <%= link_to "Purchase Orders", admin_purchase_orders_path, class: nav_link.call(admin_purchase_orders_path, request.path.start_with?(admin_purchase_orders_path)) %>
 
     <p class="px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300">Settings</p>
     <%= link_to "Markup &amp; Margins", margins_admin_settings_path, class: nav_link.call(margins_admin_settings_path, request.path.start_with?("/admin/settings")) %>

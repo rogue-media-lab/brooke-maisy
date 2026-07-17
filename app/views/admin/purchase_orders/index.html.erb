@@ -1,0 +1,51 @@
+<% content_for(:title, "Purchase Orders") %>
+
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="font-serif text-2xl font-semibold text-theme-500">Purchase Orders</h1>
+    <p class="text-sm text-gray-400 mt-1">Order from manufacturers after client approval.</p>
+  </div>
+  <%= link_to "New Purchase Order", new_admin_purchase_order_path, class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors" %>
+</div>
+
+<% if @purchase_orders.any? %>
+  <div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="bg-gray-50 text-left">
+          <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400">PO</th>
+          <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Manufacturer</th>
+          <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Project</th>
+          <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Items</th>
+          <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Total Cost</th>
+          <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Status</th>
+          <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Ordered</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @purchase_orders.each do |po| %>
+          <tr class="border-t border-gray-50 hover:bg-theme-50">
+            <td class="px-5 py-3">
+              <%= link_to "PO ##{po.id}", admin_purchase_order_path(po), class: "font-medium text-theme-500 hover:underline" %>
+            </td>
+            <td class="px-5 py-3 text-gray-600"><%= po.manufacturer.name %></td>
+            <td class="px-5 py-3 text-gray-600">
+              <%= po.quote&.project&.title || "—" %>
+            </td>
+            <td class="px-5 py-3 text-gray-600"><%= po.item_count %></td>
+            <td class="px-5 py-3 text-gray-700 font-medium"><%= number_to_currency(po.total_cost) %></td>
+            <td class="px-5 py-3">
+              <%= render "admin/purchase_orders/status_badge", status: po.status %>
+            </td>
+            <td class="px-5 py-3 text-gray-400"><%= po.order_date&.strftime("%b %d, %Y") || "—" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="bg-white rounded-xl border border-theme-100 p-12 text-center">
+    <p class="text-gray-400">No purchase orders yet.</p>
+    <p class="text-sm text-gray-300 mt-1">Create a PO after a client approves a quote.</p>
+  </div>
+<% end %>
