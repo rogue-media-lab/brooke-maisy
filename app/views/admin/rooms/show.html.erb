@@ -19,12 +19,12 @@
   <div class="bg-white rounded-xl border border-theme-100 p-8 mb-8">
     <div class="flex items-center justify-between mb-4">
       <h2 class="font-serif text-lg font-semibold text-theme-500">Windows</h2>
-      <%= link_to "Add window", new_admin_room_window_path(@room), class: "text-sm text-theme-500 hover:underline" %>
+      <%= link_to "Add window", new_admin_project_room_window_path(@room.project, @room), class: "text-sm text-theme-500 hover:underline" %>
     </div>
     <% if @room.windows.any? %>
       <div class="space-y-2">
         <% @room.windows.ordered.each do |window| %>
-          <%= link_to admin_room_window_path(@room, window), class: "flex items-center justify-between p-3 rounded-lg hover:bg-theme-100" do %>
+          <%= link_to admin_project_room_window_path(@room.project, @room, window), class: "flex items-center justify-between p-3 rounded-lg hover:bg-theme-100" do %>
             <div>
               <div class="text-sm font-medium text-theme-500"><%= window.name %></div>
               <div class="text-xs text-gray-400"><%= window.width %>″ × <%= window.height %>″ · <%= window.mount_type&.titleize || "—" %></div>

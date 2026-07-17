@@ -16,7 +16,7 @@ class Admin::WindowsController < Admin::BaseController
   def create
     @window = @room.windows.new(window_params)
     if @window.save
-      redirect_to admin_room_window_path(@room, @window), notice: "Window added."
+      redirect_to admin_project_room_window_path(@room.project, @room, @window), notice: "Window added."
     else
       render :new, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class Admin::WindowsController < Admin::BaseController
 
   def update
     if @window.update(window_params)
-      redirect_to admin_room_window_path(@window.room, @window), notice: "Window updated."
+      redirect_to admin_project_room_window_path(@window.room.project, @window.room, @window), notice: "Window updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -36,7 +36,7 @@ class Admin::WindowsController < Admin::BaseController
   def destroy
     room = @window.room
     @window.destroy
-    redirect_to admin_room_windows_path(room), notice: "Window removed."
+    redirect_to admin_project_room_windows_path(room.project, room), notice: "Window removed."
   end
 
   private
