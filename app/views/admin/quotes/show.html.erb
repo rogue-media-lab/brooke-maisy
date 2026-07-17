@@ -28,7 +28,7 @@
 <div class="bg-white rounded-xl border border-theme-100 overflow-hidden mb-8">
   <div class="flex items-center justify-between px-5 py-3 bg-theme-100">
     <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Line Items</span>
-    <%= link_to "Add item", new_admin_quote_quote_line_item_path(@quote), class: "text-xs text-theme-500 hover:underline" %>
+    <%= link_to "Add item", new_admin_project_quote_quote_line_item_path(@quote.project, @quote), class: "text-xs text-theme-500 hover:underline" %>
   </div>
   <% if @quote.quote_line_items.any? %>
     <%# Group by comparison group %>

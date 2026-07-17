@@ -1,4 +1,4 @@
-<%= form_with model: [:admin, @quote, @quote_line_item],
+<%= form_with model: [:admin, @quote.project, @quote, @quote_line_item],
       class: "space-y-6",
       data: { controller: "quote-calculator" } do |f| %>
 

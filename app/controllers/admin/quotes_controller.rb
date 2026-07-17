@@ -51,7 +51,7 @@ class Admin::QuotesController < Admin::BaseController
   end
 
   def new
-    @quote = @project.quotes.new
+    @quote = @project.quotes.new(client_id: @project.user_id)
     @clients = User.where(role: :client).order(:name)
   end
 
