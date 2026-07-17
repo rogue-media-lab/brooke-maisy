@@ -11,6 +11,15 @@ class Admin::ClientsController < Admin::BaseController
 
   def new
     @client = User.new(role: "client")
+
+    if params[:quick]
+      render :quick, layout: "admin_minimal"
+    end
+  end
+
+  def selector
+    @clients = User.where(role: "client").order(:name)
+    @selected_id = params[:selected_id]
   end
 
   # Creates a client with a random password and sends a "set your password"
@@ -23,8 +32,15 @@ class Admin::ClientsController < Admin::BaseController
 
     if @client.save
       @client.send_reset_password_instructions
-      redirect_to admin_client_path(@client),
-                  notice: "#{@client.display_name} invited. A set-password email has been sent."
+
+      if params[:return_to].present?
+        separator = params[:return_to].include?("?") ? "&" : "?"
+        redirect_to "#{params[:return_to]}#{separator}new_client_id=#{@client.id}",
+                    notice: "#{@client.display_name} added and selected."
+      else
+        redirect_to admin_client_path(@client),
+                    notice: "#{@client.display_name} invited. A set-password email has been sent."
+      end
     else
       render :new, status: :unprocessable_entity
     end

@@ -48,6 +48,9 @@ Rails.application.routes.draw do
       member do
         post :resend_invite
       end
+      collection do
+        get :selector
+      end
     end
     resources :projects do
       resources :project_updates, only: [ :create, :destroy ]

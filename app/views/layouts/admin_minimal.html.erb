@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Brooke & Maisy — Admin</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <div class="max-w-lg mx-auto py-12 px-4">
+    <% if notice %>
+      <div class="bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-4 py-3 mb-6"><%= notice %></div>
+    <% end %>
+    <% if alert %>
+      <div class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-6"><%= alert %></div>
+    <% end %>
+    <%= yield %>
+  </div>
+</body>
+</html>
