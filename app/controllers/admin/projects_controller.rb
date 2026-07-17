@@ -10,6 +10,8 @@ class Admin::ProjectsController < Admin::BaseController
   def show
     @updates = @project.project_updates.recent
     @new_update = @project.project_updates.build(visible_to_client: true)
+    @rooms = @project.rooms.includes(:windows).ordered
+    @quotes = @project.quotes.live.includes(:client).recent.limit(5)
   end
 
   def new
