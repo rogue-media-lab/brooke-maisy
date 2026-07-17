@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_17_175334) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_17_213812) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -224,6 +224,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_17_175334) do
   end
 
   create_table "quote_line_items", force: :cascade do |t|
+    t.string "comparison_group"
     t.datetime "created_at", null: false
     t.string "description"
     t.string "discount_reason"
@@ -268,6 +269,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_17_175334) do
     t.decimal "deposit_amount"
     t.decimal "deposit_percentage"
     t.decimal "grand_total"
+    t.boolean "is_template"
     t.text "notes"
     t.bigint "project_id", null: false
     t.bigint "promo_code_id"

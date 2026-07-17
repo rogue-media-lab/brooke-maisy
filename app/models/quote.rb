@@ -20,4 +20,7 @@ class Quote < ApplicationRecord
   scope :recent, -> { order(created_at: :desc) }
   scope :by_project, ->(project_id) { where(project_id: project_id) }
   scope :by_client, ->(client_id) { where(client_id: client_id) }
+  scope :templates, -> { where(is_template: true) }
+  scope :live, -> { where(is_template: false) }
+  scope :client_visible, -> { where.not(status: [ :draft ]) }
 end

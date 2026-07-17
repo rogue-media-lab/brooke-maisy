@@ -14,6 +14,9 @@
     <%= link_to "Preview", preview_admin_project_quote_path(@quote.project, @quote), class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors" %>
     <% if @quote.draft? %>
       <%= button_to "Send to client", send_quote_admin_project_quote_path(@quote.project, @quote), method: :post, class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors" %>
+      <% unless @quote.is_template? %>
+        <%= button_to "Save as template", save_as_template_admin_project_quote_path(@quote.project, @quote), method: :post, class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors", form: { data: { turbo_confirm: "Save this quote as a reusable template?" } } %>
+      <% end %>
     <% end %>
   </div>
 </div>
@@ -25,6 +28,8 @@
     <%= link_to "Add item", new_admin_quote_quote_line_item_path(@quote), class: "text-xs text-theme-500 hover:underline" %>
   </div>
   <% if @quote.quote_line_items.any? %>
+    <%# Group by comparison group %>
+    <% groups = @quote.quote_line_items.ordered.group_by(&:comparison_group) %>
     <div class="grid grid-cols-12 px-5 py-2 bg-gray-50 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
       <div class="col-span-4">Product</div>
       <div class="col-span-2">Qty</div>
@@ -32,14 +37,26 @@
       <div class="col-span-2">Unit Price</div>
       <div class="col-span-2">Line Total</div>
     </div>
-    <% @quote.quote_line_items.ordered.each do |item| %>
-      <div class="grid grid-cols-12 px-5 py-3 items-center border-b border-gray-50 last:border-0 hover:bg-theme-50">
-        <div class="col-span-4 text-sm font-medium text-theme-500"><%= item.product&.name || item.description || "—" %></div>
-        <div class="col-span-2 text-sm text-gray-600"><%= item.quantity %></div>
-        <div class="col-span-2 text-sm text-gray-500"><%= number_to_currency(item.unit_cost || 0) %></div>
-        <div class="col-span-2 text-sm text-gray-600"><%= number_to_currency(item.unit_price || 0) %></div>
-        <div class="col-span-2 text-sm text-gray-600 font-medium"><%= number_to_currency(item.line_total || 0) %></div>
-      </div>
+    <% groups.each do |group_name, items| %>
+      <% if group_name.present? %>
+        <div class="grid grid-cols-12 px-5 py-2 bg-theme-50 border-b border-theme-100">
+          <span class="col-span-12 text-[10px] font-semibold uppercase tracking-wider text-theme-500"><%= group_name %></span>
+        </div>
+      <% end %>
+      <% items.each do |item| %>
+        <div class="grid grid-cols-12 px-5 py-3 items-center border-b border-gray-50 last:border-0 hover:bg-theme-50">
+          <div class="col-span-4 text-sm font-medium text-theme-500">
+            <%= item.product&.name || item.description || "—" %>
+            <% if item.comparison_group.present? %>
+              <span class="ml-1 text-[10px] text-gray-400">· <%= item.comparison_group %></span>
+            <% end %>
+          </div>
+          <div class="col-span-2 text-sm text-gray-600"><%= item.quantity %></div>
+          <div class="col-span-2 text-sm text-gray-500"><%= number_to_currency(item.unit_cost || 0) %></div>
+          <div class="col-span-2 text-sm text-gray-600"><%= number_to_currency(item.unit_price || 0) %></div>
+          <div class="col-span-2 text-sm text-gray-600 font-medium"><%= number_to_currency(item.line_total || 0) %></div>
+        </div>
+      <% end %>
     <% end %>
   <% else %>
     <div class="p-8 text-center text-gray-400"><p>No line items yet. Add products to this quote.</p></div>

@@ -21,7 +21,19 @@ Rails.application.routes.draw do
 
   # Authenticated client portal (real, data-driven)
   namespace :client do
-    resources :projects, only: [ :index, :show ]
+    resources :projects, only: [ :index, :show ] do
+      resources :quotes, only: [ :show ] do
+        member do
+          post :approve
+        end
+        resources :quote_line_items, only: [] do
+          member do
+            post :approve, action: :approve_line_item
+            post :decline, action: :decline_line_item
+          end
+        end
+      end
+    end
   end
 
   # Tech/installer portal
@@ -46,6 +58,7 @@ Rails.application.routes.draw do
         member do
           post :send_quote
           get :preview
+          post :save_as_template
         end
         resources :quote_line_items, only: [ :new, :create, :edit, :update, :destroy ]
       end
@@ -88,6 +101,8 @@ Rails.application.routes.draw do
     resource :settings, only: [] do
       get :margins, on: :member
     end
+    get "templates", to: "quotes#templates", as: :quote_templates
+    post "templates/load", to: "quotes#load", as: :load_quote_templates
   end
 
   # Public "client-portal" link routes into the authenticated portal.

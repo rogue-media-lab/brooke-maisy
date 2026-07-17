@@ -53,7 +53,7 @@ class Admin::QuoteLineItemsController < Admin::BaseController
       :product_id, :window_id, :swatch_id, :description,
       :width, :height, :quantity, :unit_cost, :unit_price,
       :discount_type, :discount_value, :discount_reason,
-      :status, :notes
+      :status, :notes, :comparison_group
     )
   end
 end
