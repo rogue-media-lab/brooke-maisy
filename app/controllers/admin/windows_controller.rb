@@ -7,6 +7,7 @@ class Admin::WindowsController < Admin::BaseController
   end
 
   def show
+    @room = @window.room
   end
 
   def new
@@ -23,11 +24,13 @@ class Admin::WindowsController < Admin::BaseController
   end
 
   def edit
+    @room = @window.room
   end
 
   def update
+    @room = @window.room
     if @window.update(window_params)
-      redirect_to admin_project_room_window_path(@window.room.project, @window.room, @window), notice: "Window updated."
+      redirect_to admin_project_room_window_path(@room.project, @room, @window), notice: "Window updated."
     else
       render :edit, status: :unprocessable_entity
     end
