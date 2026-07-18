@@ -15,6 +15,7 @@ class PurchaseOrder < ApplicationRecord
   }
 
   validates :status, presence: true
+  validates :order_date, presence: true
 
   scope :recent, -> { order(created_at: :desc) }
   scope :by_manufacturer, ->(manufacturer_id) { where(manufacturer_id: manufacturer_id) }

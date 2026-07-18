@@ -3,7 +3,8 @@ class Window < ApplicationRecord
   has_one_attached :photo
 
   validates :name, presence: true
-  validates :width, :height, numericality: { greater_than: 0 }, allow_nil: true
+  validates :width, presence: true, numericality: { greater_than: 0 }
+  validates :height, presence: true, numericality: { greater_than: 0 }
   validates :mount_type, inclusion: { in: %w[inside outside], allow_blank: true }
 
   scope :ordered, -> { order(:position, :created_at) }

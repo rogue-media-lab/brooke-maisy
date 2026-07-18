@@ -9,5 +9,7 @@ class Admin::DashboardController < Admin::BaseController
     @recent_projects    = Project.includes(:client).recent.limit(6)
     @recent_updates     = ProjectUpdate.includes(:project).recent.limit(5)
     @status_breakdown   = Project.group(:status).count
+    @quote_count        = Quote.live.count
+    @recent_quotes      = Quote.live.includes(:client, :project).recent.limit(5)
   end
 end

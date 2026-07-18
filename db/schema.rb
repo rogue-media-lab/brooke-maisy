@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_18_201721) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_18_202734) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -96,6 +96,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_18_201721) do
     t.string "trade_program_url"
     t.datetime "updated_at", null: false
     t.string "website"
+    t.index ["name"], name: "index_manufacturers_on_name", unique: true
   end
 
   create_table "messages", force: :cascade do |t|
@@ -136,7 +137,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_18_201721) do
     t.string "slug"
     t.string "spec_template"
     t.datetime "updated_at", null: false
+    t.index ["parent_id", "name"], name: "index_product_categories_on_parent_and_name", unique: true
     t.index ["parent_id"], name: "index_product_categories_on_parent_id"
+    t.index ["slug"], name: "index_product_categories_on_slug", unique: true
   end
 
   create_table "product_selections", force: :cascade do |t|
@@ -161,6 +164,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_18_201721) do
     t.bigint "product_id", null: false
     t.bigint "swatch_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["product_id", "swatch_id"], name: "index_product_swatches_on_product_and_swatch", unique: true
     t.index ["product_id"], name: "index_product_swatches_on_product_id"
     t.index ["swatch_id"], name: "index_product_swatches_on_swatch_id"
   end
@@ -220,6 +224,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_18_201721) do
     t.datetime "updated_at", null: false
     t.integer "usage_count"
     t.integer "usage_limit"
+    t.index ["code"], name: "index_promo_codes_on_code", unique: true
   end
 
   create_table "purchase_order_line_items", force: :cascade do |t|

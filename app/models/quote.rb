@@ -8,6 +8,7 @@ class Quote < ApplicationRecord
 
   validates :status, presence: true
   validates :version_number, presence: true
+  validates :valid_until, presence: true
 
   enum :status, {
     draft: 0,

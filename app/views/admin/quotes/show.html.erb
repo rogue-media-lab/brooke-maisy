@@ -1,5 +1,6 @@
 <% content_for(:title, "Quote — #{@quote.project&.title || @quote.client&.display_name}") %>
 
+<div data-controller="margin-unlock">
 <div class="flex items-center justify-between mb-8">
   <div>
     <div class="flex items-center gap-2 mb-1">
@@ -29,6 +30,13 @@
   </div>
 </div>
 
+<div data-margin-unlock-target="unlockButton" class="mb-4">
+  <button data-action="click->margin-unlock#prompt"
+    class="bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-medium px-4 py-2 rounded-lg">
+    Reveal Margins
+  </button>
+</div>
+
 <%# Line Items %>
 <div class="bg-white rounded-xl border border-theme-100 overflow-hidden mb-8">
   <div class="flex items-center justify-between px-5 py-3 bg-theme-100">
@@ -41,7 +49,7 @@
     <div class="grid grid-cols-12 px-5 py-2 bg-gray-50 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
       <div class="col-span-4">Product</div>
       <div class="col-span-2">Qty</div>
-      <div class="col-span-2">Unit Cost</div>
+      <div class="col-span-2 hidden" data-margin-unlock-target="locked">Unit Cost</div>
       <div class="col-span-2">Unit Price</div>
       <div class="col-span-2">Line Total</div>
     </div>
@@ -60,7 +68,7 @@
             <% end %>
           </div>
           <div class="col-span-2 text-sm text-gray-600"><%= item.quantity %></div>
-          <div class="col-span-2 text-sm text-gray-500"><%= number_to_currency(item.unit_cost || 0) %></div>
+          <div class="col-span-2 text-sm text-gray-500 hidden" data-margin-unlock-target="locked"><%= number_to_currency(item.unit_cost || 0) %></div>
           <div class="col-span-2 text-sm text-gray-600"><%= number_to_currency(item.unit_price || 0) %></div>
           <div class="col-span-2 text-sm text-gray-600 font-medium"><%= number_to_currency(item.line_total || 0) %></div>
         </div>
@@ -74,24 +82,28 @@
 <%# Totals card %>
 <% if @calculator %>
   <div class="grid grid-cols-3 gap-6">
-    <div class="bg-white rounded-xl border border-theme-100 p-6">
-      <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Cost &amp; Revenue</h3>
-      <dl class="space-y-2">
-        <div class="flex justify-between text-sm"><dt class="text-gray-500">Total Cost</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:total_cost]) %></dd></div>
-        <div class="flex justify-between text-sm"><dt class="text-gray-500">Subtotal</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:subtotal]) %></dd></div>
-        <div class="flex justify-between text-sm"><dt class="text-gray-500">Quote Discount</dt><dd class="text-red-500">−<%= number_to_currency(@calculator[:quote_discount]) %></dd></div>
-        <div class="flex justify-between text-sm"><dt class="text-gray-500">Adjusted Subtotal</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:adjusted_subtotal]) %></dd></div>
-        <div class="flex justify-between text-sm"><dt class="text-gray-500">Tax</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:tax_amount]) %></dd></div>
-        <div class="flex justify-between text-sm pt-2 border-t border-gray-100"><dt class="font-semibold text-gray-700">Grand Total</dt><dd class="font-semibold text-theme-500"><%= number_to_currency(@calculator[:grand_total]) %></dd></div>
-      </dl>
+    <div data-margin-unlock-target="locked" class="hidden">
+      <div class="bg-white rounded-xl border border-theme-100 p-6">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Cost &amp; Revenue</h3>
+        <dl class="space-y-2">
+          <div class="flex justify-between text-sm"><dt class="text-gray-500">Total Cost</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:total_cost]) %></dd></div>
+          <div class="flex justify-between text-sm"><dt class="text-gray-500">Subtotal</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:subtotal]) %></dd></div>
+          <div class="flex justify-between text-sm"><dt class="text-gray-500">Quote Discount</dt><dd class="text-red-500">−<%= number_to_currency(@calculator[:quote_discount]) %></dd></div>
+          <div class="flex justify-between text-sm"><dt class="text-gray-500">Adjusted Subtotal</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:adjusted_subtotal]) %></dd></div>
+          <div class="flex justify-between text-sm"><dt class="text-gray-500">Tax</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:tax_amount]) %></dd></div>
+          <div class="flex justify-between text-sm pt-2 border-t border-gray-100"><dt class="font-semibold text-gray-700">Grand Total</dt><dd class="font-semibold text-theme-500"><%= number_to_currency(@calculator[:grand_total]) %></dd></div>
+        </dl>
+      </div>
     </div>
-    <div class="bg-white rounded-xl border border-theme-100 p-6">
-      <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Profit</h3>
-      <dl class="space-y-2">
-        <div class="flex justify-between text-sm"><dt class="text-gray-500">Gross Profit</dt><dd class="text-green-600 font-medium"><%= number_to_currency(@calculator[:gross_profit]) %></dd></div>
-        <div class="flex justify-between text-sm"><dt class="text-gray-500">Profit Margin</dt><dd class="text-green-600 font-medium"><%= @calculator[:profit_margin_pct] %>%</dd></div>
-        <div class="flex justify-between text-sm pt-2 border-t border-gray-100"><dt class="text-gray-500">Default Markup</dt><dd class="text-gray-700"><%= number_to_percentage(QuoteCalculator::DEFAULT_MARKUP * 100, precision: 0) %></dd></div>
-      </dl>
+    <div data-margin-unlock-target="locked" class="hidden">
+      <div class="bg-white rounded-xl border border-theme-100 p-6">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Profit</h3>
+        <dl class="space-y-2">
+          <div class="flex justify-between text-sm"><dt class="text-gray-500">Gross Profit</dt><dd class="text-green-600 font-medium"><%= number_to_currency(@calculator[:gross_profit]) %></dd></div>
+          <div class="flex justify-between text-sm"><dt class="text-gray-500">Profit Margin</dt><dd class="text-green-600 font-medium"><%= @calculator[:profit_margin_pct] %>%</dd></div>
+          <div class="flex justify-between text-sm pt-2 border-t border-gray-100"><dt class="text-gray-500">Default Markup</dt><dd class="text-gray-700"><%= number_to_percentage(QuoteCalculator::DEFAULT_MARKUP * 100, precision: 0) %></dd></div>
+        </dl>
+      </div>
     </div>
     <div class="bg-white rounded-xl border border-theme-100 p-6">
       <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Deposit</h3>
@@ -105,7 +117,7 @@
 
   <%# Per-line-item profitability %>
   <% if @calculator[:line_items].any? %>
-    <div class="mt-6 bg-white rounded-xl border border-theme-100 overflow-hidden">
+    <div data-margin-unlock-target="locked" class="hidden mt-6 bg-white rounded-xl border border-theme-100 overflow-hidden">
       <div class="px-5 py-3 bg-theme-100">
         <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Line Item Profitability</span>
       </div>
@@ -135,3 +147,4 @@
     </div>
   <% end %>
 <% end %>
+</div>
