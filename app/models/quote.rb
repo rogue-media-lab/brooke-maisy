@@ -1,6 +1,6 @@
 class Quote < ApplicationRecord
-  belongs_to :project
-  belongs_to :client, class_name: "User"
+  belongs_to :client
+  belongs_to :project, optional: true
   belongs_to :promo_code, optional: true
   has_many :quote_line_items, dependent: :destroy
   has_many :quote_revisions, dependent: :destroy

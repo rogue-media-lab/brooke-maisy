@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_18_195029) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_18_195205) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -198,12 +198,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_18_195029) do
 
   create_table "projects", force: :cascade do |t|
     t.string "address"
+    t.bigint "client_id", null: false
     t.datetime "created_at", null: false
     t.text "description"
     t.string "status", default: "discovery", null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.index ["client_id"], name: "index_projects_on_client_id"
     t.index ["user_id"], name: "index_projects_on_user_id"
   end
 
@@ -567,6 +569,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_18_195029) do
   add_foreign_key "products", "manufacturers"
   add_foreign_key "products", "product_categories"
   add_foreign_key "project_updates", "projects"
+  add_foreign_key "projects", "clients"
   add_foreign_key "projects", "users"
   add_foreign_key "purchase_order_line_items", "products"
   add_foreign_key "purchase_order_line_items", "purchase_orders"
@@ -578,9 +581,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_18_195029) do
   add_foreign_key "quote_line_items", "swatches"
   add_foreign_key "quote_line_items", "windows"
   add_foreign_key "quote_revisions", "quotes"
+  add_foreign_key "quotes", "clients"
   add_foreign_key "quotes", "projects"
   add_foreign_key "quotes", "promo_codes"
-  add_foreign_key "quotes", "users", column: "client_id"
   add_foreign_key "rooms", "projects"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
