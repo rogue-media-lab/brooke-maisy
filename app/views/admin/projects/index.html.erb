@@ -25,7 +25,7 @@
       <%= link_to admin_project_path(project), class: "flex items-center justify-between px-5 py-4 border-b border-gray-50 last:border-0 hover:bg-theme-100" do %>
         <div class="min-w-0">
           <p class="font-medium text-theme-500 truncate"><%= project.title %></p>
-          <p class="text-xs text-gray-400"><%= project.user.display_name %><%= " · #{project.address}" if project.address.present? %></p>
+          <p class="text-xs text-gray-400"><%= project.client.display_name %><%= " · #{project.address}" if project.address.present? %></p>
         </div>
         <%= render "admin/shared/status_badge", status: project.status %>
       <% end %>

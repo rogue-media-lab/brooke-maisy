@@ -46,6 +46,7 @@ Rails.application.routes.draw do
     root "dashboard#index"
     resources :clients do
       member do
+        post :invite
         post :resend_invite
       end
       collection do

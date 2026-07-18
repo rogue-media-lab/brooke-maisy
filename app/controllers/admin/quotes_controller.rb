@@ -51,8 +51,8 @@ class Admin::QuotesController < Admin::BaseController
   end
 
   def new
-    @quote = @project.quotes.new(client_id: @project.user_id)
-    @clients = User.where(role: :client).order(:name)
+    @quote = @project.quotes.new(client_id: @project.client_id)
+    @clients = Client.alphabetical
   end
 
   def create
@@ -61,20 +61,20 @@ class Admin::QuotesController < Admin::BaseController
     if @quote.save
       redirect_to admin_project_quote_path(@project, @quote), notice: "Quote created."
     else
-      @clients = User.where(role: :client).order(:name)
+      @clients = Client.alphabetical
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @clients = User.where(role: :client).order(:name)
+    @clients = Client.alphabetical
   end
 
   def update
     if @quote.update(quote_params)
       redirect_to admin_project_quote_path(@quote.project, @quote), notice: "Quote updated."
     else
-      @clients = User.where(role: :client).order(:name)
+      @clients = Client.alphabetical
       render :edit, status: :unprocessable_entity
     end
   end

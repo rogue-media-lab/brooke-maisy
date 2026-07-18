@@ -12,7 +12,7 @@
       <%= render "admin/shared/status_badge", status: @project.status %>
     </div>
     <p class="text-gray-500 mt-1">
-      <%= link_to @project.user.display_name, admin_client_path(@project.user), class: "hover:text-theme-500" %>
+      <%= link_to @project.client.display_name, admin_client_path(@project.client), class: "hover:text-theme-500" %>
       <%= " · #{@project.address}" if @project.address.present? %>
     </p>
   </div>
@@ -188,7 +188,7 @@
       <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Details</h3>
       <dl class="space-y-2 text-sm">
         <div class="flex justify-between"><dt class="text-gray-500">Status</dt><dd class="font-medium text-theme-500"><%= @project.status.titleize %></dd></div>
-        <div class="flex justify-between"><dt class="text-gray-500">Client</dt><dd class="font-medium text-theme-500"><%= @project.user.display_name %></dd></div>
+        <div class="flex justify-between"><dt class="text-gray-500">Client</dt><dd class="font-medium text-theme-500"><%= @project.client.display_name %></dd></div>
         <div class="flex justify-between"><dt class="text-gray-500">Created</dt><dd class="text-gray-600"><%= @project.created_at.strftime("%b %-d, %Y") %></dd></div>
         <div class="flex justify-between"><dt class="text-gray-500">Updates</dt><dd class="text-gray-600"><%= @project.project_updates.count %></dd></div>
         <div class="flex justify-between"><dt class="text-gray-500">Presentations</dt><dd class="text-gray-600"><%= @project.design_presentations.count %></dd></div>

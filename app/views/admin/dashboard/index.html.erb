@@ -43,7 +43,7 @@
             <%= link_to admin_project_path(project), class: "flex items-center justify-between px-5 py-3 hover:bg-theme-100" do %>
               <div>
                 <p class="text-sm font-medium text-theme-500"><%= project.title %></p>
-                <p class="text-xs text-gray-400"><%= project.user.display_name %></p>
+                <p class="text-xs text-gray-400"><%= project.client.display_name %></p>
               </div>
               <%= render "admin/shared/status_badge", status: project.status %>
             <% end %>
