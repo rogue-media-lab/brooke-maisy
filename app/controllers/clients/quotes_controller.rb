@@ -18,27 +18,27 @@ class Clients::QuotesController < ApplicationController
     @quote.update!(status: :approved, approved_at: Time.current)
     @quote.quote_revisions.create!(reason: "Client approved", snapshot: snapshot)
 
-    redirect_to clients_project_quote_path(@project, @quote),
+    redirect_to clients_quote_path(@quote),
                 notice: "Quote approved! We'll begin processing your order."
   end
 
   def approve_line_item
     authorize @quote, policy_class: Clients::QuotePolicy
 
-    item = @quote.quote_line_items.find(params[:line_item_id])
+    item = @quote.quote_line_items.find(params[:id])
     item.update!(status: :approved)
 
-    redirect_to clients_project_quote_path(@project, @quote),
+    redirect_to clients_quote_path(@quote),
                 notice: "#{item.product&.name || 'Item'} approved."
   end
 
   def decline_line_item
     authorize @quote, policy_class: Clients::QuotePolicy
 
-    item = @quote.quote_line_items.find(params[:line_item_id])
+    item = @quote.quote_line_items.find(params[:id])
     item.update!(status: :declined)
 
-    redirect_to clients_project_quote_path(@project, @quote),
+    redirect_to clients_quote_path(@quote),
                 notice: "#{item.product&.name || 'Item'} declined. We'll follow up."
   end
 
@@ -46,8 +46,7 @@ class Clients::QuotesController < ApplicationController
 
   def set_quote
     @quote = Quote.includes(quote_line_items: [ :product, :window, :swatch ])
-                  .find(params[:id])
-    @project = @quote.project
+                  .find(params[:quote_id] || params[:id])
   end
 
   def build_snapshot

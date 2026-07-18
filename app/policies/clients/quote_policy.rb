@@ -6,7 +6,7 @@ class Clients::QuotePolicy < ApplicationPolicy
     return false unless user
 
     user.admin? || (
-      record.client_id == user.id &&
+      record.client_id == user.client_id &&
       !record.draft? &&
       !record.is_template?
     )
@@ -29,7 +29,7 @@ class Clients::QuotePolicy < ApplicationPolicy
       if user.admin?
         scope.client_visible
       else
-        scope.client_visible.where(client_id: user.id)
+        scope.client_visible.where(client_id: user.client_id)
       end
     end
   end

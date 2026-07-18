@@ -75,14 +75,14 @@
       <div class="flex items-center justify-between mb-4">
         <h2 class="font-serif text-lg font-semibold text-theme-500">Quotes</h2>
         <div class="flex gap-2">
-          <%= link_to "New Quote", new_admin_project_quote_path(@project), class: "bg-theme-500 hover:bg-theme-400 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors" %>
-          <%= link_to "View all", admin_project_quotes_path(@project), class: "text-sm text-theme-500 hover:text-theme-400 font-medium" %>
+          <%= link_to "New Quote", new_admin_quote_path(project_id: @project.id, client_id: @project.client_id), class: "bg-theme-500 hover:bg-theme-400 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors" %>
+          <%= link_to "View all", admin_quotes_path(project_id: @project.id), class: "text-sm text-theme-500 hover:text-theme-400 font-medium" %>
         </div>
       </div>
       <% if @quotes.any? %>
         <div class="space-y-2">
           <% @quotes.each do |quote| %>
-            <%= link_to admin_project_quote_path(@project, quote),
+            <%= link_to admin_quote_path(quote),
                   class: "flex items-center justify-between rounded-lg border border-gray-100 px-4 py-3 hover:border-theme-200 transition-colors" do %>
               <div>
                 <div class="flex items-center gap-2">
@@ -100,7 +100,7 @@
           <% end %>
         </div>
       <% else %>
-        <p class="text-sm text-gray-400">No quotes yet. <%= link_to "Create your first quote", new_admin_project_quote_path(@project), class: "text-theme-500 hover:text-theme-400" %>.</p>
+        <p class="text-sm text-gray-400">No quotes yet. <%= link_to "Create your first quote", new_admin_quote_path(project_id: @project.id, client_id: @project.client_id), class: "text-theme-500 hover:text-theme-400" %>.</p>
       <% end %>
     </div>
 

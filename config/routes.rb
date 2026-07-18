@@ -21,16 +21,15 @@ Rails.application.routes.draw do
 
   # Authenticated client portal (real, data-driven)
   namespace :clients do
-    resources :projects, only: [ :index, :show ] do
-      resources :quotes, only: [ :show ] do
+    resources :projects, only: [ :index, :show ]
+    resources :quotes, only: [ :show ] do
+      member do
+        post :approve
+      end
+      resources :quote_line_items, only: [], controller: "quotes" do
         member do
-          post :approve
-        end
-        resources :quote_line_items, only: [] do
-          member do
-            post :approve, action: :approve_line_item
-            post :decline, action: :decline_line_item
-          end
+          post :approve, action: :approve_line_item
+          post :decline, action: :decline_line_item
         end
       end
     end
@@ -57,14 +56,6 @@ Rails.application.routes.draw do
       resources :project_updates, only: [ :create, :destroy ]
       resources :rooms do
         resources :windows
-      end
-      resources :quotes do
-        member do
-          post :send_quote
-          get :preview
-          post :save_as_template
-        end
-        resources :quote_line_items, only: [ :new, :create, :edit, :update, :destroy ]
       end
       resources :design_presentations do
         resource :publication, only: [ :create, :destroy ]
@@ -107,6 +98,15 @@ Rails.application.routes.draw do
     end
     get "templates", to: "quotes#templates", as: :quote_templates
     post "templates/load", to: "quotes#load", as: :load_quote_templates
+    resources :quotes do
+      member do
+        post :send_quote
+        get :preview
+        post :save_as_template
+        post :convert_to_project
+      end
+      resources :quote_line_items, only: [ :new, :create, :edit, :update, :destroy ]
+    end
     resources :purchase_orders do
       member do
         post :submit

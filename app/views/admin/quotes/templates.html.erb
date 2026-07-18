@@ -23,7 +23,7 @@
         <% @templates.each do |template| %>
           <tr class="border-t border-gray-50 hover:bg-theme-50">
             <td class="px-5 py-3">
-              <span class="font-medium text-theme-500"><%= template.project&.title %> — Quote #<%= template.id %></span>
+              <span class="font-medium text-theme-500"><%= template.project&.title || template.client&.display_name %> — Quote #<%= template.id %></span>
               <% if template.notes.present? %>
                 <p class="text-xs text-gray-400 mt-0.5 truncate max-w-xs"><%= template.notes.truncate(60) %></p>
               <% end %>
@@ -32,7 +32,7 @@
             <td class="px-5 py-3 text-gray-600"><%= template.quote_line_items.count %></td>
             <td class="px-5 py-3 text-gray-400"><%= time_ago_in_words(template.created_at) %> ago</td>
             <td class="px-5 py-3 text-right">
-              <%= link_to "View", admin_project_quote_path(template.project, template), class: "text-xs text-theme-500 hover:underline" %>
+              <%= link_to "View", admin_quote_path(template), class: "text-xs text-theme-500 hover:underline" %>
             </td>
           </tr>
         <% end %>

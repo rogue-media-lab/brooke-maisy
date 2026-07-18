@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_18_195205) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_18_200759) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -315,7 +315,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_18_195205) do
     t.decimal "grand_total"
     t.boolean "is_template"
     t.text "notes"
-    t.bigint "project_id", null: false
+    t.bigint "project_id"
     t.bigint "promo_code_id"
     t.string "quote_discount_reason"
     t.string "quote_discount_type"

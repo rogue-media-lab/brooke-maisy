@@ -1,4 +1,4 @@
-<%= form_with model: [:admin, @quote.project, @quote, @quote_line_item],
+<%= form_with model: [:admin, @quote, @quote_line_item],
       class: "space-y-6",
       data: { controller: "quote-calculator" } do |f| %>
 
@@ -119,6 +119,6 @@
 
   <div class="flex gap-3">
     <%= f.submit class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition-colors cursor-pointer" %>
-    <%= link_to "Cancel", admin_project_quote_path(@quote.project, @quote), class: "text-sm text-gray-500 hover:text-gray-700 py-2.5" %>
+    <%= link_to "Cancel", admin_quote_path(@quote), class: "text-sm text-gray-500 hover:text-gray-700 py-2.5" %>
   </div>
 <% end %>

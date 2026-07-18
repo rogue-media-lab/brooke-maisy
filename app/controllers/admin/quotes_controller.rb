@@ -1,21 +1,23 @@
 class Admin::QuotesController < Admin::BaseController
-  before_action :set_project, only: [ :index, :new, :create ]
-  before_action :set_quote, only: [ :show, :edit, :update, :destroy, :send_quote, :preview, :save_as_template ]
+  before_action :set_quote, only: [ :show, :edit, :update, :destroy, :send_quote, :preview, :save_as_template, :convert_to_project ]
 
   def index
-    @quotes = @project.quotes.live.includes(:client).recent
+    @quotes = Quote.live.includes(:client, :project).recent
+    @quotes = @quotes.by_project(params[:project_id]) if params[:project_id].present?
+    @quotes = @quotes.by_client(params[:client_id]) if params[:client_id].present?
   end
 
   def templates
-    @templates = Quote.templates.includes(:project, :client).recent
+    @templates = Quote.templates.includes(:client, :project).recent
   end
 
   def load
     template = Quote.templates.find(params[:template_id])
-    project = Project.find(params[:project_id])
+    project_id = params[:project_id].presence
 
-    new_quote = project.quotes.create!(
+    new_quote = Quote.new(
       client: template.client,
+      project_id: project_id,
       notes: template.notes,
       tax_rate: template.tax_rate,
       deposit_percentage: template.deposit_percentage,
@@ -25,7 +27,7 @@ class Admin::QuotesController < Admin::BaseController
     )
 
     template.quote_line_items.ordered.each do |item|
-      new_quote.quote_line_items.create!(
+      new_quote.quote_line_items.build(
         product: item.product,
         window: item.window,
         swatch: item.swatch,
@@ -43,7 +45,9 @@ class Admin::QuotesController < Admin::BaseController
       )
     end
 
-    redirect_to admin_project_quote_path(project, new_quote), notice: "Quote created from template."
+    new_quote.save!
+
+    redirect_to admin_quote_path(new_quote), notice: "Quote created from template."
   end
 
   def show
@@ -51,44 +55,53 @@ class Admin::QuotesController < Admin::BaseController
   end
 
   def new
-    @quote = @project.quotes.new(client_id: @project.client_id)
+    @quote = Quote.new(
+      client_id: params[:client_id],
+      project_id: params[:project_id],
+      tax_rate: 0.06,
+      valid_until: 30.days.from_now.to_date
+    )
     @clients = Client.alphabetical
+    @projects = @quote.client_id.present? ? @quote.client.projects.recent : []
   end
 
   def create
-    @quote = @project.quotes.new(quote_params)
+    @quote = Quote.new(quote_params)
     @quote.version_number = 1
+    @quote.status = :draft
     if @quote.save
-      redirect_to admin_project_quote_path(@project, @quote), notice: "Quote created."
+      redirect_to admin_quote_path(@quote), notice: "Quote created."
     else
       @clients = Client.alphabetical
+      @projects = @quote.client_id.present? ? @quote.client.projects.recent : []
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
     @clients = Client.alphabetical
+    @projects = @quote.client_id.present? ? @quote.client.projects.recent : []
   end
 
   def update
     if @quote.update(quote_params)
-      redirect_to admin_project_quote_path(@quote.project, @quote), notice: "Quote updated."
+      redirect_to admin_quote_path(@quote), notice: "Quote updated."
     else
       @clients = Client.alphabetical
+      @projects = @quote.client_id.present? ? @quote.client.projects.recent : []
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
-    project = @quote.project
     @quote.destroy
-    redirect_to admin_project_quotes_path(project), notice: "Quote removed."
+    redirect_to admin_quotes_path, notice: "Quote removed."
   end
 
   def send_quote
     @quote.update!(status: :sent, sent_at: Time.current)
     QuoteMailer.send_quote(@quote).deliver_later
-    redirect_to admin_project_quote_path(@quote.project, @quote), notice: "Quote sent to #{@quote.client.display_name}."
+    redirect_to admin_quote_path(@quote), notice: "Quote sent to #{@quote.client.display_name}."
   end
 
   def preview
@@ -98,14 +111,24 @@ class Admin::QuotesController < Admin::BaseController
 
   def save_as_template
     @quote.update!(is_template: true)
-    redirect_to admin_project_quotes_path(@quote.project), notice: "Quote saved as template."
+    redirect_to admin_quote_path(@quote), notice: "Quote saved as template."
+  end
+
+  def convert_to_project
+    if @quote.project.present?
+      redirect_to admin_quote_path(@quote), notice: "Quote already linked to a project."
+      return
+    end
+    project = Project.create!(
+      client: @quote.client,
+      title: "Project for #{@quote.client.display_name}",
+      status: :discovery
+    )
+    @quote.update!(project: project)
+    redirect_to admin_project_path(project), notice: "Project created from quote."
   end
 
   private
-
-  def set_project
-    @project = Project.find(params[:project_id])
-  end
 
   def set_quote
     @quote = Quote.includes(quote_line_items: [ :product, :window, :swatch ]).find(params[:id])
@@ -113,7 +136,7 @@ class Admin::QuotesController < Admin::BaseController
 
   def quote_params
     params.require(:quote).permit(
-      :client_id, :promo_code_id, :status, :notes,
+      :client_id, :project_id, :promo_code_id, :status, :notes,
       :quote_discount_type, :quote_discount_value, :quote_discount_reason,
       :tax_rate, :deposit_percentage, :valid_until
     )

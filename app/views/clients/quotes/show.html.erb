@@ -1,4 +1,4 @@
-<% content_for(:title, "Quote — #{@project.title}") %>
+<% content_for(:title, "Quote — #{@project&.title || @quote.client&.display_name}") %>
 
 <div class="max-w-3xl mx-auto px-4 py-8">
   <%# Status banner %>
@@ -17,7 +17,11 @@
     <h1 class="font-serif text-3xl font-semibold text-theme-500 mb-2">Brooke &amp; Maisy</h1>
     <p class="text-gray-400 text-sm">Interior Design &amp; Window Treatments</p>
     <div class="mt-6">
-      <h2 class="text-xl font-semibold text-gray-800"><%= @project.title %></h2>
+      <% if @project %>
+        <h2 class="text-xl font-semibold text-gray-800"><%= @project.title %></h2>
+      <% else %>
+        <h2 class="text-xl font-semibold text-gray-800"><%= @quote.client&.display_name %></h2>
+      <% end %>
       <p class="text-gray-500 text-sm mt-1">
         Quote #<%= @quote.id %> · Prepared <%= @quote.sent_at&.strftime("%B %d, %Y") || @quote.created_at.strftime("%B %d, %Y") %>
       </p>
@@ -36,7 +40,7 @@
       </div>
       <div class="flex-1 min-w-[120px]">
         <span class="text-gray-400 text-xs uppercase tracking-wide">Address</span>
-        <p class="text-gray-800 font-medium mt-1"><%= @project.address || "1726 Gold Hill Rd. #1071, Fort Mill, SC 29708" %></p>
+        <p class="text-gray-800 font-medium mt-1"><%= @project&.address || "1726 Gold Hill Rd. #1071, Fort Mill, SC 29708" %></p>
       </div>
       <div class="flex-1 min-w-[120px]">
         <span class="text-gray-400 text-xs uppercase tracking-wide">Status</span>
@@ -119,7 +123,7 @@
   <% if @quote.sent? || @quote.viewed? %>
     <div class="text-center mb-8">
       <div class="inline-flex gap-3">
-        <%= button_to "Approve Quote", approve_clients_project_quote_path(@project, @quote),
+        <%= button_to "Approve Quote", approve_clients_quote_path(@quote),
               method: :post,
               class: "bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-xl transition-colors shadow-sm",
               form: { data: { turbo_confirm: "By approving this quote, you agree to the terms and pricing shown above. Proceed?" } } %>
