@@ -38,13 +38,13 @@
       <span class="text-red-500 text-xs font-medium">Declined</span>
     <% elsif @quote.sent? || @quote.viewed? %>
       <div class="flex gap-1 justify-end no-print">
-        <%= button_to approve_client_quote_quote_line_item_path(@project, @quote, item),
+        <%= button_to approve_clients_project_quote_quote_line_item_path(@project, @quote, item),
               method: :post,
               class: "text-green-600 hover:text-green-800 text-xs font-medium bg-transparent border-0 cursor-pointer p-0",
               title: "Approve this item" do %>
           ✓
         <% end %>
-        <%= button_to decline_client_quote_quote_line_item_path(@project, @quote, item),
+        <%= button_to decline_clients_project_quote_quote_line_item_path(@project, @quote, item),
               method: :post,
               class: "text-red-400 hover:text-red-600 text-xs font-medium bg-transparent border-0 cursor-pointer p-0 ml-1",
               title: "Decline this item" do %>

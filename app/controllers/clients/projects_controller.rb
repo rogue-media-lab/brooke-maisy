@@ -1,4 +1,4 @@
-class Client::ProjectsController < ApplicationController
+class Clients::ProjectsController < ApplicationController
   before_action :authenticate_user!
 
   def index

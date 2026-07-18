@@ -20,7 +20,7 @@ Rails.application.routes.draw do
   get "trade-network", to: "pages#trade_network"
 
   # Authenticated client portal (real, data-driven)
-  namespace :client do
+  namespace :clients do
     resources :projects, only: [ :index, :show ] do
       resources :quotes, only: [ :show ] do
         member do
@@ -118,7 +118,7 @@ Rails.application.routes.draw do
 
   # Public "client-portal" link routes into the authenticated portal.
   # Devise redirects to sign-in if not logged in.
-  get "client-portal", to: redirect("/client/projects")
+  get "client-portal", to: redirect("/clients/projects")
 
   # Tech portal shortcut
   get "installer", to: redirect("/tech")

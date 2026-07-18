@@ -7,7 +7,7 @@
   }
   style = status_styles[project.status] || { label: project.status.to_s.titleize, badge: "bg-gray-100 text-gray-700" }
 %>
-<%= link_to client_project_path(project), class: "block bg-theme-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-theme-200" do %>
+<%= link_to clients_project_path(project), class: "block bg-theme-100 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-theme-200" do %>
   <div class="flex items-start justify-between gap-3 mb-3">
     <h2 class="text-xl font-serif font-semibold text-theme-500"><%= project.title %></h2>
     <span class="text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap <%= style[:badge] %>"><%= style[:label] %></span>

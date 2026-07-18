@@ -119,7 +119,7 @@
   <% if @quote.sent? || @quote.viewed? %>
     <div class="text-center mb-8">
       <div class="inline-flex gap-3">
-        <%= button_to "Approve Quote", approve_client_project_quote_path(@project, @quote),
+        <%= button_to "Approve Quote", approve_clients_project_quote_path(@project, @quote),
               method: :post,
               class: "bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-xl transition-colors shadow-sm",
               form: { data: { turbo_confirm: "By approving this quote, you agree to the terms and pricing shown above. Proceed?" } } %>

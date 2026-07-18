@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Client::QuotePolicy < ApplicationPolicy
+class Clients::QuotePolicy < ApplicationPolicy
   # Client can only view quotes assigned to them that have been sent
   def show?
     return false unless user
