@@ -1,4 +1,8 @@
 <%= form_with model: [:admin, @purchase_order], class: "space-y-6" do |f| %>
+  <% unless params[:quote_id] %>
+    <%= render "admin/clients/client_dropdown", form: f, field_name: :client_id, selected_id: @purchase_order.client_id, clients: @clients, return_to: request.fullpath %>
+  <% end %>
+
   <div>
     <%= f.label :manufacturer_id, "Manufacturer", class: "block text-sm font-medium text-gray-700 mb-1" %>
     <%= f.collection_select :manufacturer_id, @manufacturers, :id, :name, { prompt: "Select manufacturer..." }, class: "w-full rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500", required: true %>

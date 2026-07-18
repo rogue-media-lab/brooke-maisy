@@ -1,6 +1,8 @@
 class PurchaseOrder < ApplicationRecord
+  belongs_to :client
   belongs_to :manufacturer
   belongs_to :quote, optional: true
+  belongs_to :project, optional: true
   has_many :purchase_order_line_items, dependent: :destroy
   has_many :quote_line_items, through: :purchase_order_line_items
 

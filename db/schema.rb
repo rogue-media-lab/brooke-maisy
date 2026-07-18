@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_18_200759) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_18_201721) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -225,10 +225,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_18_200759) do
   create_table "purchase_order_line_items", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "manufacturer_sku"
-    t.bigint "product_id", null: false
+    t.bigint "product_id"
     t.bigint "purchase_order_id", null: false
     t.integer "quantity"
-    t.bigint "quote_line_item_id", null: false
+    t.bigint "quote_line_item_id"
     t.integer "status"
     t.decimal "total_cost"
     t.decimal "unit_cost"
@@ -240,14 +240,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_18_200759) do
 
   create_table "purchase_orders", force: :cascade do |t|
     t.date "actual_delivery"
+    t.bigint "client_id", null: false
     t.datetime "created_at", null: false
     t.date "expected_delivery"
     t.bigint "manufacturer_id", null: false
     t.text "notes"
     t.date "order_date"
-    t.bigint "quote_id", null: false
+    t.bigint "quote_id"
     t.integer "status"
     t.datetime "updated_at", null: false
+    t.index ["client_id"], name: "index_purchase_orders_on_client_id"
     t.index ["manufacturer_id"], name: "index_purchase_orders_on_manufacturer_id"
     t.index ["quote_id"], name: "index_purchase_orders_on_quote_id"
   end
@@ -574,6 +576,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_18_200759) do
   add_foreign_key "purchase_order_line_items", "products"
   add_foreign_key "purchase_order_line_items", "purchase_orders"
   add_foreign_key "purchase_order_line_items", "quote_line_items"
+  add_foreign_key "purchase_orders", "clients"
   add_foreign_key "purchase_orders", "manufacturers"
   add_foreign_key "purchase_orders", "quotes"
   add_foreign_key "quote_line_items", "products"

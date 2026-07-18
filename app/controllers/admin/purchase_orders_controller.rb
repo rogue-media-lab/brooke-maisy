@@ -2,7 +2,7 @@ class Admin::PurchaseOrdersController < Admin::BaseController
   before_action :set_purchase_order, only: [ :show, :edit, :update, :destroy, :submit, :confirm_delivery, :mark_shipped, :mark_received ]
 
   def index
-    @purchase_orders = PurchaseOrder.includes(:manufacturer, :quote).recent
+    @purchase_orders = PurchaseOrder.includes(:manufacturer, :quote, :client).recent
   end
 
   def show
@@ -12,11 +12,14 @@ class Admin::PurchaseOrdersController < Admin::BaseController
   def new
     @purchase_order = PurchaseOrder.new(manufacturer_id: params[:manufacturer_id], quote_id: params[:quote_id])
     @manufacturers = Manufacturer.order(:name)
+    @clients = Client.alphabetical
     @quotes = Quote.where(status: [ :approved, :ordered ]).includes(:project).recent
     # Pre-load approved line items from the selected quote
     if params[:quote_id].present?
       @quote = Quote.find(params[:quote_id])
       @approved_items = @quote.quote_line_items.ordered.includes(:product)
+      @purchase_order.client_id = @quote.client_id
+      @purchase_order.project_id = @quote.project_id
     end
   end
 
@@ -24,6 +27,13 @@ class Admin::PurchaseOrdersController < Admin::BaseController
     @purchase_order = PurchaseOrder.new(po_params)
     @purchase_order.status = :draft
     @purchase_order.order_date = Date.current
+
+    # If quote_id present, inherit client and project from quote
+    if @purchase_order.quote_id.present? && @purchase_order.client_id.nil?
+      quote = Quote.find_by(id: @purchase_order.quote_id)
+      @purchase_order.client_id = quote&.client_id
+      @purchase_order.project_id = quote&.project_id
+    end
 
     if @purchase_order.save
       # If quote_id is present, auto-add approved line items from that manufacturer
@@ -56,6 +66,7 @@ class Admin::PurchaseOrdersController < Admin::BaseController
 
   def edit
     @manufacturers = Manufacturer.order(:name)
+    @clients = Client.alphabetical
     @quotes = Quote.where(status: [ :approved, :ordered ]).includes(:project).recent
   end
 
@@ -64,6 +75,7 @@ class Admin::PurchaseOrdersController < Admin::BaseController
       redirect_to admin_purchase_order_path(@purchase_order), notice: "Purchase order updated."
     else
       @manufacturers = Manufacturer.order(:name)
+      @clients = Client.alphabetical
       @quotes = Quote.where(status: [ :approved, :ordered ]).includes(:project).recent
       render :edit, status: :unprocessable_entity
     end
@@ -103,7 +115,7 @@ class Admin::PurchaseOrdersController < Admin::BaseController
 
   def po_params
     params.require(:purchase_order).permit(
-      :manufacturer_id, :quote_id, :status,
+      :client_id, :project_id, :manufacturer_id, :quote_id, :status,
       :order_date, :expected_delivery, :actual_delivery, :notes
     )
   end
