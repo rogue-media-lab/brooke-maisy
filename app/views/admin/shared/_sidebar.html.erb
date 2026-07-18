@@ -10,13 +10,25 @@
     <p class="text-xs uppercase tracking-[0.18em] text-theme-200 mt-0.5">Admin</p>
   </div>
 
-  <nav class="flex-1 px-3 py-4 space-y-1">
-    <p class="px-4 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300">Overview</p>
+  <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
     <%= link_to "Dashboard", admin_root_path, class: nav_link.call(admin_root_path, request.path == admin_root_path) %>
 
-    <p class="px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300">Manage</p>
-    <%= link_to "Projects", admin_projects_path, class: nav_link.call(admin_projects_path, request.path.start_with?(admin_projects_path)) %>
+    <p class="px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300">Sales</p>
     <%= link_to "Clients", admin_clients_path, class: nav_link.call(admin_clients_path, request.path.start_with?(admin_clients_path)) %>
+    <%= link_to "Quotes", admin_quotes_path, class: nav_link.call(admin_quotes_path, request.path.start_with?("/admin/quotes")) %>
+    <%= link_to "Templates", admin_quote_templates_path, class: nav_link.call(admin_quote_templates_path, request.path.start_with?("/admin/templates")) %>
+
+    <p class="px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300">Projects</p>
+    <%= link_to "All Projects", admin_projects_path, class: nav_link.call(admin_projects_path, request.path.start_with?(admin_projects_path)) %>
+
+    <p class="px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300">Procurement</p>
+    <%= link_to "Purchase Orders", admin_purchase_orders_path, class: nav_link.call(admin_purchase_orders_path, request.path.start_with?(admin_purchase_orders_path)) %>
+    <%= link_to "Manufacturers", admin_manufacturers_path, class: nav_link.call(admin_manufacturers_path, request.path.start_with?(admin_manufacturers_path)) %>
+    <%= link_to "Products", admin_products_path, class: nav_link.call(admin_products_path, request.path.start_with?(admin_products_path)) %>
+    <%= link_to "Swatches", admin_swatches_path, class: nav_link.call(admin_swatches_path, request.path.start_with?(admin_swatches_path)) %>
+    <%= link_to "Promo Codes", admin_promo_codes_path, class: nav_link.call(admin_promo_codes_path, request.path.start_with?(admin_promo_codes_path)) %>
+
+    <p class="px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300">Website</p>
     <% unread = Message.unread.count %>
     <%= link_to admin_messages_path, class: nav_link.call(admin_messages_path, request.path.start_with?(admin_messages_path)) do %>
       Messages
@@ -24,28 +36,20 @@
         <span class="ml-auto bg-theme-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"><%= unread %></span>
       <% end %>
     <% end %>
-    <%= link_to "Trade Network", admin_trade_partners_path, class: nav_link.call(admin_trade_partners_path, request.path.start_with?(admin_trade_partners_path)) %>
-    <%= link_to "Services", admin_services_path, class: nav_link.call(admin_services_path, request.path.start_with?(admin_services_path)) %>
     <% unread_questionnaires = QuestionnaireSubmission.unread.count %>
     <%= link_to admin_questionnaire_submissions_path, class: nav_link.call(admin_questionnaire_submissions_path, request.path.start_with?(admin_questionnaire_submissions_path)) do %>
-      Questionnaires
+      Inquiries
       <% if unread_questionnaires > 0 %>
         <span class="ml-auto bg-theme-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"><%= unread_questionnaires %></span>
       <% end %>
     <% end %>
-    <%= link_to "Checklist Items", admin_checklist_items_path, class: nav_link.call(admin_checklist_items_path, request.path.start_with?(admin_checklist_items_path)) %>
-
-    <p class="px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300">Inventory</p>
-    <%= link_to "Manufacturers", admin_manufacturers_path, class: nav_link.call(admin_manufacturers_path, request.path.start_with?(admin_manufacturers_path)) %>
-    <%= link_to "Categories", admin_product_categories_path, class: nav_link.call(admin_product_categories_path, request.path.start_with?(admin_product_categories_path)) %>
-    <%= link_to "Products", admin_products_path, class: nav_link.call(admin_products_path, request.path.start_with?(admin_products_path)) %>
-    <%= link_to "Swatches", admin_swatches_path, class: nav_link.call(admin_swatches_path, request.path.start_with?(admin_swatches_path)) %>
-    <%= link_to "Promo Codes", admin_promo_codes_path, class: nav_link.call(admin_promo_codes_path, request.path.start_with?(admin_promo_codes_path)) %>
-    <%= link_to "Templates", admin_quote_templates_path, class: nav_link.call(admin_quote_templates_path, request.path.start_with?("/admin/templates")) %>
-    <%= link_to "Purchase Orders", admin_purchase_orders_path, class: nav_link.call(admin_purchase_orders_path, request.path.start_with?(admin_purchase_orders_path)) %>
+    <%= link_to "Trade Network", admin_trade_partners_path, class: nav_link.call(admin_trade_partners_path, request.path.start_with?(admin_trade_partners_path)) %>
+    <%= link_to "Services", admin_services_path, class: nav_link.call(admin_services_path, request.path.start_with?(admin_services_path)) %>
 
     <p class="px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300">Settings</p>
     <%= link_to "Markup &amp; Margins", margins_admin_settings_path, class: nav_link.call(margins_admin_settings_path, request.path.start_with?("/admin/settings")) %>
+    <%= link_to "Checklist Items", admin_checklist_items_path, class: nav_link.call(admin_checklist_items_path, request.path.start_with?(admin_checklist_items_path)) %>
+    <%= link_to "Categories", admin_product_categories_path, class: nav_link.call(admin_product_categories_path, request.path.start_with?(admin_product_categories_path)) %>
   </nav>
 
   <div class="px-4 py-4 border-t border-white/10">
