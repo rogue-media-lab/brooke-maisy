@@ -112,8 +112,11 @@ Rails.application.routes.draw do
         get :payment, to: "quote_payments#show"
         post :payment, to: "quote_payments#create"
         delete :destroy_payment, to: "quote_payments#destroy"
-        resource :documents, only: [ :show ], controller: "quote_documents"
-        get "documents/:form/download", to: "quote_documents#download", as: :download_documents
+        resource :documents, only: [ :show ], controller: "quote_documents" do
+          get :sign
+          post :create_signature
+          get ":form/download", to: "quote_documents#download", as: :download
+        end
       end
       resources :quote_line_items, only: [ :new, :create, :edit, :update, :destroy ]
     end

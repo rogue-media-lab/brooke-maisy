@@ -25,7 +25,7 @@
           <p class="text-sm font-medium text-theme-500"><%= form[:label] %></p>
           <p class="text-xs text-gray-400 mt-0.5">PDF - Auto-filled from quote data</p>
         </div>
-        <%= link_to "Generate", download_documents_admin_quote_path(@quote, form: key), { target: "_blank", class: "bg-theme-500 hover:bg-theme-400 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors" } %>
+        <%= link_to "Generate", download_admin_documents_path(@quote, form: key), { target: "_blank", class: "bg-theme-500 hover:bg-theme-400 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors" } %>
       </div>
     <% end %>
   </div>
@@ -60,11 +60,13 @@
 <% if @quote.signatures.where(document_type: :agreement, signer: :client).none? %>
   <div class="bg-white rounded-xl border border-theme-100 p-5">
     <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Client Signing</h3>
-    <p class="text-sm text-gray-500 mb-3">Hand the iPad to the client. They draw their signature on screen, type their name, and check "I agree." The signed PDF saves automatically.</p>
-    <p class="text-sm text-gray-400">Signing flow coming in Phase 4 Part 2.</p>
+    <p class="text-sm text-gray-500 mb-3">Hand the iPad to the client. They draw their signature on screen, type their name, and check "I agree." The signature is captured and the quote locks automatically.</p>
+    <%= link_to "Start Client Signing Flow", sign_admin_documents_path(@quote),
+        { class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors" } %>
   </div>
 <% else %>
   <div class="bg-green-50 border border-green-200 rounded-xl p-5">
-    <p class="text-sm text-green-700 font-medium">Client has signed the agreement.</p>
+    <p class="text-sm text-green-700 font-medium">Client has signed the agreement. Quote is locked.</p>
+    <p class="text-xs text-green-600 mt-1">Changes require a Change Order.</p>
   </div>
 <% end %>
