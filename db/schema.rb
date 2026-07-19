@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_19_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_19_210000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -391,6 +391,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_19_200000) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "signatures", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "document_type", default: 0, null: false
+    t.bigint "quote_id", null: false
+    t.bigint "signable_id"
+    t.string "signable_type"
+    t.string "signature_data"
+    t.string "signature_ip"
+    t.datetime "signed_at", null: false
+    t.string "signed_name", null: false
+    t.integer "signer", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["quote_id", "document_type"], name: "index_signatures_on_quote_id_and_document_type"
+    t.index ["quote_id"], name: "index_signatures_on_quote_id"
+    t.index ["signable_type", "signable_id"], name: "index_signatures_on_signable"
+    t.index ["signable_type", "signable_id"], name: "index_signatures_on_signable_type_and_signable_id"
+  end
+
   create_table "solid_cable_messages", force: :cascade do |t|
     t.binary "channel", null: false
     t.bigint "channel_hash", null: false
@@ -627,6 +645,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_19_200000) do
   add_foreign_key "quotes", "projects"
   add_foreign_key "quotes", "promo_codes"
   add_foreign_key "rooms", "projects"
+  add_foreign_key "signatures", "quotes"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

@@ -7,6 +7,7 @@ class Quote < ApplicationRecord
   has_many :purchase_orders, dependent: :nullify
   has_many :photos, dependent: :destroy
   has_many :payments, dependent: :destroy
+  has_many :signatures, dependent: :destroy
 
   validates :status, presence: true
   validates :version_number, presence: true
