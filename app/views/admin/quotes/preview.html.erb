@@ -1,0 +1,145 @@
+<% content_for(:title, "Quote Preview — #{@quote.client&.display_name}") %>
+
+<% content_for(:stepper) do %>
+  <%= render "admin/quotes/stepper", quote: @quote %>
+<% end %>
+
+<%# Toolbar — print button only, hidden on print %>
+<div class="flex items-center justify-between mb-6 no-print">
+  <%= link_to "← Back to quote", admin_quote_path(@quote), class: "text-sm text-theme-500 hover:underline" %>
+  <button onclick="window.print()"
+          class="bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
+    Print / Save PDF
+  </button>
+</div>
+
+<%# Client-facing quote document %>
+<div class="bg-white rounded-xl border border-theme-100 p-8 sm:p-12 max-w-4xl mx-auto" id="quote-document">
+
+  <%# Header — Brooke & Maisy brand + quote meta %>
+  <div class="flex items-start justify-between mb-8 pb-6 border-b border-theme-200">
+    <div>
+      <h1 class="font-serif text-3xl font-semibold text-theme-500">Brooke &amp; Maisy</h1>
+      <p class="text-sm text-gray-400 mt-1">Interior Design &amp; Window Treatments</p>
+      <p class="text-xs text-gray-400 mt-2">(980) 277-0709</p>
+    </div>
+    <div class="text-right">
+      <h2 class="font-serif text-xl font-semibold text-theme-500">Quote #<%= @quote.id %></h2>
+      <p class="text-sm text-gray-500 mt-1"><%= Date.current.strftime("%B %-d, %Y") %></p>
+      <% if @quote.valid_until %>
+        <p class="text-xs text-gray-400 mt-1">Valid until <%= @quote.valid_until.strftime("%B %-d, %Y") %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Client info %>
+  <div class="mb-8">
+    <p class="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Prepared for</p>
+    <p class="font-serif text-lg font-medium text-theme-500"><%= @quote.client&.display_name %></p>
+    <% if @quote.client&.address.present? %>
+      <p class="text-sm text-gray-500"><%= @quote.client.address %></p>
+    <% end %>
+    <% if @quote.project&.title.present? %>
+      <p class="text-sm text-gray-500 mt-1">Project: <%= @quote.project.title %></p>
+    <% end %>
+  </div>
+
+  <%# Line items — retail only, no cost data %>
+  <% if @quote.quote_line_items.any? %>
+    <% calc_by_id = @calculator[:line_items].index_by { |c| c[:id] } %>
+    <table class="w-full mb-8">
+      <thead>
+        <tr class="border-b-2 border-theme-300">
+          <th class="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 py-3">Product</th>
+          <th class="text-center text-[11px] font-semibold uppercase tracking-wider text-gray-400 py-3">Qty</th>
+          <th class="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-400 py-3 hidden sm:table-cell">Dimensions</th>
+          <th class="text-right text-[11px] font-semibold uppercase tracking-wider text-gray-400 py-3">Unit Price</th>
+          <th class="text-right text-[11px] font-semibold uppercase tracking-wider text-gray-400 py-3">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @quote.quote_line_items.ordered.each do |item| %>
+          <% calc = calc_by_id[item.id] || {} %>
+          <tr class="border-b border-theme-100">
+            <td class="py-4">
+              <p class="text-sm font-medium text-theme-500"><%= item.product&.name || item.description || "—" %></p>
+              <% if item.location.present? %>
+                <p class="text-xs text-gray-400 mt-0.5"><%= item.location %></p>
+              <% end %>
+            </td>
+            <td class="text-center text-sm text-gray-600 py-4"><%= item.quantity %></td>
+            <td class="text-sm text-gray-500 py-4 hidden sm:table-cell">
+              <% if item.width && item.height %>
+                <%= item.width %>" × <%= item.height %>"
+              <% else %>
+                —
+              <% end %>
+            </td>
+            <td class="text-right text-sm text-gray-600 py-4"><%= number_to_currency(calc[:adjusted_retail] || 0) %></td>
+            <td class="text-right text-sm font-medium text-theme-500 py-4"><%= number_to_currency(calc[:line_total] || 0) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="text-center py-12 text-gray-400 mb-8">
+      <p>No items on this quote yet.</p>
+    </div>
+  <% end %>
+
+  <%# Totals — deposit + balance, no cost/margin %>
+  <div class="flex justify-end mb-8">
+    <div class="w-full sm:w-72">
+      <dl class="space-y-2">
+        <% if @calculator[:quote_discount].to_f > 0 %>
+          <div class="flex justify-between text-sm">
+            <dt class="text-gray-500">Subtotal</dt>
+            <dd class="text-gray-700"><%= number_to_currency(@calculator[:subtotal]) %></dd>
+          </div>
+          <div class="flex justify-between text-sm">
+            <dt class="text-gray-500">Discount</dt>
+            <dd class="text-red-500">−<%= number_to_currency(@calculator[:quote_discount]) %></dd>
+          </div>
+        <% end %>
+        <div class="flex justify-between text-sm">
+          <dt class="text-gray-500">Subtotal</dt>
+          <dd class="text-gray-700"><%= number_to_currency(@calculator[:adjusted_subtotal]) %></dd>
+        </div>
+        <div class="flex justify-between text-sm">
+          <dt class="text-gray-500">Tax (<%= number_to_percentage((@quote.tax_rate || 0.06) * 100, precision: 0) %>)</dt>
+          <dd class="text-gray-700"><%= number_to_currency(@calculator[:tax_amount]) %></dd>
+        </div>
+        <div class="flex justify-between text-sm font-semibold pt-2 border-t border-theme-200">
+          <dt class="text-theme-500">Grand Total</dt>
+          <dd class="text-theme-500"><%= number_to_currency(@calculator[:grand_total]) %></dd>
+        </div>
+        <div class="flex justify-between text-sm pt-2">
+          <dt class="text-gray-500">
+            Deposit due
+            <% if @quote.deposit_percentage %>
+              (<%= number_to_percentage(@quote.deposit_percentage, precision: 0) %>)
+            <% end %>
+          </dt>
+          <dd class="text-theme-500 font-medium"><%= number_to_currency(@calculator[:deposit_amount]) %></dd>
+        </div>
+        <div class="flex justify-between text-sm">
+          <dt class="text-gray-500">Balance due</dt>
+          <dd class="text-gray-700"><%= number_to_currency(@calculator[:balance_due]) %></dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  <%# Footer — terms + contact %>
+  <div class="pt-6 border-t border-theme-200 text-xs text-gray-400 space-y-2">
+    <% if @quote.notes.present? %>
+      <div class="mb-4">
+        <p class="font-semibold text-gray-500 mb-1">Notes</p>
+        <p class="text-gray-500"><%= @quote.notes %></p>
+      </div>
+    <% end %>
+    <p>This quote is valid for 30 days from the date issued. A <%= @quote.deposit_percentage ? number_to_percentage(@quote.deposit_percentage, precision: 0) : "50%" %> deposit is required to place your order. Final measurements will be confirmed prior to production.</p>
+    <p>Questions? Contact Brooke &amp; Maisy at (980) 277-0709 or reply to your quote email.</p>
+    <p class="pt-2 text-theme-300">Brooke &amp; Maisy Interior Designs · South Carolina</p>
+  </div>
+</div>

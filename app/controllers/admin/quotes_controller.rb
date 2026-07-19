@@ -128,7 +128,7 @@ class Admin::QuotesController < Admin::BaseController
 
   def preview
     @calculator = QuoteCalculator.new(@quote).calculate
-    render layout: "admin"  # client preview in admin layout for now
+    render layout: "quote_workflow"
   end
 
   def save_as_template
