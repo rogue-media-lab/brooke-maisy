@@ -39,4 +39,13 @@ class Quote < ApplicationRecord
   scope :templates, -> { where(is_template: true) }
   scope :live, -> { where(is_template: false) }
   scope :client_visible, -> { where.not(status: [ :draft ]) }
+
+  # Bump the workflow_stage forward to the given stage, but never backward
+  def bump_workflow_stage!(stage)
+    target = self.class.workflow_stages[stage.to_sym]
+    return unless target
+    current = self.class.workflow_stages[workflow_stage.to_sym] || 0
+    return if target <= current
+    update!(workflow_stage: stage)
+  end
 end

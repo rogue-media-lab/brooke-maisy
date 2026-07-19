@@ -4,6 +4,7 @@ class Admin::QuotePaymentsController < Admin::BaseController
   before_action :set_quote
 
   def show
+    @quote.bump_workflow_stage!(:payment)
     @calculator = QuoteCalculator.new(@quote).calculate
     @payments = @quote.payments.ordered
     @total_paid = @payments.sum(&:amount)

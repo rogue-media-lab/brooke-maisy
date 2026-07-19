@@ -4,6 +4,7 @@ class Admin::QuoteMeasurementsController < Admin::BaseController
   before_action :set_quote
 
   def show
+    @quote.bump_workflow_stage!(:measurements)
     @project = @quote.project
     @rooms = @project ? @project.rooms.ordered.includes(:windows, :photos) : []
     @quote_photos = @quote.photos.where(room_id: nil).ordered

@@ -4,6 +4,43 @@
   <%= render "admin/quotes/stepper", quote: @quote %>
 <% end %>
 
+<%# Next step hint %>
+<%
+  next_step = case @quote.workflow_stage.to_sym
+  when :client_info
+    { label: "Add client info and measurements", path: measurements_admin_quote_path(@quote), icon: "measure" }
+  when :measurements
+    { label: "Add products and line items", path: admin_quote_path(@quote), icon: "product" }
+  when :product_choices
+    { label: "Preview the quote and send to client", path: preview_admin_quote_path(@quote), icon: "quote" }
+  when :quote_review
+    { label: "Generate contract and get signature", path: admin_documents_path(@quote), icon: "contract" }
+  when :contract
+    { label: "Record deposit payment", path: payment_admin_quote_path(@quote), icon: "payment" }
+  when :payment, :cancellation
+    { label: "Generate final invoice", path: admin_documents_path(@quote), icon: "invoice" }
+  else
+    nil
+  end
+%>
+<% if next_step && !@quote.ordered? %>
+  <div class="bg-theme-100 border border-theme-200 rounded-xl p-4 mb-6 flex items-center justify-between">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wider text-theme-400">Next Step</p>
+      <p class="text-sm text-theme-500 font-medium mt-1"><%= next_step[:label] %></p>
+    </div>
+    <%= link_to "Go", next_step[:path], { class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors" } %>
+  </div>
+<% elsif @quote.ordered? %>
+  <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 flex items-center justify-between">
+    <div>
+      <p class="text-sm text-green-700 font-medium">Quote is locked (signed contract)</p>
+      <p class="text-xs text-green-600 mt-0.5">Changes require a Change Order.</p>
+    </div>
+    <%= link_to "View documents", admin_documents_path(@quote), { class: "bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors" } %>
+  </div>
+<% end %>
+
 <div data-controller="margin-unlock">
 <div class="flex items-center justify-between mb-8">
   <div>
@@ -172,4 +209,40 @@
     </div>
   <% end %>
 <% end %>
+</div>
+
+<%# Workflow progress cards %>
+<%
+  stages = [
+    { key: :measurements, label: "Measurements", path: measurements_admin_quote_path(@quote),
+      status: @quote.photos.any? ? "complete" : "pending" },
+    { key: :product_choices, label: "Product Choices", path: admin_quote_path(@quote),
+      status: @quote.quote_line_items.any? ? "complete" : "pending" },
+    { key: :quote_review, label: "Quote Review", path: preview_admin_quote_path(@quote),
+      status: "pending" },
+    { key: :contract, label: "Contract & Documents", path: admin_documents_path(@quote),
+      status: @quote.signatures.any? ? "complete" : "pending" },
+    { key: :payment, label: "Payment", path: payment_admin_quote_path(@quote),
+      status: @quote.payments.any? ? "complete" : "pending" }
+  ]
+%>
+<div class="mt-8">
+  <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Workflow Progress</h3>
+  <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+    <% stages.each do |s| %>
+      <%= link_to s[:path], { class: "border rounded-lg p-4 hover:border-theme-300 transition-colors #{s[:status] == 'complete' ? 'border-green-300 bg-green-50' : 'border-theme-100 bg-white'}" } do %>
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-medium <%= s[:status] == 'complete' ? 'text-green-700' : 'text-theme-500' %>"><%= s[:label] %></span>
+          <% if s[:status] == "complete" %>
+            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+          <% else %>
+            <div class="w-4 h-4 rounded-full border-2 border-theme-300"></div>
+          <% end %>
+        </div>
+        <p class="text-[11px] text-gray-400"><%= s[:status] == "complete" ? "Done" : "Not started" %></p>
+      <% end %>
+    <% end %>
+  </div>
 </div>

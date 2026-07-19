@@ -14,6 +14,7 @@ class Admin::QuoteDocumentsController < Admin::BaseController
   }.freeze
 
   def show
+    @quote.bump_workflow_stage!(:contract)
     @signatures = @quote.signatures.ordered
   end
 
