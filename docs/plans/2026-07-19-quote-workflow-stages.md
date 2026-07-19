@@ -219,15 +219,25 @@ Each service takes a Quote (or Project for post-contract forms) and returns a PD
 
 Uses the `signature_pad` JavaScript library (~12KB, no dependencies). Client draws their signature on the iPad screen with a finger or Apple Pencil.
 
-**Flow:**
-1. Amanda generates the contract PDF (blank signature lines)
-2. Client portal shows the contract on screen with a signature canvas below
-3. Client draws signature on the canvas + types print name + checks "I agree"
-4. System captures the canvas as a PNG image
-5. Records audit data: `signed_at` timestamp, `signed_name` (typed), `signature_ip` (request IP)
-6. Prawn re-renders the PDF with the signature PNG placed at the signature line coordinates via `image(x, y, image_data)`
-7. The signed PDF saves as an ActiveStorage attachment on the quote
-8. Amanda signs the same way (designer signature line)
+**Flow — Mode 1 (On-site, primary):**
+1. Amanda generates the contract PDF (blank signature lines) on the admin side
+2. Admin signing page shows the contract with a signature canvas below
+3. Amanda hands the iPad to the client
+4. Client draws signature on the canvas + types print name + checks "I agree"
+5. Amanda clicks "Submit Signature"
+6. System captures the canvas as a PNG image
+7. Records audit data: `signed_at` timestamp, `signed_name` (typed), `signature_ip` (request IP)
+8. Prawn re-renders the PDF with the signature PNG placed at the signature line coordinates
+9. The signed PDF saves as an ActiveStorage attachment on the quote
+10. Email sent to Amanda and client with signed PDF attached (via existing Google Workspace SMTP)
+11. Quote locks — status changes to contracted. Changes require a Change Order.
+12. Amanda signs the same way (designer signature line)
+
+**Flow — Mode 2 (Remote, fallback):**
+If client wasn't present or didn't sign on-site, the contract is available in the client portal (requires Devise login). Same canvas flow, but initiated by the client from their device.
+
+**Flow — Mode 3 (Print/scan, emergency):**
+Amanda downloads the blank PDF, prints it, client signs with pen, Amanda scans and uploads the signed PDF as an ActiveStorage attachment. No drawn signature — the scanned PDF IS the signed document.
 
 **Legal validity:** ESIGN Act (federal) + SC UETA require: (a) attribution — they drew it, (b) intent — "I agree" checkbox, (c) audit trail — timestamp + IP + typed name. All three captured.
 
@@ -431,12 +441,12 @@ Total estimated: ~15-17 hours of focused work.
 
 These aren't blocking the build but worth thinking about:
 
-1. **Email delivery of signed contracts** — the existing QuoteMailer sends quote notifications. Contract signing should trigger an email to both Amanda and the client with the signed PDF attached. Low effort — extend the existing mailer.
+1. **Email delivery of signed contracts** — the existing QuoteMailer sends quote notifications via Google Workspace SMTP (already configured, $0 cost). Contract signing should trigger an email to both Amanda and the client with the signed PDF attached. Low effort — extend the existing mailer.
 
-2. **Client portal auth for signing** — the client needs to be logged in to sign. The existing Devise invite-only portal handles this, but the signing page needs to be scoped properly (Client:: namespace, Pundit policy).
+2. **Client signing flow — no auth interruption on-site.** Amanda is holding the iPad, already logged into admin. She hands the iPad to the client. The signing canvas lives on an admin page — the client draws their signature, types their name, checks "I agree." Amanda clicks submit. The client never logs in. ESIGN Act compliance: attribution = drawn signature + typed name, intent = "I agree" checkbox, audit = timestamp + IP + typed name. If not signed on-site, the contract is available in the client portal (requires login — existing Devise invite flow) as a fallback. A third fallback: Amanda prints the blank PDF, client signs with pen, Amanda scans and uploads the signed PDF as an ActiveStorage attachment.
 
-3. **Contract versioning** — if Amanda changes the quote after the contract is signed, the signed PDF is stale. Need a rule: once signed, the quote is locked (status changes from draft to ordered/contracted). Changes require a Change Order.
+3. **Contract versioning** — once the contract is signed, the quote is locked (status changes to ordered/contracted). Any changes to scope or pricing require a Change Order. The signed PDF is immutable — it's a snapshot of the quote at signing time.
 
-4. **Business info consistency** — the forms reference two different phone numbers: (980) 277-0709 in the agreement, (817) 807-5219 in the cancellation notice. Should confirm which is current before building the PDF templates.
+4. **Business phone number** — confirmed: use (980) 277-0709 on all forms. The (817) 807-5219 in the original cancellation notice PDF is outdated.
 
-5. **Print fallback** — if the iPad signature flow fails (battery dead, screen broken), Amanda needs to print the blank PDF, get a wet signature, and scan it back in. The system should support uploading a signed PDF as a fallback to the drawn signature flow.
+5. **Print/scan fallback** — the system supports uploading a signed PDF as an ActiveStorage attachment when the drawn signature flow isn't available (dead iPad, broken screen, client prefers paper).
