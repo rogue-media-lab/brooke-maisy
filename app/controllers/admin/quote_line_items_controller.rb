@@ -4,6 +4,7 @@ class Admin::QuoteLineItemsController < Admin::BaseController
   def new
     @quote_line_item = @quote.quote_line_items.new
     @products = Product.active.ordered.includes(:manufacturer)
+    @manufacturers = Manufacturer.ordered
     @windows = @quote.project ? @quote.project.rooms.flat_map(&:windows) : []
     @swatches = Swatch.active.ordered.includes(:manufacturer)
   end
@@ -15,6 +16,7 @@ class Admin::QuoteLineItemsController < Admin::BaseController
       redirect_to admin_quote_path(@quote), notice: "Line item added."
     else
       @products = Product.active.ordered.includes(:manufacturer)
+      @manufacturers = Manufacturer.ordered
       @windows = @quote.project ? @quote.project.rooms.flat_map(&:windows) : []
       @swatches = Swatch.active.ordered.includes(:manufacturer)
       render :new, status: :unprocessable_entity
@@ -24,6 +26,7 @@ class Admin::QuoteLineItemsController < Admin::BaseController
   def edit
     @quote_line_item = @quote.quote_line_items.find(params[:id])
     @products = Product.active.ordered.includes(:manufacturer)
+    @manufacturers = Manufacturer.ordered
     @windows = @quote.project ? @quote.project.rooms.flat_map(&:windows) : []
     @swatches = Swatch.active.ordered.includes(:manufacturer)
   end
@@ -50,7 +53,7 @@ class Admin::QuoteLineItemsController < Admin::BaseController
 
   def line_item_params
     params.require(:quote_line_item).permit(
-      :product_id, :window_id, :swatch_id, :description,
+      :product_id, :window_id, :swatch_id, :description, :location, :override_cost,
       :width, :height, :quantity, :unit_cost, :unit_price,
       :discount_type, :discount_value, :discount_reason,
       :status, :notes, :comparison_group
