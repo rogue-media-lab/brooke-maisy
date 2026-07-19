@@ -9,6 +9,8 @@ class Admin::QuotesController < Admin::BaseController
     case params[:sort]
     when "client"
       @quotes = @quotes.joins(:client).order("clients.name ASC")
+    when "oldest"
+      @quotes = @quotes.order(created_at: :asc)
     when "total"
       @quotes = @quotes.recent
     when "status"

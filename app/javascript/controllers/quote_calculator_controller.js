@@ -10,7 +10,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
     "unitCost", "unitPrice", "quantity", "width", "height",
-    "overrideCost", "priceDisplay", "upchargeTotal"
+    "overrideCost", "priceDisplay", "upchargeTotal", "mountInfo"
   ]
   static values = { markup: { type: Number, default: 0.40 } }
 
@@ -71,6 +71,33 @@ export default class extends Controller {
 
     // Render client-facing price display
     this._renderPrice(lineTotal, unitPrice, quantity, override, mountNote, upcharges)
+
+    // Render mount adjustment indicator
+    this._renderMountInfo(width, height, adjWidth, adjHeight, mountNote)
+  }
+
+  _renderMountInfo(width, height, adjWidth, adjHeight, mountNote) {
+    if (!this.hasMountInfoTarget) return
+
+    if (!mountNote || (adjWidth === width && adjHeight === height)) {
+      this.mountInfoTarget.classList.add("hidden")
+      this.mountInfoTarget.innerHTML = ""
+      return
+    }
+
+    this.mountInfoTarget.classList.remove("hidden")
+    this.mountInfoTarget.innerHTML = `
+      <div class="flex items-center gap-2 text-xs text-amber-600 bg-amber-50 rounded-lg px-3 py-2">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>
+          <strong>Window:</strong> ${width}" × ${height}" →
+          <strong>Blind size:</strong> ${adjWidth}" × ${adjHeight}"
+          (${mountNote})
+        </span>
+      </div>
+    `
   }
 
   // --- Rendering ---
@@ -79,11 +106,17 @@ export default class extends Controller {
     if (this.hasPriceDisplayTarget) {
       this.priceDisplayTarget.innerHTML = `<p class="text-sm text-gray-400">Select a product to see pricing.</p>`
     }
+    if (this.hasMountInfoTarget) {
+      this.mountInfoTarget.classList.add("hidden")
+    }
   }
 
   _renderNeedDimensions() {
     if (this.hasPriceDisplayTarget) {
       this.priceDisplayTarget.innerHTML = `<p class="text-sm text-gray-400">Enter dimensions to see price.</p>`
+    }
+    if (this.hasMountInfoTarget) {
+      this.mountInfoTarget.classList.add("hidden")
     }
   }
 

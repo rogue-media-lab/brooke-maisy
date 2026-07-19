@@ -9,6 +9,7 @@
     <div class="flex items-center gap-1 text-xs text-gray-400">
       <span>Sort:</span>
       <%= link_to "Newest", admin_quotes_path(sort: nil), class: params[:sort].blank? ? "font-semibold text-theme-500" : "text-gray-500 hover:text-theme-500" %>
+      <%= link_to "Oldest", admin_quotes_path(sort: "oldest"), class: params[:sort] == "oldest" ? "font-semibold text-theme-500" : "text-gray-500 hover:text-theme-500" %>
       <%= link_to "Client", admin_quotes_path(sort: "client"), class: params[:sort] == "client" ? "font-semibold text-theme-500" : "text-gray-500 hover:text-theme-500" %>
       <%= link_to "Status", admin_quotes_path(sort: "status"), class: params[:sort] == "status" ? "font-semibold text-theme-500" : "text-gray-500 hover:text-theme-500" %>
     </div>
