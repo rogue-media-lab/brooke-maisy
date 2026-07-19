@@ -8,6 +8,8 @@
   <div data-controller="option-configurator swatch-picker"
        data-action="product-search:selected->option-configurator#configure product-search:selected->swatch-picker#loadSwatches product-search:selected->quote-calculator#loadPricing option-configurator:updated->quote-calculator#calculate"
        data-swatch-picker-swatches-url-value="/admin/products"
+       data-option-configurator-saved-options-value="<%= @quote_line_item.selected_options&.to_json || '{}' %>"
+       data-swatch-picker-saved-swatch-id-value="<%= @quote_line_item.swatch_id || '' %>"
        class="space-y-6">
 
     <%# Manufacturer + Product search %>

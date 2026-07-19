@@ -12,6 +12,33 @@ export default class extends Controller {
 
   connect() {
     this._timeout = null
+    this._restoreSavedProduct()
+  }
+
+  // On edit page, if product_id is already set, fetch the product
+  // and fire the selected event to populate option configurator,
+  // swatch picker, and quote calculator.
+  _restoreSavedProduct() {
+    const productId = this.hiddenTarget?.value
+    if (!productId) return
+
+    fetch(`${this.urlValue}?q=`)
+      .then(r => r.json())
+      .then(products => {
+        const product = products.find(p => String(p.id) === String(productId))
+        if (product) {
+          this.inputTarget.value = `${product.name} ${product.manufacturer || ""}`.trim()
+          this.dispatch("selected", {
+            detail: {
+              id: String(product.id),
+              specs: product.specs || {},
+              pricing: product.pricing || {},
+              markup: product.markup || 0.40
+            }
+          })
+        }
+      })
+      .catch(() => {})
   }
 
   search() {

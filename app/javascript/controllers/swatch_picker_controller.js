@@ -6,7 +6,10 @@ import { Controller } from "@hotwired/stimulus"
 // Amanda clicks a swatch; it highlights with a ring and updates the hidden input.
 export default class extends Controller {
   static targets = ["swatch", "hidden", "grid"]
-  static values = { swatchesUrl: { type: String, default: "/admin/products" } }
+  static values = {
+    swatchesUrl: { type: String, default: "/admin/products" },
+    savedSwatchId: { type: String, default: "" }
+  }
 
   loadSwatches(event) {
     const productId = event.detail.id
@@ -46,6 +49,15 @@ export default class extends Controller {
         </button>
       `
     }).join("")
+
+    // Restore saved swatch selection on edit page
+    if (this.savedSwatchIdValue) {
+      const savedSwatch = this.swatchTargets.find(el => el.dataset.swatchId === this.savedSwatchIdValue)
+      if (savedSwatch) {
+        savedSwatch.classList.add("ring-2", "ring-theme-500", "ring-offset-1")
+        this.hiddenTarget.value = this.savedSwatchIdValue
+      }
+    }
   }
 
   select(event) {

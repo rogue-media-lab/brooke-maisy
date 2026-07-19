@@ -6,6 +6,7 @@ import { Controller } from "@hotwired/stimulus"
 // Each field change dispatches an "updated" event for quote_calculator.
 export default class extends Controller {
   static targets = ["container"]
+  static values = { savedOptions: { type: String, default: "{}" } }
 
   configure(event) {
     const { specs } = event.detail
@@ -41,6 +42,7 @@ export default class extends Controller {
     }
 
     this.containerTarget.innerHTML = html
+    this._restoreSavedOptions()
     this.dispatch("updated")
   }
 
@@ -69,5 +71,28 @@ export default class extends Controller {
     const div = document.createElement("div")
     div.textContent = `${str}`
     return div.innerHTML
+  }
+
+  // On edit page, pre-select the saved option values
+  _restoreSavedOptions() {
+    let saved = {}
+    try {
+      saved = JSON.parse(this.savedOptionsValue || "{}")
+    } catch (e) { return }
+    if (!saved || Object.keys(saved).length === 0) return
+
+    this.containerTarget.querySelectorAll("[data-upcharge-select]").forEach(sel => {
+      const key = sel.getAttribute("data-upcharge-select")
+      if (saved[key] != null) {
+        // Try to find a matching option
+        for (const opt of sel.options) {
+          if (opt.value === saved[key]) {
+            opt.selected = true
+            sel.dispatchEvent(new Event("change", { bubbles: true }))
+            break
+          }
+        }
+      }
+    })
   }
 }
