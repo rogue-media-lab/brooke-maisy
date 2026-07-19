@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_19_154256) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_19_173059) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -105,7 +105,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_19_154256) do
     t.string "email"
     t.string "name"
     t.string "phone"
-    t.boolean "read", default: false
+    t.boolean "read", default: false, null: false
     t.string "service"
     t.datetime "updated_at", null: false
   end
@@ -174,7 +174,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_19_154256) do
     t.text "description"
     t.jsonb "documents"
     t.jsonb "images"
-    t.boolean "is_active"
+    t.boolean "is_active", default: true, null: false
     t.integer "lead_time_days"
     t.bigint "manufacturer_id", null: false
     t.string "name"
@@ -322,7 +322,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_19_154256) do
     t.decimal "deposit_amount"
     t.decimal "deposit_percentage"
     t.decimal "grand_total"
-    t.boolean "is_template"
+    t.boolean "is_template", default: false, null: false
     t.text "notes"
     t.bigint "project_id"
     t.bigint "promo_code_id"
@@ -353,7 +353,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_19_154256) do
   end
 
   create_table "services", force: :cascade do |t|
-    t.boolean "active", default: true
+    t.boolean "active", default: true, null: false
     t.text "bullet_points"
     t.datetime "created_at", null: false
     t.text "description"
@@ -511,7 +511,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_19_154256) do
     t.datetime "created_at", null: false
     t.string "hex"
     t.string "image_url"
-    t.boolean "is_active"
+    t.boolean "is_active", default: true, null: false
     t.boolean "is_new"
     t.bigint "manufacturer_id", null: false
     t.string "name"
@@ -520,7 +520,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_19_154256) do
   end
 
   create_table "trade_partners", force: :cascade do |t|
-    t.boolean "active", default: true
+    t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.text "description"
     t.integer "display_order", default: 0
