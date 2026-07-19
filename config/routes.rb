@@ -90,6 +90,7 @@ Rails.application.routes.draw do
     resources :product_categories
     resources :products do
       get :search, on: :collection
+      get :swatches, on: :member
     end
     resources :swatches
     resources :promo_codes

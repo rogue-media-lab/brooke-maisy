@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_18_202734) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_19_154256) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -283,7 +283,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_18_202734) do
     t.decimal "discount_value"
     t.decimal "height"
     t.decimal "line_total"
+    t.string "location"
     t.text "notes"
+    t.decimal "override_cost", precision: 8, scale: 2
     t.integer "position", default: 0, null: false
     t.bigint "product_id"
     t.integer "quantity", default: 1, null: false

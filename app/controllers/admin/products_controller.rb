@@ -6,7 +6,9 @@ class Admin::ProductsController < Admin::BaseController
   end
 
   def search
-    @products = Product.active
+    products = Product.active
+    products = products.by_manufacturer(params[:manufacturer_id]) if params[:manufacturer_id].present?
+    @products = products
       .where("name ILIKE ?", "%#{params[:q]}%")
       .includes(:manufacturer)
       .limit(10)
@@ -15,7 +17,21 @@ class Admin::ProductsController < Admin::BaseController
         id: p.id,
         name: p.name,
         manufacturer: p.manufacturer&.name,
-        specs: p.specs
+        specs: p.specs,
+        pricing: p.pricing,
+        markup: p.manufacturer&.markup_override || p.product_category&.markup_override || 0.40
+      }
+    }
+  end
+
+  def swatches
+    product = Product.find(params[:id])
+    swatches = product.swatches.active.ordered
+    render json: swatches.map { |s|
+      {
+        id: s.id,
+        name: s.name,
+        hex: s.hex
       }
     }
   end
