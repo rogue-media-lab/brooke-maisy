@@ -9,7 +9,7 @@
     { stage: "Sell",    key: :quote_review,    label: "Quote",        path: admin_quote_path(quote) },
     { stage: "Sell",    key: :contract,        label: "Contract",     path: nil },
     { stage: "Sell",    key: :cancellation,    label: "Cancel",       path: nil },
-    { stage: "Sell",    key: :payment,         label: "Payment",       path: nil }
+    { stage: "Sell",    key: :payment,         label: "Payment",       path: payment_admin_quote_path(quote) }
   ]
   current_index = Quote.workflow_stages[quote.workflow_stage.to_sym] || 0
   stages = steps.map { |s| s[:stage] }.uniq

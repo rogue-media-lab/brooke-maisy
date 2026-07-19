@@ -109,6 +109,9 @@ Rails.application.routes.draw do
         post :create_room, to: "quote_measurements#create_room"
         post :create_photo, to: "quote_measurements#create_photo"
         delete :destroy_photo, to: "quote_measurements#destroy_photo"
+        get :payment, to: "quote_payments#show"
+        post :payment, to: "quote_payments#create"
+        delete :destroy_payment, to: "quote_payments#destroy"
       end
       resources :quote_line_items, only: [ :new, :create, :edit, :update, :destroy ]
     end
