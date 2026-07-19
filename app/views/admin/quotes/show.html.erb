@@ -126,9 +126,12 @@
     <div class="bg-white rounded-xl border border-theme-100 p-6">
       <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Deposit</h3>
       <dl class="space-y-2">
-        <div class="flex justify-between text-sm"><dt class="text-gray-500">Deposit Due</dt><dd class="text-theme-500 font-medium"><%= number_to_currency(@calculator[:deposit_amount]) %></dd></div>
+        <div class="flex justify-between text-sm"><dt class="text-gray-500">Subtotal</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:adjusted_subtotal]) %></dd></div>
+        <div class="flex justify-between text-sm"><dt class="text-gray-500">Tax (<%= number_to_percentage(@quote.tax_rate * 100, precision: 0) %>)</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:tax_amount]) %></dd></div>
+        <div class="flex justify-between text-sm pt-2 border-t border-gray-100"><dt class="font-semibold text-gray-700">Grand Total</dt><dd class="font-semibold text-theme-500"><%= number_to_currency(@calculator[:grand_total]) %></dd></div>
+        <div class="flex justify-between text-sm pt-2"><dt class="text-gray-500">Deposit Due <% if @quote.deposit_percentage %>(<%= number_to_percentage(@quote.deposit_percentage, precision: 0) %>)<% end %></dt><dd class="text-theme-500 font-medium"><%= number_to_currency(@calculator[:deposit_amount]) %></dd></div>
         <div class="flex justify-between text-sm"><dt class="text-gray-500">Balance Due</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:balance_due]) %></dd></div>
-        <div class="flex justify-between text-sm pt-2 border-t border-gray-100"><dt class="text-gray-500">Items</dt><dd class="text-gray-700"><%= @quote.quote_line_items.count %></dd></div>
+        <div class="flex justify-between text-sm pt-2 border-t border-gray-100"><dt class="text-gray-500">Total Units</dt><dd class="text-gray-700"><%= @quote.quote_line_items.sum(:quantity) %></dd></div>
       </dl>
     </div>
   </div>
