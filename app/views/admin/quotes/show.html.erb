@@ -1,5 +1,9 @@
 <% content_for(:title, "Quote — #{@quote.project&.title || @quote.client&.display_name}") %>
 
+<% content_for(:stepper) do %>
+  <%= render "admin/quotes/stepper", quote: @quote %>
+<% end %>
+
 <div data-controller="margin-unlock">
 <div class="flex items-center justify-between mb-8">
   <div>

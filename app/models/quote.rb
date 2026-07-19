@@ -19,6 +19,17 @@ class Quote < ApplicationRecord
     ordered: 5
   }
 
+  enum :workflow_stage, {
+    client_info: 0,      # Stage 1: Measure
+    measurements: 1,     # Stage 1: Measure
+    product_choices: 2,  # Stage 2: Product
+    quote_review: 3,     # Stage 3: Sell
+    contract: 4,         # Stage 3: Sell
+    cancellation: 5,     # Stage 3: Sell
+    payment: 6,          # Stage 3: Sell
+    completed: 7
+  }, default: :client_info
+
   scope :recent, -> { order(created_at: :desc) }
   scope :by_project, ->(project_id) { where(project_id: project_id) }
   scope :by_client, ->(client_id) { where(client_id: client_id) }

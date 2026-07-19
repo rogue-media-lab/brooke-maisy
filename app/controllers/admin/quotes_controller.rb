@@ -72,6 +72,7 @@ class Admin::QuotesController < Admin::BaseController
 
   def show
     @calculator = QuoteCalculator.new(@quote).calculate
+    render layout: "quote_workflow"
   end
 
   def new
@@ -101,6 +102,7 @@ class Admin::QuotesController < Admin::BaseController
   def edit
     @clients = Client.alphabetical
     @projects = @quote.client_id.present? ? @quote.client.projects.recent : []
+    render layout: "quote_workflow"
   end
 
   def update
