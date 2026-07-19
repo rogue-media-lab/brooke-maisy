@@ -46,12 +46,16 @@
   <% if @quote.quote_line_items.any? %>
     <%# Group by comparison group %>
     <% groups = @quote.quote_line_items.ordered.group_by(&:comparison_group) %>
+    <%# Zip items with calculator results for consistent pricing %>
+    <% calc_by_id = @calculator[:line_items].index_by { |c| c[:id] } %>
     <div class="grid grid-cols-12 px-5 py-2 bg-gray-50 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
       <div class="col-span-4">Product</div>
-      <div class="col-span-2">Qty</div>
+      <div class="col-span-1">Qty</div>
+      <div class="col-span-2">Dimensions</div>
       <div class="col-span-2 hidden" data-margin-unlock-target="locked">Unit Cost</div>
-      <div class="col-span-2">Unit Price</div>
-      <div class="col-span-2">Line Total</div>
+      <div class="col-span-1">Unit Price</div>
+      <div class="col-span-1">Line Total</div>
+      <div class="col-span-1">Actions</div>
     </div>
     <% groups.each do |group_name, items| %>
       <% if group_name.present? %>
@@ -60,17 +64,31 @@
         </div>
       <% end %>
       <% items.each do |item| %>
+        <% calc = calc_by_id[item.id] || {} %>
         <div class="grid grid-cols-12 px-5 py-3 items-center border-b border-gray-50 last:border-0 hover:bg-theme-50">
           <div class="col-span-4 text-sm font-medium text-theme-500">
             <%= item.product&.name || item.description || "—" %>
             <% if item.comparison_group.present? %>
               <span class="ml-1 text-[10px] text-gray-400">· <%= item.comparison_group %></span>
             <% end %>
+            <% if item.location.present? %>
+              <span class="block text-[10px] text-gray-400"><%= item.location %></span>
+            <% end %>
           </div>
-          <div class="col-span-2 text-sm text-gray-600"><%= item.quantity %></div>
-          <div class="col-span-2 text-sm text-gray-500 hidden" data-margin-unlock-target="locked"><%= number_to_currency(item.unit_cost || 0) %></div>
-          <div class="col-span-2 text-sm text-gray-600"><%= number_to_currency(item.unit_price || 0) %></div>
-          <div class="col-span-2 text-sm text-gray-600 font-medium"><%= number_to_currency(item.line_total || 0) %></div>
+          <div class="col-span-1 text-sm text-gray-600"><%= item.quantity %></div>
+          <div class="col-span-2 text-xs text-gray-500">
+            <% if item.width && item.height %>
+              <%= item.width %>" × <%= item.height %>"
+            <% else %>
+              —
+            <% end %>
+          </div>
+          <div class="col-span-2 text-sm text-gray-500 hidden" data-margin-unlock-target="locked"><%= number_to_currency(calc[:configured_cost] || item.unit_cost || 0) %></div>
+          <div class="col-span-1 text-sm text-gray-600"><%= number_to_currency(calc[:adjusted_retail] || item.unit_price || 0) %></div>
+          <div class="col-span-1 text-sm text-gray-600 font-medium"><%= number_to_currency(calc[:line_total] || 0) %></div>
+          <div class="col-span-1 text-sm">
+            <%= link_to "Edit", edit_admin_quote_quote_line_item_path(@quote, item), class: "text-theme-500 hover:underline" %>
+          </div>
         </div>
       <% end %>
     <% end %>
