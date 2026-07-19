@@ -58,13 +58,13 @@ export default class extends Controller {
         <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">${label}</label>
         <select name="quote_line_item[selected_options][${key}]"
                 class="w-full rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500 text-sm"
-                data-action="change->option-configurator#updateCost">
+                data-action="change->option-configurator#updateCost"
+                data-upcharge-select="${key}">
           ${opts}
         </select>
       </div>
     `
   }
-
   _esc(str) {
     const div = document.createElement("div")
     div.textContent = `${str}`

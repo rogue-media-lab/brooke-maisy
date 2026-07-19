@@ -188,7 +188,7 @@ export default class extends Controller {
 
   _sumUpcharges() {
     let total = 0
-    document.querySelectorAll("[data-option-configurator-target='field']").forEach(sel => {
+    document.querySelectorAll("[data-upcharge-select]").forEach(sel => {
       const opt = sel.selectedOptions[0]
       if (opt && opt.dataset.upcharge) {
         total += parseFloat(opt.dataset.upcharge) || 0
@@ -201,12 +201,10 @@ export default class extends Controller {
 
   _updateSelectedOptions() {
     // Read all option configurator selects and build a selected_options hash
-    document.querySelectorAll("[data-option-configurator-target='field']").forEach(sel => {
-      const name = sel.getAttribute("name") || ""
-      // Extract key from name like "quote_line_item[selected_options][lift_style]"
-      const match = name.match(/\[selected_options\]\[(\w+)\]/)
-      if (match && sel.selectedOptions[0]) {
-        this._selectedOptions[match[1]] = sel.selectedOptions[0].value
+    document.querySelectorAll("[data-upcharge-select]").forEach(sel => {
+      const key = sel.getAttribute("data-upcharge-select")
+      if (key && sel.selectedOptions[0]) {
+        this._selectedOptions[key] = sel.selectedOptions[0].value
       }
     })
   }
