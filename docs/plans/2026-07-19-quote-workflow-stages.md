@@ -183,62 +183,137 @@ The preview should show:
 
 ---
 
-## Phase 4: Contract + Cancellation
+## Phase 4: Contracts, Forms + E-Signature
 
-**Goal:** Generate SC home improvement contract and Notice of Cancellation as PDFs. Client signs via the portal (simple checkbox + typed name as e-signature).
+**Goal:** Generate all 7 legal forms as PDFs with auto-filled data. Client signs on the iPad with a drawn signature — no DocuSign, no SaaS fees.
 
-### SC Legal Requirements
+### The 7 Forms
 
-South Carolina requires:
-1. **Home improvement contract** — scope of work, total price, payment schedule, start/completion dates
-2. **Notice of Cancellation** — a detachable form giving the client 3 business days to cancel. Must include: client name, contractor name, contract date, cancellation deadline date, and a statement of the right to cancel.
+All forms documented in `docs/plans/2026-07-19-form-inventory.md`. Each is recreated in Prawn with the exact legal language from the original PDFs, with blank fields auto-filled from the database.
+
+| Form | Auto-Fill Source | Signature |
+|------|-----------------|-----------|
+| Design & Installation Services Agreement | Client name, date, project location | Client + Designer |
+| Notice of Cancellation (2 copies) | Transaction date, client name, project location, deadline | Client only (if cancelling) |
+| Work Order — CLIENT | Full quote data: products, pricing, deposit schedule | Client + Designer |
+| Work Order — INTERNAL | Measurements, cost tracking, site notes | None (internal) |
+| Change Order | Original pricing, change details, revised pricing | Client + Designer |
+| Completion Sign-Off | Walkthrough checklist, final balance, warranty date | Client + Designer |
+| Invoice | Line items, subtotal, tax, deposits, balance due | None |
 
 ### PDF Generation
 
-Use the `prawn` gem for PDF generation. Two PDF templates:
+Use the `prawn` gem. Each form gets its own service object:
 
-**Contract PDF:**
-- Brooke & Maisy header + business address
-- Client name + address
-- Project scope (from quote line items)
-- Total price (from QuoteCalculator grand total)
-- Deposit amount + balance
-- Payment schedule
-- Signature lines for both parties
+- `app/services/pdf/agreement_pdf.rb` — Design & Installation Services Agreement
+- `app/services/pdf/cancellation_pdf.rb` — Notice of Cancellation (renders 2 copies)
+- `app/services/pdf/work_order_client_pdf.rb` — Client work order
+- `app/services/pdf/work_order_internal_pdf.rb` — Internal work order
+- `app/services/pdf/change_order_pdf.rb` — Change order
+- `app/services/pdf/completion_signoff_pdf.rb` — Completion sign-off
+- `app/services/pdf/invoice_pdf.rb` — Invoice
 
-**Cancellation Notice PDF:**
-- "NOTICE OF CANCELLATION" header
-- Client name, contractor name, contract date
-- Cancellation deadline (3 business days from contract date)
-- "You may cancel this transaction, without any penalty or obligation, within three business days..."
-- Detachable signature line
+Each service takes a Quote (or Project for post-contract forms) and returns a PDF string. The legal text is hardcoded as constants — never paraphrased, copied verbatim from the source PDFs.
 
-### E-Signature
+### E-Signature: Drawn Signature Capture
 
-Simple approach — no DocuSign. The client portal shows the contract, client types their full name in a signature field, checks "I agree," and the system records:
-- `signed_at` timestamp
-- `signed_name` (typed name)
-- `signature_ip` (request IP for audit)
+Uses the `signature_pad` JavaScript library (~12KB, no dependencies). Client draws their signature on the iPad screen with a finger or Apple Pencil.
+
+**Flow:**
+1. Amanda generates the contract PDF (blank signature lines)
+2. Client portal shows the contract on screen with a signature canvas below
+3. Client draws signature on the canvas + types print name + checks "I agree"
+4. System captures the canvas as a PNG image
+5. Records audit data: `signed_at` timestamp, `signed_name` (typed), `signature_ip` (request IP)
+6. Prawn re-renders the PDF with the signature PNG placed at the signature line coordinates via `image(x, y, image_data)`
+7. The signed PDF saves as an ActiveStorage attachment on the quote
+8. Amanda signs the same way (designer signature line)
+
+**Legal validity:** ESIGN Act (federal) + SC UETA require: (a) attribution — they drew it, (b) intent — "I agree" checkbox, (c) audit trail — timestamp + IP + typed name. All three captured.
+
+**Files:**
+- Add: `signature_pad` npm package (or vendor the JS directly)
+- Create: `app/javascript/controllers/signature_pad_controller.js` — wraps the library, captures PNG data
+- Create: `app/javascript/controllers/signature_controller.js` — orchestrates the full signing flow (show form, capture signature, submit to server)
+- Create: `app/views/clients/signatures/new.html.erb` — client-facing signing page
+- Create: `app/controllers/clients/signatures_controller.rb` — receives signature data, re-renders PDF, saves attachment
+
+### Signature Data Model
+
+Migration adds to `quotes`:
+```ruby
+# Client signature
+add_column :quotes, :client_signed_at, :datetime
+add_column :quotes, :client_signed_name, :string
+add_column :quotes, :client_signature_ip, :string
+add_column :quotes, :client_signature_image, :text  # base64 PNG data, or use ActiveStorage
+
+# Designer signature
+add_column :quotes, :designer_signed_at, :datetime
+add_column :quotes, :designer_signed_name, :string
+
+# Contract status
+add_column :quotes, :contract_sent_at, :datetime
+add_column :quotes, :contract_signed_pdf, :string  # ActiveStorage attachment
+```
+
+Or use a separate `Signature` model if the same quote needs multiple form signatures (agreement, change orders, completion sign-off all need signatures at different times):
+
+```ruby
+class Signature < ApplicationRecord
+  belongs_to :quote
+  belongs_to :signable, polymorphic: true  # Quote, ChangeOrder, CompletionSignOff
+
+  has_one_attached :signature_image  # the drawn PNG
+
+  enum :signer, { client: 0, designer: 1 }
+  enum :document_type, {
+    agreement: 0,
+    work_order: 1,
+    change_order: 2,
+    completion_signoff: 3,
+    cancellation: 4
+  }
+
+  validates :signed_at, presence: true
+  validates :signed_name, presence: true
+  validates :signature_ip, presence: true
+end
+```
 
 ### Files
 
 - Add: `prawn` gem to Gemfile
-- Create: `app/services/contract_pdf_generator.rb`
-- Create: `app/services/cancellation_pdf_generator.rb`
-- Create: `app/controllers/admin/quote_contracts_controller.rb`
-- Create: `app/views/admin/quote_contracts/show.html.erb`
-- Create: migration to add contract fields to quotes (`signed_at`, `signed_name`, `contract_sent_at`)
+- Add: `signature_pad` JS library (vendored or npm)
+- Create: 7 PDF service objects (one per form)
+- Create: `app/controllers/admin/quote_documents_controller.rb` — generate/download forms
+- Create: `app/controllers/clients/signatures_controller.rb` — client signing flow
+- Create: `app/controllers/admin/quote_contracts_controller.rb` — send contract, track status
+- Create: `app/views/admin/quote_documents/index.html.erb` — form generation dashboard
+- Create: `app/views/clients/signatures/new.html.erb` — client signing page
+- Create: `app/javascript/controllers/signature_pad_controller.js`
+- Create: `app/javascript/controllers/signature_controller.js`
+- Create: migration for signature fields (Signature model or columns on quotes)
 - Modify: stepper to link contract + cancellation steps
+- Modify: client portal to show signing status
 
 ### Tasks
 
-1. Add prawn gem, create ContractPdfGenerator service
-2. Create CancellationPdfGenerator service
-3. Create QuoteContractsController — generate PDF, download, mark as sent
-4. Create contract view — preview, generate PDF, send to client
-5. Add e-signature to client portal — name field + checkbox + timestamp
-6. Wire stepper contract + cancellation links
-7. Verify PDFs generate correctly with real data
+1. Add prawn gem, create base PDF layout (header, footer, branding)
+2. Create AgreementPdfGenerator — the 6-page master contract (verbatim legal text)
+3. Create CancellationPdfGenerator — two copies of the notice
+4. Create WorkOrderClientPdfGenerator — client-facing scope + pricing
+5. Create WorkOrderInternalPdfGenerator — measurements + cost tracking
+6. Create InvoicePdfGenerator — billing document
+7. Create ChangeOrderPdfGenerator (future — when change order workflow is built)
+8. Create CompletionSignOffPdfGenerator (future — when project completion is built)
+9. Add signature_pad JS library + Stimulus controller
+10. Create Signature model + migration
+11. Create client signing flow — show form, draw signature, submit, re-render PDF with embedded signature
+12. Create admin document dashboard — generate any form, download, send to client
+13. Wire stepper contract + cancellation + payment links
+14. Verify: generate each form with real data from Quote #2 (Bob Ross)
+15. Verify: client signing flow on iPad-width viewport
 
 ---
 
@@ -333,6 +408,9 @@ The existing `admin/quotes/show.html.erb` becomes the "Quote Review" step (proce
 - Square API payment processing — physical terminal + manual log
 - AI reference image generation — photo capture foundation is built, AI layer deferred
 - Drag-and-drop floor plan editor — room layout visual deferred, location field serves as interim
+- Change order workflow — form template built in Phase 4, but the interactive change order creation flow deferred (needs its own model + controller)
+- Completion sign-off workflow — form template built in Phase 4, but the walkthrough checklist UI deferred (needs project phase tracking)
+- DocuSign or paid e-signature SaaS — self-hosted signature_pad covers the legal requirements at $0
 
 ---
 
@@ -342,7 +420,23 @@ The existing `admin/quotes/show.html.erb` becomes the "Quote Review" step (proce
 2. **Phase 3** — Fix Preview button (quick win, ~30 min)
 3. **Phase 2** — Photo capture (measurable value for Amanda, ~3 hours)
 4. **Phase 5** — Payment tracking (simple, ~2 hours)
-5. **Phase 4** — Contract + cancellation (most complex, ~4 hours)
+5. **Phase 4** — All 7 forms + e-signature (most complex, ~6-8 hours)
 6. **Phase 6** — Integration (wires it all together, ~1 hour)
 
-Total estimated: ~12-13 hours of focused work.
+Total estimated: ~15-17 hours of focused work.
+
+---
+
+## Potential Gaps to Consider
+
+These aren't blocking the build but worth thinking about:
+
+1. **Email delivery of signed contracts** — the existing QuoteMailer sends quote notifications. Contract signing should trigger an email to both Amanda and the client with the signed PDF attached. Low effort — extend the existing mailer.
+
+2. **Client portal auth for signing** — the client needs to be logged in to sign. The existing Devise invite-only portal handles this, but the signing page needs to be scoped properly (Client:: namespace, Pundit policy).
+
+3. **Contract versioning** — if Amanda changes the quote after the contract is signed, the signed PDF is stale. Need a rule: once signed, the quote is locked (status changes from draft to ordered/contracted). Changes require a Change Order.
+
+4. **Business info consistency** — the forms reference two different phone numbers: (980) 277-0709 in the agreement, (817) 807-5219 in the cancellation notice. Should confirm which is current before building the PDF templates.
+
+5. **Print fallback** — if the iPad signature flow fails (battery dead, screen broken), Amanda needs to print the blank PDF, get a wet signature, and scan it back in. The system should support uploading a signed PDF as a fallback to the drawn signature flow.
