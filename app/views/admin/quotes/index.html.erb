@@ -24,7 +24,7 @@
         <div class="col-span-2"><span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium <%= q.draft? ? 'bg-gray-100 text-gray-600' : q.sent? ? 'bg-blue-100 text-blue-700' : q.approved? ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' %>"><%= q.status&.titleize %></span></div>
         <div class="col-span-3 text-sm text-theme-500 font-medium"><%= q.client&.display_name || "—" %></div>
         <div class="col-span-2 text-sm text-gray-500"><%= q.project&.title || "—" %></div>
-        <div class="col-span-2 text-sm text-gray-600"><%= number_to_currency(q.grand_total || 0) %></div>
+        <div class="col-span-2 text-sm text-gray-600"><%= number_to_currency(@quote_totals[q.id][:grand_total] || 0) %></div>
         <div class="col-span-2 text-sm text-gray-500"><%= q.created_at.strftime("%b %d") %></div>
         <div class="col-span-1 text-right text-gray-300 text-xs">→</div>
       <% end %>

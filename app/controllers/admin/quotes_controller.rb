@@ -2,9 +2,14 @@ class Admin::QuotesController < Admin::BaseController
   before_action :set_quote, only: [ :show, :edit, :update, :destroy, :send_quote, :preview, :save_as_template, :convert_to_project ]
 
   def index
-    @quotes = Quote.live.includes(:client, :project).recent
+    @quotes = Quote.live.includes(:client, :project, quote_line_items: :product).recent
     @quotes = @quotes.by_project(params[:project_id]) if params[:project_id].present?
     @quotes = @quotes.by_client(params[:client_id]) if params[:client_id].present?
+    # Pre-compute totals for each quote
+    @quote_totals = {}
+    @quotes.each do |q|
+      @quote_totals[q.id] = QuoteCalculator.new(q).calculate
+    end
   end
 
   def templates
