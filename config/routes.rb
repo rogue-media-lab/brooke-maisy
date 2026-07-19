@@ -105,6 +105,10 @@ Rails.application.routes.draw do
         get :preview
         post :save_as_template
         post :convert_to_project
+        get :measurements, to: "quote_measurements#show"
+        post :create_room, to: "quote_measurements#create_room"
+        post :create_photo, to: "quote_measurements#create_photo"
+        delete :destroy_photo, to: "quote_measurements#destroy_photo"
       end
       resources :quote_line_items, only: [ :new, :create, :edit, :update, :destroy ]
     end

@@ -1,6 +1,7 @@
 class Window < ApplicationRecord
   belongs_to :room
   has_one_attached :photo
+  has_many :photos, dependent: :destroy
 
   validates :name, presence: true
   validates :width, presence: true, numericality: { greater_than: 0 }

@@ -3,8 +3,8 @@
    Renders horizontal stepper with completed/current/future states %>
 <%
   steps = [
-    { stage: "Measure", key: :client_info,     label: "Client",      path: admin_quote_path(quote) },
-    { stage: "Measure", key: :measurements,    label: "Measurements", path: nil },
+    { stage: "Measure", key: :client_info,     label: "Client",       path: admin_quote_path(quote) },
+    { stage: "Measure", key: :measurements,    label: "Measurements", path: measurements_admin_quote_path(quote) },
     { stage: "Product", key: :product_choices, label: "Product",      path: admin_quote_path(quote) },
     { stage: "Sell",    key: :quote_review,    label: "Quote",        path: admin_quote_path(quote) },
     { stage: "Sell",    key: :contract,        label: "Contract",     path: nil },

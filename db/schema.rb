@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_19_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_19_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -127,6 +127,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_19_180000) do
     t.integer "position", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["design_presentation_id"], name: "index_mood_boards_on_design_presentation_id"
+  end
+
+  create_table "photos", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "kind", default: 0, null: false
+    t.string "label", null: false
+    t.integer "position", default: 0, null: false
+    t.bigint "quote_id"
+    t.bigint "room_id"
+    t.datetime "updated_at", null: false
+    t.bigint "window_id"
+    t.index ["quote_id"], name: "index_photos_on_quote_id"
+    t.index ["room_id"], name: "index_photos_on_room_id"
+    t.index ["window_id"], name: "index_photos_on_window_id"
   end
 
   create_table "product_categories", force: :cascade do |t|
@@ -572,6 +586,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_19_180000) do
   add_foreign_key "design_presentations", "projects"
   add_foreign_key "mood_board_items", "mood_boards"
   add_foreign_key "mood_boards", "design_presentations"
+  add_foreign_key "photos", "quotes"
+  add_foreign_key "photos", "rooms"
+  add_foreign_key "photos", "windows"
   add_foreign_key "product_categories", "product_categories", column: "parent_id"
   add_foreign_key "product_selections", "design_presentations"
   add_foreign_key "product_swatches", "products"

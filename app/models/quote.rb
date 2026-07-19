@@ -5,6 +5,7 @@ class Quote < ApplicationRecord
   has_many :quote_line_items, dependent: :destroy
   has_many :quote_revisions, dependent: :destroy
   has_many :purchase_orders, dependent: :nullify
+  has_many :photos, dependent: :destroy
 
   validates :status, presence: true
   validates :version_number, presence: true

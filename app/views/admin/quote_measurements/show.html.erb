@@ -1,0 +1,137 @@
+<% content_for(:title, "Measurements — #{@quote.client&.display_name}") %>
+
+<% content_for(:stepper) do %>
+  <%= render "admin/quotes/stepper", quote: @quote %>
+<% end %>
+
+<div class="mb-6">
+  <div class="flex items-center gap-2 mb-1">
+    <%= link_to "Quotes", admin_quotes_path, class: "text-sm text-theme-500 hover:underline" %>
+    <span class="text-gray-300">/</span>
+    <%= link_to "Quote ##{@quote.id}", admin_quote_path(@quote), class: "text-sm text-theme-500 hover:underline" %>
+  </div>
+  <h1 class="font-serif text-2xl font-semibold text-theme-500">Measurements</h1>
+  <p class="text-sm text-gray-400"><%= @quote.client&.display_name %></p>
+</div>
+
+<%# Add room form %>
+<div class="bg-white rounded-xl border border-theme-100 p-5 mb-6">
+  <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Add Room</h2>
+  <%= form_with model: Room.new, url: create_room_admin_quote_path(@quote), local: true, class: "flex gap-3 items-end" do |f| %>
+    <div class="flex-1">
+      <%= f.label :name, class: "block text-xs text-gray-500 mb-1" %>
+      <%= f.text_field :name, placeholder: "e.g. Living Room, Primary Bedroom", class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" %>
+    </div>
+    <%= f.submit "Add Room", class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors" %>
+  <% end %>
+  <% unless @quote.project %>
+    <p class="text-xs text-gray-400 mt-2">A project will be created automatically when you add the first room.</p>
+  <% end %>
+</div>
+
+<%# Room list with photos %>
+<% if @rooms.any? %>
+  <% @rooms.each do |room| %>
+    <div class="bg-white rounded-xl border border-theme-100 overflow-hidden mb-6">
+      <%# Room header %>
+      <div class="flex items-center justify-between px-5 py-3 bg-theme-100">
+        <div>
+          <h3 class="font-serif text-lg font-semibold text-theme-500"><%= room.name %></h3>
+          <% if room.windows.any? %>
+            <p class="text-xs text-gray-400 mt-0.5"><%= pluralize(room.windows.count, "window") %></p>
+          <% end %>
+        </div>
+        <%= link_to "Manage windows", admin_project_rooms_path(@quote.project, anchor: "room-#{room.id}"),
+            class: "text-xs text-theme-500 hover:underline" if @quote.project %>
+      </div>
+
+      <%# Photo grid for this room %>
+      <div class="p-5">
+        <% room_photos = room.photos.ordered.with_attached_image %>
+        <% if room_photos.any? %>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+            <% room_photos.each do |photo| %>
+              <div class="relative group">
+                <% if photo.image.attached? %>
+                  <%= image_tag photo.image.variant(resize_to_fill: [300, 300]), class: "w-full h-32 object-cover rounded-lg border border-theme-100" %>
+                <% end %>
+                <p class="text-xs text-gray-500 mt-1 truncate"><%= photo.label %></p>
+                <%= button_to "Remove",
+                    destroy_photo_admin_quote_path(@quote, photo_id: photo.id),
+                    method: :delete,
+                    form: { class: "absolute top-1 right-1", data: { turbo_confirm: "Remove this photo?" } },
+                    class: "hidden group:block bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-0.5 rounded opacity-80 hover:opacity-100" %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-sm text-gray-400 mb-4">No photos yet for this room.</p>
+        <% end %>
+
+        <%# Upload form for this room %>
+        <%= form_with model: Photo.new, url: create_photo_admin_quote_path(@quote),
+            local: true, html: { class: "flex gap-3 items-end" } do |f| %>
+          <%= f.hidden_field :room_id, value: room.id %>
+          <%= f.hidden_field :kind, value: "measurement" %>
+          <div class="flex-1">
+            <%= f.label :label, "Label", class: "block text-xs text-gray-500 mb-1" %>
+            <%= f.text_field :label, placeholder: "e.g. North window, east wall", class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" %>
+          </div>
+          <div>
+            <%= f.label :image, "Photo", class: "block text-xs text-gray-500 mb-1" %>
+            <%= f.file_field :image, accept: "image/*", capture: "environment", direct_upload: true, class: "text-sm text-gray-500 file:mr-2 file:rounded-lg file:border-0 file:bg-theme-100 file:px-3 file:py-1.5 file:text-theme-500 hover:file:bg-theme-200" %>
+          </div>
+          <%= f.submit "Upload", class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <div class="bg-white rounded-xl border border-theme-100 p-8 mb-6 text-center">
+    <p class="text-gray-400">No rooms yet. Add your first room above to start organizing measurements.</p>
+  </div>
+<% end %>
+
+<%# General quote photos (not tied to a room) %>
+<% if @quote_photos.any? %>
+  <div class="bg-white rounded-xl border border-theme-100 overflow-hidden mb-6">
+    <div class="px-5 py-3 bg-theme-100">
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400">General Photos</h3>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+        <% @quote_photos.each do |photo| %>
+          <div class="relative group">
+            <% if photo.image.attached? %>
+              <%= image_tag photo.image.variant(resize_to_fill: [300, 300]), class: "w-full h-32 object-cover rounded-lg border border-theme-100" %>
+            <% end %>
+            <p class="text-xs text-gray-500 mt-1 truncate"><%= photo.label %></p>
+            <%= button_to "Remove",
+                destroy_photo_admin_quote_path(@quote, photo_id: photo.id),
+                method: :delete,
+                form: { class: "absolute top-1 right-1", data: { turbo_confirm: "Remove this photo?" } },
+                class: "hidden group:block bg-red-500 hover:bg-red-600 text-white text-[10px] px-2 py-0.5 rounded opacity-80 hover:opacity-100" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<%# General photo upload (no room) %>
+<div class="bg-white rounded-xl border border-theme-100 p-5">
+  <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Add General Photo</h2>
+  <%= form_with model: Photo.new, url: create_photo_admin_quote_path(@quote),
+      local: true, html: { class: "flex gap-3 items-end" } do |f| %>
+    <%= f.hidden_field :kind, value: "measurement" %>
+    <div class="flex-1">
+      <%= f.label :label, "Label", class: "block text-xs text-gray-500 mb-1" %>
+      <%= f.text_field :label, placeholder: "e.g. Front of house, hallway", class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" %>
+    </div>
+    <div>
+      <%= f.label :image, "Photo", class: "block text-xs text-gray-500 mb-1" %>
+      <%= f.file_field :image, accept: "image/*", capture: "environment", direct_upload: true, class: "text-sm text-gray-500 file:mr-2 file:rounded-lg file:border-0 file:bg-theme-100 file:px-3 file:py-1.5 file:text-theme-500 hover:file:bg-theme-200" %>
+    </div>
+    <%= f.submit "Upload", class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors" %>
+  <% end %>
+</div>
