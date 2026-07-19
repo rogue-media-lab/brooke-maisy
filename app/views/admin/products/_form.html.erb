@@ -45,6 +45,62 @@
     <%= f.label :notes, class: "block text-sm font-medium text-gray-700 mb-1" %>
     <%= f.text_area :notes, rows: 3, class: "w-full rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500" %>
   </div>
+  <div data-controller="product-pricing" class="space-y-4 pt-4 border-t border-gray-100">
+    <div>
+      <h3 class="text-sm font-semibold text-theme-500">Pricing Reference Points</h3>
+      <p class="mt-1 text-xs text-gray-500">Enter the vendor's price for each standard window size. Leave blank if the vendor doesn't offer that size.</p>
+    </div>
+
+    <div data-product-pricing-target="container" class="space-y-3">
+      <% pricing = @product.pricing || {} %>
+      <% existing_points = (pricing["price_points"] || []).index_by { |p| [ p["width"].to_i, p["height"].to_i ] } %>
+      <% StandardWindowSize::SIZES.each do |size| %>
+        <% point = existing_points[[ size[:width], size[:height] ]] %>
+        <div data-price-point class="grid grid-cols-12 gap-3 items-center">
+          <div class="col-span-3">
+            <label class="block text-xs font-medium text-gray-500 mb-1">Width</label>
+            <div class="flex items-center h-10 px-3 rounded-lg bg-gray-50 text-sm text-gray-700">
+              <%= size[:width] %>″
+              <%= hidden_field_tag "product[pricing][price_points][][width]", size[:width] %>
+            </div>
+          </div>
+          <div class="col-span-3">
+            <label class="block text-xs font-medium text-gray-500 mb-1">Height</label>
+            <div class="flex items-center h-10 px-3 rounded-lg bg-gray-50 text-sm text-gray-700">
+              <%= size[:height] %>″
+              <%= hidden_field_tag "product[pricing][price_points][][height]", size[:height] %>
+            </div>
+          </div>
+          <div class="col-span-4">
+            <label class="block text-xs font-medium text-gray-500 mb-1">Cost</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 text-sm">$</span>
+              <%= text_field_tag "product[pricing][price_points][][cost]", point ? point["cost"] : "", type: :number, step: "0.01", min: 0, placeholder: "0.00", class: "w-full rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500 pl-7" %>
+            </div>
+          </div>
+          <div class="col-span-2 flex justify-end">
+            <button type="button" class="text-xs text-gray-400 hover:text-red-500" data-action="click->product-pricing#removePoint">Remove</button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div>
+      <button type="button" class="text-sm text-theme-500 hover:text-theme-400" data-action="click->product-pricing#addPoint">+ Add custom size</button>
+    </div>
+
+    <div class="grid grid-cols-2 gap-6 pt-4 border-t border-gray-100">
+      <div>
+        <%= label_tag "product[pricing][height_factor]", "Height Factor", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= number_field_tag "product[pricing][height_factor]", pricing["height_factor"].presence || 0.5, step: 0.1, class: "w-full rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500" %>
+        <p class="mt-1 text-xs text-gray-500">Adjusts cost when actual height differs from the reference size.</p>
+      </div>
+      <div>
+        <%= label_tag "product[pricing][last_verified]", "Last Verified", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= date_field_tag "product[pricing][last_verified]", pricing["last_verified"], class: "w-full rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500" %>
+      </div>
+    </div>
+  </div>
   <div class="flex gap-3">
     <%= f.submit class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition-colors cursor-pointer" %>
     <%= link_to "Cancel", @product.persisted? ? admin_product_path(@product) : admin_products_path, class: "text-sm text-gray-500 hover:text-gray-700 py-2.5" %>
