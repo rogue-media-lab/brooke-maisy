@@ -24,17 +24,16 @@ RSpec.describe "Admin access control", type: :request do
     end
   end
 
-  describe "POST /admin/clients (invite flow)" do
-    it "creates a client and sends a set-password email" do
+  describe "POST /admin/clients" do
+    it "creates a client record" do
       sign_in admin
 
       expect {
-        post "/admin/clients", params: { user: { name: "New Person", email: "new@example.com" } }
-      }.to change(User, :count).by(1)
+        post "/admin/clients", params: { client: { name: "New Person", email: "new@example.com", phone: "555-1234" } }
+      }.to change(Client, :count).by(1)
 
-      created = User.find_by(email: "new@example.com")
-      expect(created.role).to eq("client")
-      expect(created.reset_password_sent_at).to be_present
+      created = Client.find_by(email: "new@example.com")
+      expect(created.name).to eq("New Person")
     end
   end
 end
