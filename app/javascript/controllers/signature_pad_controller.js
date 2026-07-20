@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import SignaturePad from "signature_pad"
+import SignaturePad from "signature_pad_wrapper"
 
 export default class extends Controller {
   static targets = [ "canvas", "typedName", "agreeCheckbox", "submitBtn", "clearBtn", "hint" ]
