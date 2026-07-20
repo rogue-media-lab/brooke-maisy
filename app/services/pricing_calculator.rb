@@ -79,7 +79,17 @@ class PricingCalculator
       @method = :override
       return @override_cost.to_f.round(2)
     end
-    return no_pricing if pricing_data.blank? || price_points.empty?
+
+    # No pricing data at all
+    return no_pricing if pricing_data.blank?
+
+    # Flat base_cost fallback — products without size-based price_points
+    if price_points.empty? && pricing_data["base_cost"].present?
+      @method = :single_point
+      return pricing_data["base_cost"].to_f.round(2)
+    end
+
+    return no_pricing if price_points.empty?
     return single_point_cost(height) if price_points.size == 1
 
     interpolate(width, height)

@@ -175,7 +175,13 @@ export default class extends Controller {
 
   _interpolate(width, height) {
     const points = (this._pricingData?.price_points || []).slice().sort((a, b) => a.width - b.width)
-    if (points.length === 0) return 0
+
+    // Flat base_cost fallback — products without size-based price_points
+    if (points.length === 0) {
+      const baseCost = this._pricingData?.base_cost
+      return baseCost ? parseFloat(baseCost) : 0
+    }
+
     if (points.length === 1) {
       return this._applyHeightAdj(points[0].cost, points[0].height, height)
     }
