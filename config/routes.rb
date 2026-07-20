@@ -107,6 +107,8 @@ Rails.application.routes.draw do
         post :convert_to_project
         get :measurements, to: "quote_measurements#show"
         post :create_room, to: "quote_measurements#create_room"
+        post :create_window, to: "quote_measurements#create_window"
+        delete :destroy_window, to: "quote_measurements#destroy_window"
         post :create_photo, to: "quote_measurements#create_photo"
         delete :destroy_photo, to: "quote_measurements#destroy_photo"
         get :payment, to: "quote_payments#show"

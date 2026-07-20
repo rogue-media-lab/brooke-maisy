@@ -17,6 +17,25 @@ class Admin::QuoteMeasurementsController < Admin::BaseController
     redirect_to measurements_admin_quote_path(@quote), notice: "Room \"#{@room.name}\" added."
   end
 
+  def create_window
+    ensure_project!
+    room = @quote.project.rooms.find(params[:window][:room_id])
+    @window = room.windows.new(window_params)
+
+    if @window.save
+      redirect_to measurements_admin_quote_path(@quote), notice: "Window \"#{@window.name}\" added to #{room.name}."
+    else
+      redirect_to measurements_admin_quote_path(@quote), alert: "Window creation failed: #{@window.errors.full_messages.to_sentence}"
+    end
+  end
+
+  def destroy_window
+    room = @quote.project.rooms.find(params[:room_id])
+    window = room.windows.find(params[:window_id])
+    window.destroy!
+    redirect_to measurements_admin_quote_path(@quote), notice: "Window removed."
+  end
+
   def create_photo
     @photo = Photo.new(photo_params)
     @photo.quote = @quote
@@ -54,6 +73,10 @@ class Admin::QuoteMeasurementsController < Admin::BaseController
 
   def room_params
     params.require(:room).permit(:name, :notes, :position)
+  end
+
+  def window_params
+    params.require(:window).permit(:name, :width, :height, :mount_type, :depth, :notes, :photo)
   end
 
   def photo_params
