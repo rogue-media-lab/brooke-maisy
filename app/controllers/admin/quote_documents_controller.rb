@@ -75,7 +75,15 @@ class Admin::QuoteDocumentsController < Admin::BaseController
       return
     end
 
-    generator = form[:class].constantize.new(@quote, signatures: @quote.signatures.to_a)
+    generator_class = case form_key
+    when :agreement then Pdf::AgreementPdf
+    when :cancellation then Pdf::CancellationPdf
+    else
+      redirect_to admin_documents_path(@quote), alert: "Unknown form type."
+      return
+    end
+
+    generator = generator_class.new(@quote, signatures: @quote.signatures.to_a)
     pdf_data = generator.render
 
     send_data pdf_data,

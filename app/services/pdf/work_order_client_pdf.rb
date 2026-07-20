@@ -32,7 +32,7 @@ module Pdf
       pdf.move_down 4
       pdf.text "Project Location: #{project_location}", size: 10
       pdf.move_down 4
-      contact = [@client&.phone, @client&.email].compact.join(" · ")
+      contact = [ @client&.phone, @client&.email ].compact.join(" · ")
       pdf.text "Project Contact Phone / Email: #{contact.presence || '____________________'}", size: 10
       pdf.move_down 4
       pdf.text "Estimated Start Date: __________________             Estimated Completion Date: __________________", size: 10
