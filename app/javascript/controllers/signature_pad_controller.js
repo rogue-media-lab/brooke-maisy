@@ -70,7 +70,7 @@ export default class extends Controller {
     if (signatureField) signatureField.value = signatureData
     if (nameField) nameField.value = this.typedNameTarget.value.trim()
 
-    // Submit the form normally (non-Turbo)
-    form.requestSubmit()
+    // Submit the form directly (bypasses submit event, avoids re-triggering this handler)
+    form.submit()
   }
 }
