@@ -1,0 +1,35 @@
+<% content_for(:title, "Categories - Admin") %>
+
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="font-serif text-3xl font-semibold text-theme-500">Product Categories</h1>
+    <p class="text-gray-500 mt-1"><%= pluralize(@product_categories.size, "top-level category") %></p>
+  </div>
+  <%= link_to "Add category", new_admin_product_category_path,
+        class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors" %>
+</div>
+
+<% if @product_categories.any? %>
+  <div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+    <div class="grid grid-cols-12 px-5 py-3 bg-theme-100 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+      <div class="col-span-3">Name</div>
+      <div class="col-span-3">Slug</div>
+      <div class="col-span-2">Markup Override</div>
+      <div class="col-span-2">Children</div>
+      <div class="col-span-2">Products</div>
+    </div>
+    <% @product_categories.each do |cat| %>
+      <%= link_to admin_product_category_path(cat), class: "grid grid-cols-12 px-5 py-4 items-center border-b border-gray-50 last:border-0 hover:bg-theme-100" do %>
+        <div class="col-span-3 font-medium text-theme-500"><%= cat.name %></div>
+        <div class="col-span-3 text-sm text-gray-500 font-mono"><%= cat.slug %></div>
+        <div class="col-span-2 text-sm text-gray-600"><%= cat.markup_override ? "#{(cat.markup_override * 100).round}%" : "default" %></div>
+        <div class="col-span-2 text-sm text-gray-600"><%= cat.children.count %></div>
+        <div class="col-span-2 text-sm text-gray-600"><%= cat.products.count %></div>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="bg-white rounded-xl border border-theme-100 p-12 text-center text-gray-400">
+    <p>No categories yet. Add one to start organizing your product catalog.</p>
+  </div>
+<% end %>

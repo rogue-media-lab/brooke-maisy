@@ -1,0 +1,92 @@
+<% content_for(:title, "#{@product.name} - Admin") %>
+
+<div class="max-w-4xl mx-auto">
+  <div class="flex items-center justify-between mb-8">
+    <%= link_to admin_products_path, class: "text-sm text-gray-400 hover:text-theme-500 flex items-center gap-1" do %>
+      ← Products
+    <% end %>
+    <div class="flex gap-2">
+      <%= link_to "Edit", edit_admin_product_path(@product), class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors" %>
+      <%= button_to "Delete", admin_product_path(@product), method: :delete,
+            data: { turbo_confirm: "Remove #{@product.name}?" },
+            class: "bg-red-50 hover:bg-red-100 text-red-600 text-sm font-medium px-4 py-2 rounded-lg transition-colors" %>
+    </div>
+  </div>
+
+  <%# Tabs %>
+  <div class="flex border-b border-theme-100 mb-6" data-controller="tabs">
+    <% %w[overview specs media pricing].each_with_index do |tab, i| %>
+      <button class="px-4 py-2 text-sm font-medium border-b-2 transition-colors <%= i == 0 ? 'border-theme-500 text-theme-500' : 'border-transparent text-gray-400 hover:text-gray-600' %>"
+              data-action="click->tabs#select" data-tabs-target="tab" data-tab="<%= tab %>"><%= tab.titlecase %></button>
+    <% end %>
+  </div>
+
+  <%# Overview tab %>
+  <div data-tabs-target="panel" data-tab="overview" class="bg-white rounded-xl border border-theme-100 p-8">
+    <dl class="grid grid-cols-2 gap-6">
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Manufacturer</dt><dd class="text-sm text-gray-600"><%= @product.manufacturer.name %></dd></div>
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Category</dt><dd class="text-sm text-gray-600"><%= @product.product_category.name %></dd></div>
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Unit</dt><dd class="text-sm text-gray-600"><%= @product.unit.presence || "—" %></dd></div>
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Lead Time</dt><dd class="text-sm text-gray-600"><%= @product.lead_time_days ? "#{@product.lead_time_days} days" : "—" %></dd></div>
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Tier</dt><dd class="text-sm text-gray-600"><%= @product.tier&.titleize || "—" %></dd></div>
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Active</dt><dd class="text-sm"><%= @product.is_active ? '✓ Yes' : '✗ No' %></dd></div>
+      <% if @product.product_url.present? %>
+        <div class="col-span-2"><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Product URL</dt><dd class="text-sm text-theme-500"><%= link_to @product.product_url, @product.product_url, target: "_blank", class: "hover:underline truncate block" %></dd></div>
+      <% end %>
+    </dl>
+    <% if @product.description.present? %>
+      <div class="mt-6 pt-6 border-t border-gray-100">
+        <dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Description</dt>
+        <dd class="text-sm text-gray-600 whitespace-pre-wrap"><%= @product.description %></dd>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Specs tab %>
+  <div data-tabs-target="panel" data-tab="specs" class="hidden bg-white rounded-xl border border-theme-100 p-8">
+    <h3 class="font-serif text-lg font-semibold text-theme-500 mb-4">Product Specs</h3>
+    <pre class="bg-gray-50 rounded-lg p-4 text-sm text-gray-700 overflow-x-auto font-mono"><%= JSON.pretty_generate(@product.specs || {}) %></pre>
+  </div>
+
+  <%# Media tab %>
+  <div data-tabs-target="panel" data-tab="media" class="hidden space-y-8">
+    <div class="bg-white rounded-xl border border-theme-100 p-8">
+      <h3 class="font-serif text-lg font-semibold text-theme-500 mb-4">Images</h3>
+      <% if @product.images.present? %>
+        <div class="grid grid-cols-3 gap-4">
+          <% @product.images.each do |img| %>
+            <div class="border border-gray-100 rounded-lg p-2">
+              <p class="text-xs text-gray-400 mb-1"><%= img["kind"] %></p>
+              <p class="text-xs text-gray-500 truncate"><%= img["url"] %></p>
+            </div>
+          <% end %>
+        </div>
+      <% else %><p class="text-sm text-gray-400">No images.</p><% end %>
+    </div>
+    <div class="bg-white rounded-xl border border-theme-100 p-8">
+      <h3 class="font-serif text-lg font-semibold text-theme-500 mb-4">Videos</h3>
+      <% if @product.videos.present? %>
+        <div class="space-y-2"><% @product.videos.each do |v| %><div class="text-sm"><span class="text-gray-400"><%= v["kind"] %>:</span> <span class="text-theme-500"><%= v["title"] %></span> <span class="text-gray-400 font-mono text-xs">(<%= v["video_id"] %>)</span></div><% end %></div>
+      <% else %><p class="text-sm text-gray-400">No videos.</p><% end %>
+    </div>
+    <div class="bg-white rounded-xl border border-theme-100 p-8">
+      <h3 class="font-serif text-lg font-semibold text-theme-500 mb-4">Documents</h3>
+      <% if @product.documents.present? %>
+        <div class="space-y-2"><% @product.documents.each do |d| %><div class="text-sm"><span class="text-gray-400"><%= d["kind"] %>:</span> <span class="text-theme-500"><%= d["title"] %></span></div><% end %></div>
+      <% else %><p class="text-sm text-gray-400">No documents.</p><% end %>
+    </div>
+  </div>
+
+  <%# Pricing tab %>
+  <div data-tabs-target="panel" data-tab="pricing" class="hidden bg-white rounded-xl border border-theme-100 p-8">
+    <h3 class="font-serif text-lg font-semibold text-theme-500 mb-4">Pricing</h3>
+    <pre class="bg-gray-50 rounded-lg p-4 text-sm text-gray-700 overflow-x-auto font-mono"><%= JSON.pretty_generate(@product.pricing || {}) %></pre>
+  </div>
+
+  <% if @product.notes.present? %>
+    <div class="mt-6 bg-white rounded-xl border border-theme-100 p-8">
+      <dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Notes</dt>
+      <dd class="text-sm text-gray-600 whitespace-pre-wrap"><%= @product.notes %></dd>
+    </div>
+  <% end %>
+</div>

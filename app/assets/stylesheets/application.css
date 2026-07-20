@@ -18,3 +18,34 @@
 .animate-slide-up {
   animation: slideUp 0.3s ease-out;
 }
+
+/* Print styles — hide admin chrome when printing quote preview */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  /* Hide workflow header, stepper, slide-out nav, overlay */
+  header,
+  aside,
+  [data-workflow-nav-target="overlay"] {
+    display: none !important;
+  }
+
+  /* Reset body to clean white background for print */
+  body {
+    background: white !important;
+  }
+
+  /* Remove border radius and padding constraints on the document */
+  #quote-document {
+    border: none !important;
+    padding: 0 !important;
+    max-width: none !important;
+  }
+
+  /* Ensure table doesn't break across pages awkwardly */
+  tr {
+    page-break-inside: avoid;
+  }
+}

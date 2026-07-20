@@ -12,7 +12,7 @@
       <%= render "admin/shared/status_badge", status: @project.status %>
     </div>
     <p class="text-gray-500 mt-1">
-      <%= link_to @project.user.display_name, admin_client_path(@project.user), class: "hover:text-theme-500" %>
+      <%= link_to @project.client.display_name, admin_client_path(@project.client), class: "hover:text-theme-500" %>
       <%= " · #{@project.address}" if @project.address.present? %>
     </p>
   </div>
@@ -43,6 +43,64 @@
         </div>
       <% else %>
         <p class="text-sm text-gray-400">No photos yet. Add some when editing the project.</p>
+      <% end %>
+    </div>
+
+    <%# Rooms & Windows %>
+    <div class="bg-white rounded-xl border border-theme-100 p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-serif text-lg font-semibold text-theme-500">Rooms &amp; Windows</h2>
+        <div class="flex gap-2">
+          <%= link_to "Manage", admin_project_rooms_path(@project), class: "text-sm text-theme-500 hover:text-theme-400 font-medium" %>
+        </div>
+      </div>
+      <% if @rooms.any? %>
+        <div class="space-y-2">
+          <% @rooms.each do |room| %>
+            <div class="flex items-center justify-between rounded-lg border border-gray-100 px-4 py-3">
+              <div>
+                <span class="font-medium text-sm text-theme-500"><%= room.name %></span>
+                <span class="text-xs text-gray-400 ml-2"><%= room.windows.count %> window<%= "s" if room.windows.count != 1 %></span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-400">No rooms measured yet. <%= link_to "Add a room", new_admin_project_room_path(@project), class: "text-theme-500 hover:text-theme-400" %>.</p>
+      <% end %>
+    </div>
+
+    <%# Quotes %>
+    <div class="bg-white rounded-xl border border-theme-100 p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-serif text-lg font-semibold text-theme-500">Quotes</h2>
+        <div class="flex gap-2">
+          <%= link_to "New Quote", new_admin_quote_path(project_id: @project.id, client_id: @project.client_id), class: "bg-theme-500 hover:bg-theme-400 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors" %>
+          <%= link_to "View all", admin_quotes_path(project_id: @project.id), class: "text-sm text-theme-500 hover:text-theme-400 font-medium" %>
+        </div>
+      </div>
+      <% if @quotes.any? %>
+        <div class="space-y-2">
+          <% @quotes.each do |quote| %>
+            <%= link_to admin_quote_path(quote),
+                  class: "flex items-center justify-between rounded-lg border border-gray-100 px-4 py-3 hover:border-theme-200 transition-colors" do %>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-medium text-sm text-theme-500">Quote #<%= quote.id %></span>
+                  <span class="text-xs text-gray-400">v<%= quote.version_number %></span>
+                  <%= render "admin/shared/status_badge", status: quote.status %>
+                </div>
+                <p class="text-xs text-gray-400 mt-0.5">
+                  <%= quote.client.display_name %> · <%= quote.quote_line_items.count %> items
+                  <% if quote.grand_total %>· <%= number_to_currency(quote.grand_total) %><% end %>
+                </p>
+              </div>
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-400">No quotes yet. <%= link_to "Create your first quote", new_admin_quote_path(project_id: @project.id, client_id: @project.client_id), class: "text-theme-500 hover:text-theme-400" %>.</p>
       <% end %>
     </div>
 
@@ -130,7 +188,7 @@
       <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Details</h3>
       <dl class="space-y-2 text-sm">
         <div class="flex justify-between"><dt class="text-gray-500">Status</dt><dd class="font-medium text-theme-500"><%= @project.status.titleize %></dd></div>
-        <div class="flex justify-between"><dt class="text-gray-500">Client</dt><dd class="font-medium text-theme-500"><%= @project.user.display_name %></dd></div>
+        <div class="flex justify-between"><dt class="text-gray-500">Client</dt><dd class="font-medium text-theme-500"><%= @project.client.display_name %></dd></div>
         <div class="flex justify-between"><dt class="text-gray-500">Created</dt><dd class="text-gray-600"><%= @project.created_at.strftime("%b %-d, %Y") %></dd></div>
         <div class="flex justify-between"><dt class="text-gray-500">Updates</dt><dd class="text-gray-600"><%= @project.project_updates.count %></dd></div>
         <div class="flex justify-between"><dt class="text-gray-500">Presentations</dt><dd class="text-gray-600"><%= @project.design_presentations.count %></dd></div>

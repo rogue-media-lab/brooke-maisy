@@ -1,0 +1,24 @@
+<% content_for(:title, "New Quote") %>
+<div class="max-w-2xl mx-auto">
+  <div class="mb-6"><%= link_to admin_quotes_path, class: "text-sm text-gray-400 hover:text-theme-500" do %>← Quotes<% end %></div>
+  <h1 class="font-serif text-2xl font-semibold text-theme-500 mb-8">New Quote</h1>
+
+  <% templates = Quote.templates.recent %>
+  <% if templates.any? %>
+    <div class="bg-theme-50 rounded-xl border border-theme-200 p-6 mb-6">
+      <h2 class="text-sm font-semibold text-theme-500 mb-3">Load from template</h2>
+      <div class="flex gap-3 flex-wrap">
+        <% templates.each do |template| %>
+          <%= button_to "#{template.project&.title || template.client&.display_name || 'Template'} (#{template.quote_line_items.count} items)",
+                load_admin_quote_templates_path(template_id: template.id, project_id: params[:project_id]),
+                method: :post,
+                class: "text-xs bg-white hover:bg-theme-100 text-theme-500 border border-theme-200 px-3 py-2 rounded-lg transition-colors",
+                form: { data: { turbo_confirm: "Create a new quote from this template?" } } %>
+        <% end %>
+      </div>
+      <p class="text-xs text-gray-400 mt-3">Or fill in the form below to start fresh.</p>
+    </div>
+  <% end %>
+
+  <div class="bg-white rounded-xl border border-theme-100 p-8"><%= render "form" %></div>
+</div>

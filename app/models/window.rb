@@ -1,0 +1,12 @@
+class Window < ApplicationRecord
+  belongs_to :room
+  has_one_attached :photo
+  has_many :photos, dependent: :destroy
+
+  validates :name, presence: true
+  validates :width, presence: true, numericality: { greater_than: 0 }
+  validates :height, presence: true, numericality: { greater_than: 0 }
+  validates :mount_type, inclusion: { in: %w[inside outside], allow_blank: true }
+
+  scope :ordered, -> { order(:position, :created_at) }
+end

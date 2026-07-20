@@ -1,0 +1,56 @@
+<div class="grid grid-cols-12 px-6 py-4 items-center border-b border-theme-100 last:border-0 hover:bg-theme-50/50 transition-colors <%= 'no-print' unless @quote.sent? || @quote.viewed? %>">
+  <%# Product info — 6 cols %>
+  <div class="col-span-6">
+    <div class="flex items-start gap-3">
+      <div class="flex-1">
+        <p class="text-sm font-medium text-gray-800">
+          <%= item.product&.name || item.description || "Window Treatment" %>
+        </p>
+        <div class="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
+          <% if item.swatch %>
+            <span class="text-xs text-gray-400">Color: <span class="text-gray-600"><%= item.swatch.name %></span></span>
+          <% end %>
+          <% if item.width && item.height %>
+            <span class="text-xs text-gray-400"><%= item.width %>″ × <%= item.height %>″</span>
+          <% end %>
+          <% if item.window %>
+            <span class="text-xs text-gray-400">Window: <span class="text-gray-600"><%= item.window.name %></span></span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Qty — 1 col %>
+  <div class="col-span-1 text-sm text-gray-600 text-center"><%= item.quantity %></div>
+
+  <%# Unit price — 2 cols %>
+  <div class="col-span-2 text-sm text-gray-600 text-right"><%= number_to_currency(item.unit_price || 0) %></div>
+
+  <%# Line total — 2 cols %>
+  <div class="col-span-2 text-sm text-gray-800 text-right font-medium"><%= number_to_currency(calc ? calc[:line_total] : item.line_total || 0) %></div>
+
+  <%# Status / Actions — 1 col %>
+  <div class="col-span-1 text-right">
+    <% if item.status_approved? %>
+      <span class="text-green-600 text-xs font-medium">✓ Approved</span>
+    <% elsif item.status_declined? %>
+      <span class="text-red-500 text-xs font-medium">Declined</span>
+    <% elsif @quote.sent? || @quote.viewed? %>
+      <div class="flex gap-1 justify-end no-print">
+        <%= button_to approve_clients_quote_quote_line_item_path(@quote, item),
+              method: :post,
+              class: "text-green-600 hover:text-green-800 text-xs font-medium bg-transparent border-0 cursor-pointer p-0",
+              title: "Approve this item" do %>
+          ✓
+        <% end %>
+        <%= button_to decline_clients_quote_quote_line_item_path(@quote, item),
+              method: :post,
+              class: "text-red-400 hover:text-red-600 text-xs font-medium bg-transparent border-0 cursor-pointer p-0 ml-1",
+              title: "Decline this item" do %>
+          ✗
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

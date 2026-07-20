@@ -1,0 +1,58 @@
+class Admin::WindowsController < Admin::BaseController
+  before_action :set_room, only: [ :index, :new, :create ]
+  before_action :set_window, only: [ :show, :edit, :update, :destroy ]
+
+  def index
+    @windows = @room.windows.ordered
+  end
+
+  def show
+    @room = @window.room
+  end
+
+  def new
+    @window = @room.windows.new
+  end
+
+  def create
+    @window = @room.windows.new(window_params)
+    if @window.save
+      redirect_to admin_project_room_window_path(@room.project, @room, @window), notice: "Window added."
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def edit
+    @room = @window.room
+  end
+
+  def update
+    @room = @window.room
+    if @window.update(window_params)
+      redirect_to admin_project_room_window_path(@room.project, @room, @window), notice: "Window updated."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    room = @window.room
+    @window.destroy
+    redirect_to admin_project_room_windows_path(room.project, room), notice: "Window removed."
+  end
+
+  private
+
+  def set_room
+    @room = Room.find(params[:room_id])
+  end
+
+  def set_window
+    @window = Window.find(params[:id])
+  end
+
+  def window_params
+    params.require(:window).permit(:name, :width, :height, :mount_type, :depth, :notes, :position, :photo)
+  end
+end

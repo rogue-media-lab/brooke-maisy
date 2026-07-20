@@ -12,9 +12,38 @@
   </div>
   <div class="flex gap-2">
     <%= link_to "Edit", edit_admin_client_path(@client), class: "text-sm font-medium px-3 py-2 rounded-lg bg-theme-100 border border-theme-100 hover:bg-theme-100" %>
+  </div>
+</div>
+
+<%# Client details %>
+<div class="bg-white rounded-xl border border-theme-100 p-6 mb-6">
+  <h2 class="font-serif text-lg font-semibold text-theme-500 mb-3">Details</h2>
+  <dl class="space-y-2 text-sm">
+    <div class="flex justify-between"><dt class="text-gray-500">Phone</dt><dd class="text-gray-700"><%= @client.phone.presence || "—" %></dd></div>
+    <div class="flex justify-between"><dt class="text-gray-500">Address</dt><dd class="text-gray-700 text-right"><%= @client.address.presence || "—" %></dd></div>
+    <% if @client.notes.present? %>
+      <div class="pt-2 border-t border-theme-100">
+        <dt class="text-gray-500 mb-1">Notes</dt>
+        <dd class="text-gray-700"><%= simple_format(@client.notes) %></dd>
+      </div>
+    <% end %>
+  </dl>
+</div>
+
+<%# Portal Access %>
+<div class="bg-white rounded-xl border border-theme-100 p-6 mb-6">
+  <h2 class="font-serif text-lg font-semibold text-theme-500 mb-3">Portal Access</h2>
+  <% if @client.portal_enabled? %>
+    <p class="text-sm text-gray-700 mb-3">Portal enabled — <span class="font-medium text-theme-500"><%= @client.user.email %></span></p>
     <%= button_to "Resend invite", resend_invite_admin_client_path(@client),
           class: "text-sm font-medium px-3 py-2 rounded-lg bg-theme-100 border border-theme-100 hover:bg-theme-100 cursor-pointer" %>
-  </div>
+  <% elsif @client.email.present? %>
+    <p class="text-sm text-gray-500 mb-3">No portal account yet. Invite the client to set a password and view their projects online.</p>
+    <%= button_to "Enable portal access", invite_admin_client_path(@client),
+          class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2 rounded-lg cursor-pointer transition-colors" %>
+  <% else %>
+    <p class="text-sm text-gray-500">Add an email to enable portal access.</p>
+  <% end %>
 </div>
 
 <div class="flex items-center justify-between mb-4">
@@ -38,6 +67,23 @@
     <p class="px-5 py-8 text-sm text-gray-400 text-center">No projects for this client yet.</p>
   <% end %>
 </div>
+
+<% if @quotes.any? %>
+  <div class="mt-6">
+    <h2 class="font-serif text-xl font-semibold text-theme-500 mb-4">Quotes</h2>
+    <div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+      <% @quotes.each do |quote| %>
+        <%= link_to admin_quote_path(quote), class: "flex items-center justify-between px-5 py-4 border-b border-gray-50 last:border-0 hover:bg-theme-100" do %>
+          <div>
+            <p class="font-medium text-theme-500">Quote #<%= quote.id %></p>
+            <p class="text-xs text-gray-400"><%= quote.project.title %> · v<%= quote.version_number %></p>
+          </div>
+          <%= render "admin/shared/status_badge", status: quote.status %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
 
 <div class="mt-8 pt-6 border-t border-theme-100">
   <%= button_to "Remove client", admin_client_path(@client), method: :delete,

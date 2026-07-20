@@ -1,0 +1,160 @@
+<% content_for(:title, "Payment — #{@quote.client&.display_name}") %>
+
+<% content_for(:stepper) do %>
+  <%= render "admin/quotes/stepper", quote: @quote %>
+<% end %>
+
+<div class="mb-6">
+  <div class="flex items-center gap-2 mb-1">
+    <%= link_to "Quotes", admin_quotes_path, class: "text-sm text-theme-500 hover:underline" %>
+    <span class="text-gray-300">/</span>
+    <%= link_to "Quote ##{@quote.id}", admin_quote_path(@quote), class: "text-sm text-theme-500 hover:underline" %>
+  </div>
+  <h1 class="font-serif text-2xl font-semibold text-theme-500">Payment</h1>
+  <p class="text-sm text-gray-400"><%= @quote.client&.display_name %> · Quote #<%= @quote.id %></p>
+</div>
+
+<%# Status indicator %>
+<%
+  if @calculator[:grand_total] > 0 && @balance_due <= 0
+    status_label = "Paid in full"
+    status_class = "bg-green-100 text-green-700 border-green-200"
+  elsif @total_paid >= @calculator[:deposit_amount] && @calculator[:deposit_amount] > 0
+    status_label = "Deposit collected, balance due"
+    status_class = "bg-amber-100 text-amber-700 border-amber-200"
+  else
+    status_label = "Deposit outstanding"
+    status_class = "bg-red-100 text-red-700 border-red-200"
+  end
+%>
+<div class="inline-block px-3 py-1.5 rounded-lg text-sm font-medium border mb-6 <%= status_class %>">
+  <%= status_label %>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+  <%# Summary card %>
+  <div class="bg-white rounded-xl border border-theme-100 p-6">
+    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Quote Summary</h3>
+    <dl class="space-y-2">
+      <div class="flex justify-between text-sm">
+        <dt class="text-gray-500">Grand Total</dt>
+        <dd class="font-semibold text-theme-500"><%= number_to_currency(@calculator[:grand_total]) %></dd>
+      </div>
+      <div class="flex justify-between text-sm">
+        <dt class="text-gray-500">
+          Deposit Due
+          <% if @quote.deposit_percentage %>
+            (<%= number_to_percentage(@quote.deposit_percentage, precision: 0) %>)
+          <% end %>
+        </dt>
+        <dd class="text-theme-500 font-medium"><%= number_to_currency(@calculator[:deposit_amount]) %></dd>
+      </div>
+      <div class="flex justify-between text-sm pt-2 border-t border-gray-100">
+        <dt class="text-gray-500">Total Paid</dt>
+        <dd class="text-green-600 font-medium"><%= number_to_currency(@total_paid) %></dd>
+      </div>
+      <div class="flex justify-between text-sm">
+        <dt class="text-gray-500">Balance Due</dt>
+        <dd class="<%= @balance_due > 0 ? 'text-red-600' : 'text-green-600' %> font-semibold"><%= number_to_currency(@balance_due) %></dd>
+      </div>
+    </dl>
+  </div>
+
+  <%# Record payment form %>
+  <div class="bg-white rounded-xl border border-theme-100 p-6 lg:col-span-2">
+    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Record Payment</h3>
+    <%= form_with model: @payment, url: payment_admin_quote_path(@quote), local: true, html: { data: { turbo: false } }, class: "space-y-4" do |f| %>
+      <% if @payment.errors.any? %>
+        <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-600">
+          <%= @payment.errors.full_messages.to_sentence %>
+        </div>
+      <% end %>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <%= f.label :amount, class: "block text-xs text-gray-500 mb-1" %>
+          <%= f.number_field :amount, step: "0.01", min: "0.01",
+              placeholder: "0.00",
+              class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" %>
+        </div>
+        <div>
+          <%= f.label :paid_at, "Date", class: "block text-xs text-gray-500 mb-1" %>
+          <%= f.date_field :paid_at,
+              class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" %>
+        </div>
+        <div>
+          <%= f.label :method, class: "block text-xs text-gray-500 mb-1" %>
+          <%= f.select :method,
+              Payment.methods.keys.map { |m| [m.humanize, m] },
+              {},
+              class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" %>
+        </div>
+        <div>
+          <%= f.label :kind, class: "block text-xs text-gray-500 mb-1" %>
+          <%= f.select :kind,
+              Payment.kinds.keys.map { |k| [k.humanize, k] },
+              {},
+              class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" %>
+        </div>
+        <div class="col-span-2">
+          <%= f.label :reference, "Reference (optional)", class: "block text-xs text-gray-500 mb-1" %>
+          <%= f.text_field :reference,
+              placeholder: "Receipt #, check #, transaction ID",
+              class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" %>
+        </div>
+        <div class="col-span-2">
+          <%= f.label :notes, "Notes (optional)", class: "block text-xs text-gray-500 mb-1" %>
+          <%= f.text_area :notes, rows: 2,
+              class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" %>
+        </div>
+      </div>
+      <%= f.submit "Record Payment",
+          class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors" %>
+    <% end %>
+  </div>
+</div>
+
+<%# Payment history %>
+<% if @payments.any? %>
+  <div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+    <div class="px-5 py-3 bg-theme-100">
+      <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Payment History</span>
+    </div>
+    <div class="grid grid-cols-12 px-5 py-2 bg-gray-50 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+      <div class="col-span-2">Date</div>
+      <div class="col-span-2">Amount</div>
+      <div class="col-span-2">Method</div>
+      <div class="col-span-1">Kind</div>
+      <div class="col-span-3">Reference</div>
+      <div class="col-span-2">Actions</div>
+    </div>
+    <% @payments.each do |payment| %>
+      <div class="grid grid-cols-12 px-5 py-3 items-center border-b border-gray-50 last:border-0 hover:bg-theme-50">
+        <div class="col-span-2 text-sm text-gray-600">
+          <%= payment.paid_at&.strftime("%b %-d, %Y") %>
+        </div>
+        <div class="col-span-2 text-sm font-medium text-green-600">
+          <%= number_to_currency(payment.amount) %>
+        </div>
+        <div class="col-span-2 text-sm text-gray-600">
+          <%= payment.method.humanize %>
+        </div>
+        <div class="col-span-1 text-xs text-gray-500">
+          <span class="px-2 py-0.5 rounded-full bg-theme-100 text-theme-500"><%= payment.kind.humanize %></span>
+        </div>
+        <div class="col-span-3 text-sm text-gray-500 truncate">
+          <%= payment.reference.presence || "—" %>
+        </div>
+        <div class="col-span-2">
+          <%= button_to "Remove", destroy_payment_admin_quote_path(@quote, payment_id: payment.id),
+              method: :delete,
+              form: { data: { turbo_confirm: "Remove this payment record?" } },
+              class: "text-xs text-red-500 hover:text-red-700" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="bg-white rounded-xl border border-theme-100 p-8 text-center">
+    <p class="text-gray-400">No payments recorded yet.</p>
+  </div>
+<% end %>

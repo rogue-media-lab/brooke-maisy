@@ -1,0 +1,34 @@
+<% content_for(:title, "#{@room.name} — Windows") %>
+
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <div class="flex items-center gap-2 mb-1"><%= link_to @room.project.title, admin_project_path(@room.project), class: "text-sm text-theme-500 hover:underline" %><span class="text-gray-300">/</span><%= link_to @room.name, admin_project_room_path(@room.project, @room), class: "text-sm text-theme-500 hover:underline" %></div>
+    <p class="text-gray-500 text-sm"><%= pluralize(@windows.size, "window") %></p>
+  </div>
+  <%= link_to "Add window", new_admin_project_room_window_path(@room.project, @room), class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors" %>
+</div>
+
+<% if @windows.any? %>
+  <div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+    <div class="grid grid-cols-12 px-5 py-3 bg-theme-100 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+      <div class="col-span-3">Name</div>
+      <div class="col-span-2">Width</div>
+      <div class="col-span-2">Height</div>
+      <div class="col-span-2">Mount</div>
+      <div class="col-span-2">Depth</div>
+      <div class="col-span-1"></div>
+    </div>
+    <% @windows.each do |w| %>
+      <%= link_to admin_project_room_window_path(@room.project, @room, w), class: "grid grid-cols-12 px-5 py-4 items-center border-b border-gray-50 last:border-0 hover:bg-theme-100" do %>
+        <div class="col-span-3 font-medium text-theme-500"><%= w.name %></div>
+        <div class="col-span-2 text-sm text-gray-600"><%= w.width %>″</div>
+        <div class="col-span-2 text-sm text-gray-600"><%= w.height %>″</div>
+        <div class="col-span-2 text-sm text-gray-500"><%= w.mount_type&.titleize || "—" %></div>
+        <div class="col-span-2 text-sm text-gray-500"><%= w.depth ? "#{w.depth}″" : "—" %></div>
+        <div class="col-span-1 text-right text-gray-300 text-xs">→</div>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="bg-white rounded-xl border border-theme-100 p-12 text-center text-gray-400"><p>No windows yet.</p></div>
+<% end %>

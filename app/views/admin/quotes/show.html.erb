@@ -1,0 +1,261 @@
+<% content_for(:title, "Quote — #{@quote.project&.title || @quote.client&.display_name}") %>
+
+<% content_for(:stepper) do %>
+  <%= render "admin/quotes/stepper", quote: @quote %>
+<% end %>
+
+<%# Next step hint %>
+<%
+  next_step = case @quote.workflow_stage.to_sym
+  when :client_info
+    { label: "Add client info and measurements", path: measurements_admin_quote_path(@quote), icon: "measure" }
+  when :measurements
+    { label: "Add products and line items", path: new_admin_quote_quote_line_item_path(@quote), icon: "product" }
+  when :product_choices
+    { label: "Preview the quote and send to client", path: preview_admin_quote_path(@quote), icon: "quote" }
+  when :quote_review
+    { label: "Generate contract and get signature", path: admin_documents_path(@quote), icon: "contract" }
+  when :contract
+    { label: "Record deposit payment", path: payment_admin_quote_path(@quote), icon: "payment" }
+  when :payment, :cancellation
+    { label: "Generate final invoice", path: admin_documents_path(@quote), icon: "invoice" }
+  else
+    nil
+  end
+%>
+<% if next_step && !@quote.ordered? %>
+  <div class="bg-theme-100 border border-theme-200 rounded-xl p-4 mb-6 flex items-center justify-between">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wider text-theme-400">Next Step</p>
+      <p class="text-sm text-theme-500 font-medium mt-1"><%= next_step[:label] %></p>
+    </div>
+    <%= link_to "Go", next_step[:path], { class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors" } %>
+  </div>
+<% elsif @quote.ordered? %>
+  <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 flex items-center justify-between">
+    <div>
+      <p class="text-sm text-green-700 font-medium">Quote is locked (signed contract)</p>
+      <p class="text-xs text-green-600 mt-0.5">Changes require a Change Order.</p>
+    </div>
+    <%= link_to "View documents", admin_documents_path(@quote), { class: "bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors" } %>
+  </div>
+<% end %>
+
+<div data-controller="margin-unlock">
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <div class="flex items-center gap-2 mb-1">
+      <% if @quote.project %>
+        <%= link_to @quote.project.title, admin_project_path(@quote.project), class: "text-sm text-theme-500 hover:underline" %>
+        <span class="text-gray-300">/</span>
+      <% end %>
+      <%= link_to "Quotes", admin_quotes_path, class: "text-sm text-theme-500 hover:underline" %>
+    </div>
+    <h1 class="font-serif text-2xl font-semibold text-theme-500">Quote #<%= @quote.id %></h1>
+    <p class="text-sm text-gray-400"><%= @quote.client&.display_name %> · v<%= @quote.version_number %></p>
+  </div>
+  <div class="flex gap-2">
+    <%= link_to "Preview", preview_admin_quote_path(@quote), class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors" %>
+    <% if @quote.approved? || @quote.ordered? %>
+      <%= link_to "Create PO", new_admin_purchase_order_path(quote_id: @quote.id), class: "bg-green-600 hover:bg-green-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors" %>
+    <% end %>
+    <% if @quote.draft? %>
+      <%= button_to "Send to client", send_quote_admin_quote_path(@quote), method: :post, class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors" %>
+      <% unless @quote.is_template? %>
+        <%= button_to "Save as template", save_as_template_admin_quote_path(@quote), method: :post, class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors", form: { data: { turbo_confirm: "Save this quote as a reusable template?" } } %>
+      <% end %>
+    <% end %>
+    <% if @quote.project.nil? %>
+      <%= button_to "Convert to project", convert_to_project_admin_quote_path(@quote), method: :post, class: "bg-gray-700 hover:bg-gray-800 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors" %>
+    <% end %>
+  </div>
+</div>
+
+<div data-margin-unlock-target="unlockButton" class="mb-4">
+  <button data-action="click->margin-unlock#prompt"
+    class="bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-medium px-4 py-2 rounded-lg">
+    Reveal Margins
+  </button>
+</div>
+
+<%# Line Items %>
+<div class="bg-white rounded-xl border border-theme-100 overflow-hidden mb-8">
+  <div class="flex items-center justify-between px-5 py-3 bg-theme-100">
+    <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Line Items</span>
+    <% unless @quote.ordered? %>
+      <%= link_to "Add item", new_admin_quote_quote_line_item_path(@quote), class: "bg-theme-500 hover:bg-theme-400 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors" %>
+    <% else %>
+      <span class="text-[11px] text-gray-400">Locked - changes require a Change Order</span>
+    <% end %>
+  </div>
+  <% if @quote.quote_line_items.any? %>
+    <%# Group by comparison group %>
+    <% groups = @quote.quote_line_items.ordered.group_by(&:comparison_group) %>
+    <%# Zip items with calculator results for consistent pricing %>
+    <% calc_by_id = @calculator[:line_items].index_by { |c| c[:id] } %>
+    <div class="grid grid-cols-12 px-5 py-2 bg-gray-50 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+      <div class="col-span-4">Product</div>
+      <div class="col-span-1">Qty</div>
+      <div class="col-span-2">Dimensions</div>
+      <div class="col-span-2 hidden" data-margin-unlock-target="locked">Unit Cost</div>
+      <div class="col-span-1">Unit Price</div>
+      <div class="col-span-1">Line Total</div>
+      <div class="col-span-1">Actions</div>
+    </div>
+    <% groups.each do |group_name, items| %>
+      <% if group_name.present? %>
+        <div class="grid grid-cols-12 px-5 py-2 bg-theme-50 border-b border-theme-100">
+          <span class="col-span-12 text-[10px] font-semibold uppercase tracking-wider text-theme-500"><%= group_name %></span>
+        </div>
+      <% end %>
+      <% items.each do |item| %>
+        <% calc = calc_by_id[item.id] || {} %>
+        <div class="grid grid-cols-12 px-5 py-3 items-center border-b border-gray-50 last:border-0 hover:bg-theme-50">
+          <div class="col-span-4 text-sm font-medium text-theme-500">
+            <%= item.product&.name || item.description || "—" %>
+            <% if item.comparison_group.present? %>
+              <span class="ml-1 text-[10px] text-gray-400">· <%= item.comparison_group %></span>
+            <% end %>
+            <% if item.location.present? %>
+              <span class="block text-[10px] text-gray-400"><%= item.location %></span>
+            <% end %>
+          </div>
+          <div class="col-span-1 text-sm text-gray-600"><%= item.quantity %></div>
+          <div class="col-span-2 text-xs text-gray-500">
+            <% if item.width && item.height %>
+              <%= item.width %>" × <%= item.height %>"
+            <% else %>
+              —
+            <% end %>
+          </div>
+          <div class="col-span-2 text-sm text-gray-500 hidden" data-margin-unlock-target="locked"><%= number_to_currency(calc[:configured_cost] || item.unit_cost || 0) %></div>
+          <div class="col-span-1 text-sm text-gray-600"><%= number_to_currency(calc[:adjusted_retail] || item.unit_price || 0) %></div>
+          <div class="col-span-1 text-sm text-gray-600 font-medium"><%= number_to_currency(calc[:line_total] || 0) %></div>
+          <div class="col-span-1 text-sm">
+            <% unless @quote.ordered? %>
+              <%= link_to "Edit", edit_admin_quote_quote_line_item_path(@quote, item), class: "text-theme-500 hover:underline" %>
+            <% else %>
+              <span class="text-gray-300 text-xs">Locked</span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  <% else %>
+    <div class="p-8 text-center">
+      <p class="text-gray-400 mb-4">No products added yet.</p>
+      <% unless @quote.ordered? %>
+        <%= link_to "Add first product", new_admin_quote_quote_line_item_path(@quote), class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<%# Totals card %>
+<% if @calculator %>
+  <div class="grid grid-cols-3 gap-6">
+    <div data-margin-unlock-target="locked" class="hidden">
+      <div class="bg-white rounded-xl border border-theme-100 p-6">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Cost &amp; Revenue</h3>
+        <dl class="space-y-2">
+          <div class="flex justify-between text-sm"><dt class="text-gray-500">Total Cost</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:total_cost]) %></dd></div>
+          <div class="flex justify-between text-sm"><dt class="text-gray-500">Subtotal</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:subtotal]) %></dd></div>
+          <div class="flex justify-between text-sm"><dt class="text-gray-500">Quote Discount</dt><dd class="text-red-500">−<%= number_to_currency(@calculator[:quote_discount]) %></dd></div>
+          <div class="flex justify-between text-sm"><dt class="text-gray-500">Adjusted Subtotal</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:adjusted_subtotal]) %></dd></div>
+          <div class="flex justify-between text-sm"><dt class="text-gray-500">Tax</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:tax_amount]) %></dd></div>
+          <div class="flex justify-between text-sm pt-2 border-t border-gray-100"><dt class="font-semibold text-gray-700">Grand Total</dt><dd class="font-semibold text-theme-500"><%= number_to_currency(@calculator[:grand_total]) %></dd></div>
+        </dl>
+      </div>
+    </div>
+    <div data-margin-unlock-target="locked" class="hidden">
+      <div class="bg-white rounded-xl border border-theme-100 p-6">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Profit</h3>
+        <dl class="space-y-2">
+          <div class="flex justify-between text-sm"><dt class="text-gray-500">Gross Profit</dt><dd class="text-green-600 font-medium"><%= number_to_currency(@calculator[:gross_profit]) %></dd></div>
+          <div class="flex justify-between text-sm"><dt class="text-gray-500">Profit Margin</dt><dd class="text-green-600 font-medium"><%= @calculator[:profit_margin_pct] %>%</dd></div>
+          <div class="flex justify-between text-sm pt-2 border-t border-gray-100"><dt class="text-gray-500">Default Markup</dt><dd class="text-gray-700"><%= number_to_percentage(QuoteCalculator::DEFAULT_MARKUP * 100, precision: 0) %></dd></div>
+        </dl>
+      </div>
+    </div>
+    <div class="bg-white rounded-xl border border-theme-100 p-6">
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Deposit</h3>
+      <dl class="space-y-2">
+        <div class="flex justify-between text-sm"><dt class="text-gray-500">Subtotal</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:adjusted_subtotal]) %></dd></div>
+        <div class="flex justify-between text-sm"><dt class="text-gray-500">Tax (<%= number_to_percentage((@quote.tax_rate || 0.06) * 100, precision: 0) %>)</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:tax_amount]) %></dd></div>
+        <div class="flex justify-between text-sm pt-2 border-t border-gray-100"><dt class="font-semibold text-gray-700">Grand Total</dt><dd class="font-semibold text-theme-500"><%= number_to_currency(@calculator[:grand_total]) %></dd></div>
+        <div class="flex justify-between text-sm pt-2"><dt class="text-gray-500">Deposit Due <% if @quote.deposit_percentage %>(<%= number_to_percentage(@quote.deposit_percentage, precision: 0) %>)<% end %></dt><dd class="text-theme-500 font-medium"><%= number_to_currency(@calculator[:deposit_amount]) %></dd></div>
+        <div class="flex justify-between text-sm"><dt class="text-gray-500">Balance Due</dt><dd class="text-gray-700"><%= number_to_currency(@calculator[:balance_due]) %></dd></div>
+        <div class="flex justify-between text-sm pt-2 border-t border-gray-100"><dt class="text-gray-500">Total Units</dt><dd class="text-gray-700"><%= @quote.quote_line_items.sum(:quantity) %></dd></div>
+      </dl>
+    </div>
+  </div>
+
+  <%# Per-line-item profitability %>
+  <% if @calculator[:line_items].any? %>
+    <div data-margin-unlock-target="locked" class="hidden mt-6 bg-white rounded-xl border border-theme-100 overflow-hidden">
+      <div class="px-5 py-3 bg-theme-100">
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Line Item Profitability</span>
+      </div>
+      <div class="grid grid-cols-7 px-5 py-2 bg-gray-50 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+        <div class="col-span-2">Item</div>
+        <div>Cost</div>
+        <div>Retail</div>
+        <div>Discount</div>
+        <div>Line Total</div>
+        <div>Profit</div>
+      </div>
+      <% @quote.quote_line_items.ordered.zip(@calculator[:line_items]).each do |item, calc| %>
+        <div class="grid grid-cols-7 px-5 py-3 items-center border-b border-gray-50 last:border-0 hover:bg-theme-50 text-sm">
+          <div class="col-span-2 text-theme-500 font-medium"><%= item.product&.name || item.description || "Item" %></div>
+          <div class="text-gray-500"><%= number_to_currency(calc[:configured_cost]) %></div>
+          <div class="text-gray-600"><%= number_to_currency(calc[:suggested_retail]) %></div>
+          <div class="text-gray-500">
+            <% disc = calc[:suggested_retail] - calc[:adjusted_retail] %>
+            <%= disc > 0 ? "−#{number_to_currency(disc)}" : "—" %>
+          </div>
+          <div class="text-gray-700 font-medium"><%= number_to_currency(calc[:line_total]) %></div>
+          <div class="<%= (calc[:line_total] - calc[:configured_cost] * (item.quantity || 1)) >= 0 ? 'text-green-600' : 'text-red-500' %> font-medium">
+            <%= number_to_currency(calc[:line_total] - calc[:configured_cost] * (item.quantity || 1)) %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
+</div>
+
+<%# Workflow progress cards %>
+<%
+  stages = [
+    { key: :measurements, label: "Measurements", path: measurements_admin_quote_path(@quote),
+      status: @quote.photos.any? ? "complete" : "pending" },
+    { key: :product_choices, label: "Product Choices", path: admin_quote_path(@quote),
+      status: @quote.quote_line_items.any? ? "complete" : "pending" },
+    { key: :quote_review, label: "Quote Review", path: preview_admin_quote_path(@quote),
+      status: "pending" },
+    { key: :contract, label: "Contract & Documents", path: admin_documents_path(@quote),
+      status: @quote.signatures.any? ? "complete" : "pending" },
+    { key: :payment, label: "Payment", path: payment_admin_quote_path(@quote),
+      status: @quote.payments.any? ? "complete" : "pending" }
+  ]
+%>
+<div class="mt-8">
+  <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Workflow Progress</h3>
+  <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+    <% stages.each do |s| %>
+      <%= link_to s[:path], { class: "border rounded-lg p-4 hover:border-theme-300 transition-colors #{s[:status] == 'complete' ? 'border-green-300 bg-green-50' : 'border-theme-100 bg-white'}" } do %>
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-medium <%= s[:status] == 'complete' ? 'text-green-700' : 'text-theme-500' %>"><%= s[:label] %></span>
+          <% if s[:status] == "complete" %>
+            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+          <% else %>
+            <div class="w-4 h-4 rounded-full border-2 border-theme-300"></div>
+          <% end %>
+        </div>
+        <p class="text-[11px] text-gray-400"><%= s[:status] == "complete" ? "Done" : "Not started" %></p>
+      <% end %>
+    <% end %>
+  </div>
+</div>

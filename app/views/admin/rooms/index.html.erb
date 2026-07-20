@@ -1,0 +1,29 @@
+<% content_for(:title, "#{@project.title} — Rooms") %>
+
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <div class="flex items-center gap-2 mb-1"><%= link_to @project.title, admin_project_path(@project), class: "text-sm text-theme-500 hover:underline" %><span class="text-gray-300">/</span><span class="text-sm text-gray-500">Rooms</span></div>
+    <p class="text-gray-500 text-sm"><%= pluralize(@rooms.size, "room") %></p>
+  </div>
+  <%= link_to "Add room", new_admin_project_room_path(@project),
+        class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors" %>
+</div>
+
+<% if @rooms.any? %>
+  <div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+    <% @rooms.each do |room| %>
+      <div class="flex items-center justify-between px-5 py-4 border-b border-gray-50 last:border-0 hover:bg-theme-100">
+        <%= link_to admin_project_room_path(@project, room), class: "flex-1" do %>
+          <div class="font-medium text-theme-500"><%= room.name %></div>
+          <div class="text-xs text-gray-400"><%= pluralize(room.windows.count, "window") %></div>
+        <% end %>
+        <%= link_to "Edit", edit_admin_project_room_path(@project, room), class: "text-sm text-gray-400 hover:text-theme-500 mr-2" %>
+        <%= button_to "Delete", admin_project_room_path(@project, room), method: :delete, data: { turbo_confirm: "Remove #{room.name}?" }, class: "text-sm text-red-400 hover:text-red-600" %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="bg-white rounded-xl border border-theme-100 p-12 text-center text-gray-400">
+    <p>No rooms yet. Add rooms to start measuring windows for this project.</p>
+  </div>
+<% end %>

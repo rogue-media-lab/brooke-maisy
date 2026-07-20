@@ -5,7 +5,7 @@
     <h1 class="font-serif text-3xl font-semibold text-theme-500">Clients</h1>
     <p class="text-gray-500 mt-1"><%= pluralize(@clients.size, "client") %></p>
   </div>
-  <%= link_to "Invite client", new_admin_client_path,
+  <%= link_to "New Client", new_admin_client_path,
         class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors" %>
 </div>
 
@@ -26,7 +26,7 @@
   <% else %>
     <div class="px-5 py-12 text-center">
       <p class="text-theme-500 font-medium">No clients yet</p>
-      <p class="text-gray-500 text-sm mt-1">Invite your first client to get started.</p>
+      <p class="text-gray-500 text-sm mt-1">Add your first client to get started.</p>
     </div>
   <% end %>
 </div>

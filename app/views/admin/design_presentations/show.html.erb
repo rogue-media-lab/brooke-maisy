@@ -12,7 +12,7 @@
       <h1 class="font-serif text-3xl font-semibold text-theme-500"><%= @presentation.title %></h1>
       <%= render "admin/shared/status_badge", status: @presentation.status %>
     </div>
-    <p class="text-gray-500 mt-1"><%= @project.title %> · <%= @project.user.display_name %></p>
+    <p class="text-gray-500 mt-1"><%= @project.title %> · <%= @project.client.display_name %></p>
   </div>
   <div class="flex items-center gap-2">
     <% if @presentation.published? %>

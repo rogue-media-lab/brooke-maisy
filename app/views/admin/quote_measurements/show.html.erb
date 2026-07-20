@@ -1,0 +1,264 @@
+<% content_for(:title, "Measurements - #{@quote.client&.display_name}") %>
+
+<% content_for(:stepper) do %>
+  <%= render "admin/quotes/stepper", quote: @quote %>
+<% end %>
+
+<div class="mb-6">
+  <div class="flex items-center gap-2 mb-1">
+    <%= link_to "Quotes", admin_quotes_path, { class: "text-sm text-theme-500 hover:underline" } %>
+    <span class="text-gray-300">/</span>
+    <%= link_to "Quote ##{@quote.id}", admin_quote_path(@quote), { class: "text-sm text-theme-500 hover:underline" } %>
+  </div>
+  <h1 class="font-serif text-2xl font-semibold text-theme-500">Measurements</h1>
+  <p class="text-sm text-gray-400"><%= @quote.client&.display_name %></p>
+</div>
+
+<%# Help text %>
+<div class="bg-theme-100 border border-theme-200 rounded-lg p-3 mb-6">
+  <p class="text-xs text-gray-500">
+    Add rooms, then add windows to each room with dimensions and a photo. When you get to the Product step, you'll pick a window and the dimensions auto-fill.
+  </p>
+</div>
+
+<%# Add room form %>
+<div class="bg-white rounded-xl border border-theme-100 p-5 mb-6">
+  <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Add Room</h2>
+  <%= form_with model: Room.new, url: create_room_admin_quote_path(@quote), local: true, html: { data: { turbo: false } }, class: "flex gap-3 items-end" do |f| %>
+    <div class="flex-1">
+      <%= f.label :name, { class: "block text-xs text-gray-500 mb-1" } %>
+      <%= f.text_field :name, placeholder: "e.g. Living Room, Primary Bedroom, Kitchen", class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" %>
+    </div>
+    <%= f.submit "Add Room", class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors" %>
+  <% end %>
+  <% unless @quote.project %>
+    <p class="text-xs text-gray-400 mt-2">A project will be created automatically when you add the first room.</p>
+  <% end %>
+</div>
+
+<%# Room list with windows %>
+<% if @rooms.any? %>
+  <% @rooms.each do |room| %>
+    <div class="bg-white rounded-xl border border-theme-100 overflow-hidden mb-6">
+      <%# Room header %>
+      <div class="flex items-center justify-between px-5 py-3 bg-theme-100">
+        <div>
+          <h3 class="font-serif text-lg font-semibold text-theme-500"><%= room.name %></h3>
+          <p class="text-xs text-gray-400 mt-0.5"><%= pluralize(room.windows.count, "window") %></p>
+        </div>
+        <%= link_to "Edit room", admin_project_rooms_path(@quote.project, anchor: "room-#{room.id}"),
+            { class: "text-xs text-theme-500 hover:underline" } if @quote.project %>
+      </div>
+
+      <div class="p-5">
+        <%# Existing windows with dimensions + photos %>
+        <% if room.windows.ordered.any? %>
+          <div class="space-y-3 mb-6">
+            <% room.windows.ordered.each do |window| %>
+              <div class="flex gap-4 items-start border border-theme-100 rounded-lg p-3">
+                <%# Window photo %>
+                <div class="flex-shrink-0">
+                  <% if window.photo.attached? %>
+                    <%= image_tag window.photo.variant(resize_to_fill: [120, 120]), class: "w-20 h-20 object-cover rounded-lg border border-theme-100" %>
+                  <% else %>
+                    <div class="w-20 h-20 rounded-lg border-2 border-dashed border-theme-200 flex items-center justify-center">
+                      <span class="text-[10px] text-gray-400">No photo</span>
+                    </div>
+                  <% end %>
+                </div>
+
+                <%# Window details %>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-theme-500"><%= window.name %></p>
+                  <div class="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-xs text-gray-500">
+                    <span>Width: <strong class="text-gray-700"><%= window.width ? "#{window.width}\"" : "—" %></strong></span>
+                    <span>Height: <strong class="text-gray-700"><%= window.height ? "#{window.height}\"" : "—" %></strong></span>
+                    <span>Mount: <strong class="text-gray-700"><%= window.mount_type&.humanize || "—" %></strong></span>
+                    <% if window.depth %>
+                      <span>Depth: <strong class="text-gray-700"><%= window.depth %>"</strong></span>
+                    <% end %>
+                  </div>
+                  <% if window.notes.present? %>
+                    <p class="text-xs text-gray-400 mt-1 truncate"><%= window.notes %></p>
+                  <% end %>
+                </div>
+
+                <%# Edit + Delete %>
+                <div class="flex-shrink-0 flex flex-col items-end gap-2">
+                  <details class="relative">
+                    <summary class="text-theme-500 hover:text-theme-400 text-xs cursor-pointer list-none">
+                      Edit
+                    </summary>
+                    <div class="absolute right-0 top-6 z-10 bg-white border border-theme-200 rounded-lg p-4 shadow-lg w-72">
+                      <%= form_with model: window, url: update_window_admin_quote_path(@quote, room_id: room.id, window_id: window.id),
+                          method: :patch, local: true, html: { data: { turbo: false } }, class: "space-y-2" do |wf| %>
+                        <div>
+                          <wf.label :name, { class: "block text-[10px] text-gray-500" } %>
+                          <wf.text_field :name, class: "w-full rounded border border-theme-200 px-2 py-1 text-xs" %>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                          <div>
+                            <wf.label :width, "Width", { class: "block text-[10px] text-gray-500" } %>
+                            <wf.number_field :width, step: 0.125, class: "w-full rounded border border-theme-200 px-2 py-1 text-xs" %>
+                          </div>
+                          <div>
+                            <wf.label :height, "Height", { class: "block text-[10px] text-gray-500" } %>
+                            <wf.number_field :height, step: 0.125, class: "w-full rounded border border-theme-200 px-2 py-1 text-xs" %>
+                          </div>
+                        </div>
+                        <div>
+                          <wf.label :mount_type, "Mount", { class: "block text-[10px] text-gray-500" } %>
+                          <wf.select :mount_type, [ ["Inside", "inside"], ["Outside", "outside"] ], { include_blank: "Choose" }, { class: "w-full rounded border border-theme-200 px-2 py-1 text-xs" } %>
+                        </div>
+                        <div>
+                          <wf.label :notes, "Notes", { class: "block text-[10px] text-gray-500" } %>
+                          <wf.text_field :notes, class: "w-full rounded border border-theme-200 px-2 py-1 text-xs" %>
+                        </div>
+                        <div class="flex gap-2 pt-1">
+                          <wf.submit "Save", class: "flex-1 bg-theme-500 text-white text-xs font-semibold px-3 py-1.5 rounded" %>
+                          <button type="button" onclick="this.closest('details').removeAttribute('open')" class="text-gray-400 text-xs px-2 py-1.5">Cancel</button>
+                        </div>
+                      <% end %>
+                    </div>
+                  </details>
+                  <%= button_to "Remove",
+                      destroy_window_admin_quote_path(@quote, room_id: room.id, window_id: window.id),
+                      method: :delete,
+                      form: { data: { turbo_confirm: "Remove this window and its photo?" } },
+                      class: "text-red-500 hover:text-red-700 text-[11px]" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-sm text-gray-400 mb-4">No windows added yet. Add your first window below.</p>
+        <% end %>
+
+        <%# Add window form %>
+        <div class="border-t border-theme-100 pt-4">
+          <h4 class="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-3">Add Window</h4>
+          <%= form_with model: Window.new, url: create_window_admin_quote_path(@quote), local: true, html: { data: { turbo: false }, multipart: true, class: "space-y-3" } do |f| %>
+            <%= f.hidden_field :room_id, value: room.id %>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div>
+                <%= f.label :name, { class: "block text-xs text-gray-500 mb-1" } %>
+                <%= f.text_field :name, placeholder: "e.g. North wall", class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" %>
+              </div>
+              <div>
+                <%= f.label :width, "Width (in)", { class: "block text-xs text-gray-500 mb-1" } %>
+                <%= f.number_field :width, step: 0.125, placeholder: "36", class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" %>
+              </div>
+              <div>
+                <%= f.label :height, "Height (in)", { class: "block text-xs text-gray-500 mb-1" } %>
+                <%= f.number_field :height, step: 0.125, placeholder: "48", class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" %>
+              </div>
+              <div>
+                <%= f.label :mount_type, "Mount", { class: "block text-xs text-gray-500 mb-1" } %>
+                <%= f.select :mount_type, [ ["Inside", "inside"], ["Outside", "outside"] ], { include_blank: "Choose" }, { class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" } %>
+              </div>
+            </div>
+            <div class="flex gap-3 items-end">
+              <div>
+                <%= f.label :photo, "Photo", { class: "block text-xs text-gray-500 mb-1" } %>
+                <%= f.file_field :photo, accept: "image/*", capture: "environment", direct_upload: true, class: "text-sm text-gray-500 file:mr-2 file:rounded-lg file:border-0 file:bg-theme-100 file:px-3 file:py-1.5 file:text-theme-500 hover:file:bg-theme-200" %>
+              </div>
+              <div class="flex-1">
+                <%= f.label :notes, "Notes (optional)", { class: "block text-xs text-gray-500 mb-1" } %>
+                <%= f.text_field :notes, placeholder: "e.g. Left of sink, has trim", class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" %>
+              </div>
+              <%= f.submit "Add Window", class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors" %>
+            </div>
+          <% end %>
+        </div>
+
+        <%# Room-level photos (via Photo model) %>
+        <% room_photos = room.photos.ordered.with_attached_image %>
+        <% if room_photos.any? %>
+          <div class="border-t border-theme-100 pt-4 mt-4">
+            <h4 class="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-3">Additional Room Photos</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              <% room_photos.each do |photo| %>
+                <div>
+                  <% if photo.image.attached? %>
+                    <%= image_tag photo.image.variant(resize_to_fill: [300, 300]), class: "w-full h-32 object-cover rounded-lg border border-theme-100" %>
+                  <% end %>
+                  <p class="text-xs text-gray-500 mt-1 truncate"><%= photo.label %></p>
+                  <%= button_to "Remove",
+                      destroy_photo_admin_quote_path(@quote, photo_id: photo.id),
+                      method: :delete,
+                      form: { data: { turbo_confirm: "Remove this photo?" } },
+                      class: "text-red-500 hover:text-red-700 text-[11px] mt-1" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <%# Room photo upload %>
+        <div class="border-t border-theme-100 pt-4 mt-4">
+          <%= form_with model: Photo.new, url: create_photo_admin_quote_path(@quote),
+              local: true, html: { data: { turbo: false }, class: "flex gap-3 items-end" } do |f| %>
+            <%= f.hidden_field :room_id, value: room.id %>
+            <%= f.hidden_field :kind, value: "measurement" %>
+            <div class="flex-1">
+              <%= f.label :label, "Additional room photo", { class: "block text-xs text-gray-500 mb-1" } %>
+              <%= f.text_field :label, placeholder: "e.g. Overall room view", class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" %>
+            </div>
+            <div>
+              <%= f.file_field :image, accept: "image/*", capture: "environment", direct_upload: true, class: "text-sm text-gray-500 file:mr-2 file:rounded-lg file:border-0 file:bg-theme-100 file:px-3 file:py-1.5 file:text-theme-500 hover:file:bg-theme-200" %>
+            </div>
+            <%= f.submit "Upload", class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <div class="bg-white rounded-xl border border-theme-100 p-8 mb-6 text-center">
+    <p class="text-gray-400">No rooms yet. Add your first room above to start measuring.</p>
+  </div>
+<% end %>
+
+<%# General quote photos (not tied to a room) %>
+<% if @quote_photos.any? %>
+  <div class="bg-white rounded-xl border border-theme-100 overflow-hidden mb-6">
+    <div class="px-5 py-3 bg-theme-100">
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400">General Photos (not tied to a room)</h3>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+        <% @quote_photos.each do |photo| %>
+          <div>
+            <% if photo.image.attached? %>
+              <%= image_tag photo.image.variant(resize_to_fill: [300, 300]), class: "w-full h-32 object-cover rounded-lg border border-theme-100" %>
+            <% end %>
+            <p class="text-xs text-gray-500 mt-1 truncate"><%= photo.label %></p>
+            <%= button_to "Remove",
+                destroy_photo_admin_quote_path(@quote, photo_id: photo.id),
+                method: :delete,
+                form: { data: { turbo_confirm: "Remove this photo?" } },
+                class: "text-red-500 hover:text-red-700 text-[11px] mt-1" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<%# General photo upload %>
+<div class="bg-white rounded-xl border border-theme-100 p-5">
+  <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Add General Photo</h2>
+  <p class="text-xs text-gray-400 mb-3">For photos not tied to a specific room (front of house, hallway, etc).</p>
+  <%= form_with model: Photo.new, url: create_photo_admin_quote_path(@quote),
+      local: true, html: { data: { turbo: false }, class: "flex gap-3 items-end" } do |f| %>
+    <%= f.hidden_field :kind, value: "measurement" %>
+    <div class="flex-1">
+      <%= f.label :label, "Label", { class: "block text-xs text-gray-500 mb-1" } %>
+      <%= f.text_field :label, placeholder: "e.g. Front of house, hallway", class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400" %>
+    </div>
+    <div>
+      <%= f.file_field :image, accept: "image/*", capture: "environment", direct_upload: true, class: "text-sm text-gray-500 file:mr-2 file:rounded-lg file:border-0 file:bg-theme-100 file:px-3 file:py-1.5 file:text-theme-500 hover:file:bg-theme-200" %>
+    </div>
+    <%= f.submit "Upload", class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors" %>
+  <% end %>
+</div>

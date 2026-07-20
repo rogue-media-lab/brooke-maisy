@@ -1,13 +1,12 @@
 class User < ApplicationRecord
   # NOTE: :registerable intentionally removed.
   # Clients are invited by an admin (Brooke) — there is no public self-registration.
-  # Other available modules: :confirmable, :lockable, :timeoutable, :trackable, :omniauthable
   devise :database_authenticatable,
          :recoverable, :rememberable, :validatable
 
   enum :role, { client: "client", tech: "tech", admin: "admin" }, default: "client"
 
-  has_many :projects, dependent: :destroy
+  belongs_to :client, optional: true
 
   validates :role, presence: true
 
@@ -16,7 +15,7 @@ class User < ApplicationRecord
 
   # Friendly display name: the name if set, otherwise the email's local part.
   def display_name
-    name.presence || email.split("@").first.titleize
+    name.presence || client&.name || email.split("@").first.titleize
   end
 
   def first_name

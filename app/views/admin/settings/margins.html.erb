@@ -1,0 +1,73 @@
+<% content_for(:title, "Markup Settings") %>
+
+<div class="max-w-3xl mx-auto">
+  <h1 class="font-serif text-2xl font-semibold text-theme-500 mb-2">Markup Settings</h1>
+  <p class="text-sm text-gray-400 mb-8">
+    Set default markup and per-category or per-manufacturer overrides.
+    Resolution: manufacturer override &gt; category override &gt; default.
+    <span class="text-gray-500">Changed markups only affect future quotes.</span>
+  </p>
+
+  <%# Default %>
+  <div class="bg-white rounded-xl border border-theme-100 p-6 mb-6">
+    <h2 class="text-sm font-semibold uppercase tracking-wider text-theme-500 mb-2">Default Markup</h2>
+    <p class="text-sm text-gray-500 mb-4">Applied to all products unless a category or manufacturer override exists.</p>
+    <div class="flex items-center gap-3">
+      <span class="text-2xl font-bold text-theme-500"><%= number_to_percentage(@default_markup * 100, precision: 0) %></span>
+      <span class="text-sm text-gray-400">
+        ($100 cost → $<%= (100 * (1 + @default_markup)).round %> retail = <%= number_to_percentage(100 * (@default_markup / (1 + @default_markup)), precision: 1) %> margin)
+      </span>
+    </div>
+  </div>
+
+  <%# Manufacturer overrides %>
+  <div class="bg-white rounded-xl border border-theme-100 p-6 mb-6">
+    <h2 class="text-sm font-semibold uppercase tracking-wider text-theme-500 mb-4">Manufacturer Overrides</h2>
+    <% if @manufacturers.any? %>
+      <div class="space-y-3">
+        <% @manufacturers.each do |mfr| %>
+          <div class="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+            <span class="text-sm font-medium text-gray-700"><%= mfr.name %></span>
+            <%= form_with model: [:admin, mfr], method: :patch, class: "flex items-center gap-2" do |f| %>
+              <div class="flex items-center gap-2">
+                <%= f.number_field :markup_override, value: mfr.markup_override, step: 0.01, min: 0, max: 2, placeholder: "#{number_to_percentage(@default_markup * 100, precision: 0)} (default)", class: "w-20 text-sm rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500" %>
+                <span class="text-xs text-gray-400">× 100%</span>
+              </div>
+              <%= f.submit "Save", class: "text-xs bg-theme-500 hover:bg-theme-400 text-white px-3 py-1.5 rounded-lg transition-colors cursor-pointer" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-sm text-gray-400 italic">No manufacturers yet. Add them in the Inventory section.</p>
+    <% end %>
+  </div>
+
+  <%# Category overrides %>
+  <div class="bg-white rounded-xl border border-theme-100 p-6">
+    <h2 class="text-sm font-semibold uppercase tracking-wider text-theme-500 mb-4">Category Overrides</h2>
+    <% if @categories.any? %>
+      <div class="space-y-3">
+        <% @categories.each do |cat| %>
+          <div class="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+            <div>
+              <span class="text-sm font-medium text-gray-700"><%= cat.name %></span>
+              <% if cat.children.any? %>
+                <span class="text-xs text-gray-400 ml-2">(<%= cat.children.count %> subcategories)</span>
+              <% end %>
+            </div>
+            <%= form_with model: [:admin, cat], method: :patch, class: "flex items-center gap-2" do |f| %>
+              <div class="flex items-center gap-2">
+                <%= f.number_field :markup_override, value: cat.markup_override, step: 0.01, min: 0, max: 2, placeholder: "#{number_to_percentage(@default_markup * 100, precision: 0)} (default)", class: "w-20 text-sm rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500" %>
+                <span class="text-xs text-gray-400">× 100%</span>
+              </div>
+              <%= f.submit "Save", class: "text-xs bg-theme-500 hover:bg-theme-400 text-white px-3 py-1.5 rounded-lg transition-colors cursor-pointer" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-sm text-gray-400 italic">No categories yet.</p>
+    <% end %>
+  </div>
+</div>

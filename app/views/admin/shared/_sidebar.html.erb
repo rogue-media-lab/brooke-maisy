@@ -3,6 +3,24 @@
     base = "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
     active ? "#{base} bg-theme-400 text-white" : "#{base} text-theme-100 hover:bg-white/10 hover:text-white"
   }
+
+  # Determine which section should be auto-expanded based on current path
+  sales_active = request.path.start_with?(admin_clients_path) ||
+                 request.path.start_with?("/admin/quotes") ||
+                 request.path.start_with?("/admin/templates")
+  projects_active = request.path.start_with?(admin_projects_path)
+  procurement_active = request.path.start_with?(admin_purchase_orders_path) ||
+                       request.path.start_with?(admin_manufacturers_path) ||
+                       request.path.start_with?(admin_products_path) ||
+                       request.path.start_with?(admin_swatches_path) ||
+                       request.path.start_with?(admin_promo_codes_path)
+  website_active = request.path.start_with?(admin_messages_path) ||
+                   request.path.start_with?(admin_questionnaire_submissions_path) ||
+                   request.path.start_with?(admin_trade_partners_path) ||
+                   request.path.start_with?(admin_services_path)
+  settings_active = request.path.start_with?("/admin/settings") ||
+                    request.path.start_with?(admin_checklist_items_path) ||
+                    request.path.start_with?(admin_product_categories_path)
 %>
 <aside class="w-64 bg-theme-500 flex flex-col flex-shrink-0">
   <div class="px-6 py-6 border-b border-white/10">
@@ -10,29 +28,90 @@
     <p class="text-xs uppercase tracking-[0.18em] text-theme-200 mt-0.5">Admin</p>
   </div>
 
-  <nav class="flex-1 px-3 py-4 space-y-1">
-    <p class="px-4 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300">Overview</p>
+  <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
     <%= link_to "Dashboard", admin_root_path, class: nav_link.call(admin_root_path, request.path == admin_root_path) %>
 
-    <p class="px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300">Manage</p>
-    <%= link_to "Projects", admin_projects_path, class: nav_link.call(admin_projects_path, request.path.start_with?(admin_projects_path)) %>
-    <%= link_to "Clients", admin_clients_path, class: nav_link.call(admin_clients_path, request.path.start_with?(admin_clients_path)) %>
-    <% unread = Message.unread.count %>
-    <%= link_to admin_messages_path, class: nav_link.call(admin_messages_path, request.path.start_with?(admin_messages_path)) do %>
-      Messages
-      <% if unread > 0 %>
-        <span class="ml-auto bg-theme-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"><%= unread %></span>
+    <%# Sales — collapsed by default, auto-expands when on a sales page %>
+    <details <%= sales_active ? "open" : "" %> class="group">
+      <summary class="flex items-center px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300 cursor-pointer hover:text-theme-100 transition-colors list-none">
+        <span>Sales</span>
+        <svg class="ml-auto w-3 h-3 text-theme-300 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </summary>
+      <%= link_to "Clients", admin_clients_path, class: nav_link.call(admin_clients_path, request.path.start_with?(admin_clients_path)) %>
+      <%= link_to "Quotes", admin_quotes_path, class: nav_link.call(admin_quotes_path, request.path.start_with?("/admin/quotes")) %>
+      <%= link_to "Templates", admin_quote_templates_path, class: nav_link.call(admin_quote_templates_path, request.path.start_with?("/admin/templates")) %>
+    </details>
+
+    <%# Projects %>
+    <details <%= projects_active ? "open" : "" %> class="group">
+      <summary class="flex items-center px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300 cursor-pointer hover:text-theme-100 transition-colors list-none">
+        <span>Projects</span>
+        <svg class="ml-auto w-3 h-3 text-theme-300 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </summary>
+      <%= link_to "All Projects", admin_projects_path, class: nav_link.call(admin_projects_path, request.path.start_with?(admin_projects_path)) %>
+    </details>
+
+    <%# Procurement %>
+    <details <%= procurement_active ? "open" : "" %> class="group">
+      <summary class="flex items-center px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300 cursor-pointer hover:text-theme-100 transition-colors list-none">
+        <span>Procurement</span>
+        <svg class="ml-auto w-3 h-3 text-theme-300 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </summary>
+      <%= link_to "Purchase Orders", admin_purchase_orders_path, class: nav_link.call(admin_purchase_orders_path, request.path.start_with?(admin_purchase_orders_path)) %>
+      <%= link_to "Manufacturers", admin_manufacturers_path, class: nav_link.call(admin_manufacturers_path, request.path.start_with?(admin_manufacturers_path)) %>
+      <%= link_to "Products", admin_products_path, class: nav_link.call(admin_products_path, request.path.start_with?(admin_products_path)) %>
+      <%= link_to "Swatches", admin_swatches_path, class: nav_link.call(admin_swatches_path, request.path.start_with?(admin_swatches_path)) %>
+      <%= link_to "Promo Codes", admin_promo_codes_path, class: nav_link.call(admin_promo_codes_path, request.path.start_with?(admin_promo_codes_path)) %>
+    </details>
+
+    <%# Website %>
+    <details <%= website_active ? "open" : "" %> class="group">
+      <summary class="flex items-center px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300 cursor-pointer hover:text-theme-100 transition-colors list-none">
+        <span>Website</span>
+        <% unread = Message.unread.count %>
+        <% unread_questionnaires = QuestionnaireSubmission.unread.count %>
+        <% if unread > 0 || unread_questionnaires > 0 %>
+          <span class="ml-auto bg-theme-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"><%= unread + unread_questionnaires %></span>
+        <% else %>
+          <svg class="ml-auto w-3 h-3 text-theme-300 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        <% end %>
+      </summary>
+      <%= link_to admin_messages_path, class: nav_link.call(admin_messages_path, request.path.start_with?(admin_messages_path)) do %>
+        Messages
+        <% if unread > 0 %>
+          <span class="ml-auto bg-theme-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"><%= unread %></span>
+        <% end %>
       <% end %>
-    <% end %>
-    <%= link_to "Trade Network", admin_trade_partners_path, class: nav_link.call(admin_trade_partners_path, request.path.start_with?(admin_trade_partners_path)) %>
-    <%= link_to "Services", admin_services_path, class: nav_link.call(admin_services_path, request.path.start_with?(admin_services_path)) %>
-    <% unread_questionnaires = QuestionnaireSubmission.unread.count %>
-    <%= link_to admin_questionnaire_submissions_path, class: nav_link.call(admin_questionnaire_submissions_path, request.path.start_with?(admin_questionnaire_submissions_path)) do %>
-      Questionnaires
-      <% if unread_questionnaires > 0 %>
-        <span class="ml-auto bg-theme-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"><%= unread_questionnaires %></span>
+      <%= link_to admin_questionnaire_submissions_path, class: nav_link.call(admin_questionnaire_submissions_path, request.path.start_with?(admin_questionnaire_submissions_path)) do %>
+        Inquiries
+        <% if unread_questionnaires > 0 %>
+          <span class="ml-auto bg-theme-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"><%= unread_questionnaires %></span>
+        <% end %>
       <% end %>
-    <% end %>
+      <%= link_to "Trade Network", admin_trade_partners_path, class: nav_link.call(admin_trade_partners_path, request.path.start_with?(admin_trade_partners_path)) %>
+      <%= link_to "Services", admin_services_path, class: nav_link.call(admin_services_path, request.path.start_with?(admin_services_path)) %>
+    </details>
+
+    <%# Settings %>
+    <details <%= settings_active ? "open" : "" %> class="group">
+      <summary class="flex items-center px-4 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-theme-300 cursor-pointer hover:text-theme-100 transition-colors list-none">
+        <span>Settings</span>
+        <svg class="ml-auto w-3 h-3 text-theme-300 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </summary>
+      <%= link_to "Markup &amp; Margins", margins_admin_settings_path, class: nav_link.call(margins_admin_settings_path, request.path.start_with?("/admin/settings")) %>
+      <%= link_to "Checklist Items", admin_checklist_items_path, class: nav_link.call(admin_checklist_items_path, request.path.start_with?(admin_checklist_items_path)) %>
+      <%= link_to "Categories", admin_product_categories_path, class: nav_link.call(admin_product_categories_path, request.path.start_with?(admin_product_categories_path)) %>
+    </details>
   </nav>
 
   <div class="px-4 py-4 border-t border-white/10">

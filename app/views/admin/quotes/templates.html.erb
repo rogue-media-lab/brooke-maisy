@@ -1,0 +1,47 @@
+<% content_for(:title, "Quote Templates") %>
+
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="font-serif text-2xl font-semibold text-theme-500">Quote Templates</h1>
+    <p class="text-sm text-gray-400 mt-1">Reusable quote templates for quick quoting.</p>
+  </div>
+</div>
+
+<% if @templates.any? %>
+  <div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="bg-gray-50 text-left">
+          <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Template</th>
+          <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Client</th>
+          <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Items</th>
+          <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Created</th>
+          <th class="px-5 py-3 text-right text-[10px] font-semibold uppercase tracking-wider text-gray-400">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @templates.each do |template| %>
+          <tr class="border-t border-gray-50 hover:bg-theme-50">
+            <td class="px-5 py-3">
+              <span class="font-medium text-theme-500"><%= template.project&.title || template.client&.display_name %> — Quote #<%= template.id %></span>
+              <% if template.notes.present? %>
+                <p class="text-xs text-gray-400 mt-0.5 truncate max-w-xs"><%= template.notes.truncate(60) %></p>
+              <% end %>
+            </td>
+            <td class="px-5 py-3 text-gray-600"><%= template.client&.display_name %></td>
+            <td class="px-5 py-3 text-gray-600"><%= template.quote_line_items.count %></td>
+            <td class="px-5 py-3 text-gray-400"><%= time_ago_in_words(template.created_at) %> ago</td>
+            <td class="px-5 py-3 text-right">
+              <%= link_to "View", admin_quote_path(template), class: "text-xs text-theme-500 hover:underline" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="bg-white rounded-xl border border-theme-100 p-12 text-center">
+    <p class="text-gray-400">No templates yet.</p>
+    <p class="text-sm text-gray-300 mt-1">Save a quote as a template from its detail page to build your library.</p>
+  </div>
+<% end %>

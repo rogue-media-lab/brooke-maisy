@@ -2,19 +2,22 @@ class Admin::ProjectsController < Admin::BaseController
   before_action :set_project, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    @projects = Project.includes(:user).recent
+    @projects = Project.includes(:client).recent
     @projects = @projects.where(status: params[:status]) if params[:status].present?
-    @projects = @projects.where(user_id: params[:client_id]) if params[:client_id].present?
+    @projects = @projects.where(client_id: params[:client_id]) if params[:client_id].present?
   end
 
   def show
     @updates = @project.project_updates.recent
     @new_update = @project.project_updates.build(visible_to_client: true)
+    @rooms = @project.rooms.includes(:windows).ordered
+    @quotes = @project.quotes.live.includes(:client).recent.limit(5)
   end
 
   def new
     @project = Project.new
-    @project.user_id = params[:client_id] if params[:client_id].present?
+    @project.client_id = params[:client_id] if params[:client_id].present?
+    @clients = Client.alphabetical
   end
 
   def create
@@ -54,6 +57,6 @@ class Admin::ProjectsController < Admin::BaseController
   end
 
   def project_params
-    params.require(:project).permit(:user_id, :title, :description, :status, :address, photos: [])
+    params.require(:project).permit(:client_id, :title, :description, :status, :address, photos: [])
   end
 end

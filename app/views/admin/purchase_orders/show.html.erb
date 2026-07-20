@@ -1,0 +1,143 @@
+<% content_for(:title, "PO ##{@purchase_order.id}") %>
+
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <div class="flex items-center gap-2 mb-1">
+      <%= link_to "Purchase Orders", admin_purchase_orders_path, class: "text-sm text-theme-500 hover:underline" %>
+      <span class="text-gray-300">/</span>
+    </div>
+    <h1 class="font-serif text-2xl font-semibold text-theme-500">PO #<%= @purchase_order.id %></h1>
+    <p class="text-sm text-gray-400"><%= @purchase_order.manufacturer.name %> · Ordered <%= @purchase_order.order_date&.strftime("%b %d, %Y") || @purchase_order.created_at.strftime("%b %d, %Y") %></p>
+  </div>
+  <div>
+    <%= render "admin/purchase_orders/status_badge", status: @purchase_order.status %>
+  </div>
+</div>
+
+<%# Status workflow bar %>
+<div class="bg-white rounded-xl border border-theme-100 p-6 mb-8">
+  <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Delivery Tracking</h3>
+  <div class="flex items-center gap-2">
+    <% steps = [["draft", "Draft"], ["submitted", "Submitted"], ["confirmed", "Confirmed"], ["shipped", "Shipped"], ["received", "Received"]] %>
+    <% current_idx = steps.index { |s| s[0] == @purchase_order.status } || 0 %>
+    <% steps.each_with_index do |(step, label), idx| %>
+      <div class="flex items-center gap-2">
+        <div class="<%= idx <= current_idx ? 'bg-theme-500 text-white' : 'bg-gray-100 text-gray-400' %> text-[10px] font-semibold px-3 py-1.5 rounded-full"><%= label %></div>
+        <% unless idx == steps.length - 1 %>
+          <div class="w-3 h-px <%= idx < current_idx ? 'bg-theme-500' : 'bg-gray-200' %>"></div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Action buttons %>
+  <div class="flex gap-2 mt-4">
+    <% if @purchase_order.draft? || @purchase_order.submitted? %>
+      <% unless @purchase_order.submitted? %>
+        <%= button_to "Submit to Manufacturer", submit_admin_purchase_order_path(@purchase_order),
+              method: :post,
+              class: "bg-theme-500 hover:bg-theme-400 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors" %>
+      <% end %>
+      <% unless @purchase_order.confirmed? %>
+        <%= button_to "Confirm", confirm_delivery_admin_purchase_order_path(@purchase_order),
+              method: :post,
+              class: "bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors" %>
+      <% end %>
+    <% end %>
+    <% if @purchase_order.confirmed? %>
+      <%= button_to "Mark Shipped", mark_shipped_admin_purchase_order_path(@purchase_order),
+            method: :post,
+            class: "bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors" %>
+    <% end %>
+    <% if @purchase_order.shipped? %>
+      <%= button_to "Mark Received", mark_received_admin_purchase_order_path(@purchase_order),
+            method: :post,
+            class: "bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors" %>
+    <% end %>
+  </div>
+</div>
+
+<%# Info cards %>
+<div class="grid grid-cols-3 gap-6 mb-8">
+  <div class="bg-white rounded-xl border border-theme-100 p-6">
+    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Manufacturer</h3>
+    <p class="text-sm font-medium text-theme-500"><%= @purchase_order.manufacturer.name %></p>
+    <% if @purchase_order.manufacturer.website.present? %>
+      <p class="text-xs text-gray-400 mt-1"><%= link_to @purchase_order.manufacturer.website, @purchase_order.manufacturer.website, target: "_blank", class: "hover:underline" %></p>
+    <% end %>
+  </div>
+  <div class="bg-white rounded-xl border border-theme-100 p-6">
+    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Project</h3>
+    <% if @purchase_order.quote %>
+      <p class="text-sm font-medium text-theme-500"><%= link_to @purchase_order.quote.project.title, admin_project_path(@purchase_order.quote.project), class: "hover:underline" %></p>
+      <p class="text-xs text-gray-400 mt-1">Quote #<%= @purchase_order.quote_id %></p>
+    <% else %>
+      <p class="text-sm text-gray-400">—</p>
+    <% end %>
+  </div>
+  <div class="bg-white rounded-xl border border-theme-100 p-6">
+    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Dates</h3>
+    <dl class="space-y-1 text-sm">
+      <div class="flex justify-between"><dt class="text-gray-500 text-xs">Ordered</dt><dd class="text-gray-700"><%= @purchase_order.order_date&.strftime("%b %d, %Y") || "—" %></dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500 text-xs">Expected</dt><dd class="text-gray-700"><%= @purchase_order.expected_delivery&.strftime("%b %d, %Y") || "—" %></dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500 text-xs">Received</dt><dd class="text-gray-700"><%= @purchase_order.actual_delivery&.strftime("%b %d, %Y") || "—" %></dd></div>
+    </dl>
+  </div>
+</div>
+
+<%# Line items %>
+<div class="bg-white rounded-xl border border-theme-100 overflow-hidden mb-8">
+  <div class="flex items-center justify-between px-5 py-3 bg-theme-100">
+    <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Line Items</span>
+    <span class="text-xs text-gray-400"><%= @purchase_order.item_count %> items</span>
+  </div>
+  <% if @line_items.any? %>
+    <div class="grid grid-cols-12 px-5 py-2 bg-gray-50 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+      <div class="col-span-4">Product</div>
+      <div class="col-span-2">Qty</div>
+      <div class="col-span-2">Unit Cost</div>
+      <div class="col-span-2">Total Cost</div>
+      <div class="col-span-2">Status</div>
+    </div>
+    <% @line_items.each do |item| %>
+      <div class="grid grid-cols-12 px-5 py-3 items-center border-b border-gray-50 last:border-0 hover:bg-theme-50 text-sm">
+        <div class="col-span-4 font-medium text-theme-500">
+          <%= item.product&.name || item.quote_line_item&.product&.name || "Item" %>
+          <% if item.manufacturer_sku.present? %>
+            <br><span class="text-[10px] text-gray-400">SKU: <%= item.manufacturer_sku %></span>
+          <% end %>
+        </div>
+        <div class="col-span-2 text-gray-600"><%= item.quantity %></div>
+        <div class="col-span-2 text-gray-500"><%= number_to_currency(item.unit_cost) %></div>
+        <div class="col-span-2 text-gray-700 font-medium"><%= number_to_currency(item.total_cost) %></div>
+        <div class="col-span-2">
+          <% item_status_colors = { pending: "bg-gray-100 text-gray-600", ordered: "bg-blue-100 text-blue-700", backordered: "bg-red-100 text-red-700", received: "bg-green-100 text-green-700" } %>
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium <%= item_status_colors[item.status.to_sym] || 'bg-gray-100 text-gray-600' %>">
+            <%= item.status.to_s.humanize %>
+          </span>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="p-8 text-center text-gray-400">No line items on this PO.</div>
+  <% end %>
+
+  <div class="px-5 py-3 bg-theme-50 border-t border-theme-200 flex justify-end">
+    <div class="text-sm font-semibold text-theme-500">
+      Total: <%= number_to_currency(@purchase_order.total_cost) %>
+    </div>
+  </div>
+</div>
+
+<%# Notes %>
+<% if @purchase_order.notes.present? %>
+  <div class="bg-white rounded-xl border border-theme-100 p-6 mb-8">
+    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Notes</h3>
+    <p class="text-sm text-gray-600 whitespace-pre-wrap"><%= @purchase_order.notes %></p>
+  </div>
+<% end %>
+
+<div class="flex gap-3">
+  <%= link_to "Edit", edit_admin_purchase_order_path(@purchase_order), class: "text-sm text-theme-500 hover:underline" %>
+  <%= link_to "Back to POs", admin_purchase_orders_path, class: "text-sm text-gray-400 hover:text-gray-600" %>
+</div>

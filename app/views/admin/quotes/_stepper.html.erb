@@ -1,0 +1,74 @@
+<%# Quote workflow stepper — 7-step progress bar
+   Local variable: quote (Quote instance)
+   Renders horizontal stepper with completed/current/future states %>
+<%
+  steps = [
+    { stage: "Measure", key: :client_info,     label: "Client",       path: admin_quote_path(quote) },
+    { stage: "Measure", key: :measurements,    label: "Measurements", path: measurements_admin_quote_path(quote) },
+    { stage: "Product", key: :product_choices, label: "Product",      path: admin_quote_path(quote) },
+    { stage: "Sell",    key: :quote_review,    label: "Quote",        path: admin_quote_path(quote) },
+    { stage: "Sell",    key: :contract,        label: "Contract",     path: admin_documents_path(quote) },
+    { stage: "Sell",    key: :cancellation,    label: "Cancel",       path: admin_documents_path(quote) },
+    { stage: "Sell",    key: :payment,         label: "Payment",       path: payment_admin_quote_path(quote) }
+  ]
+  current_index = Quote.workflow_stages[quote.workflow_stage.to_sym] || 0
+  stages = steps.map { |s| s[:stage] }.uniq
+%>
+
+<div class="bg-theme-500 border-t border-white/10 px-4 py-3 overflow-x-auto">
+  <div class="flex items-center min-w-max gap-0">
+    <% steps.each_with_index do |step, index| %>
+      <%
+        is_completed = index < current_index
+        is_current = index == current_index
+        is_future = index > current_index
+        is_available = step[:path].present?
+      %>
+
+      <%# Connector line (before each step except the first) %>
+      <% if index > 0 %>
+        <div class="flex-shrink-0 w-6 sm:w-10 h-0.5 <%= is_completed ? "bg-green-400" : "bg-theme-400" %>"></div>
+      <% end %>
+
+      <%# Step circle + label %>
+      <div class="flex-shrink-0 flex flex-col items-center">
+        <% if is_available %>
+          <%= link_to step[:path], class: "flex flex-col items-center group" do %>
+            <%# Circle %>
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-colors
+              <%= if is_current
+                   "bg-theme-100 text-theme-500 ring-2 ring-white"
+                 elsif is_completed
+                   "bg-green-500 text-white"
+                 else
+                   "bg-theme-400 text-theme-200 group-hover:bg-theme-300"
+                 end %>">
+              <% if is_completed %>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                </svg>
+              <% else %>
+                <%= index + 1 %>
+              <% end %>
+            </div>
+            <%# Label %>
+            <span class="mt-1.5 text-[11px] font-medium <%= is_current ? "text-white" : is_completed ? "text-green-300" : "text-theme-200" %>">
+              <%= step[:label] %>
+            </span>
+          <% end %>
+        <% else %>
+          <div class="flex flex-col items-center">
+            <%# Circle (disabled) %>
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold bg-theme-400 text-theme-300 opacity-60">
+              <%= index + 1 %>
+            </div>
+            <%# Label %>
+            <span class="mt-1.5 text-[11px] font-medium text-theme-300 opacity-60">
+              <%= step[:label] %>
+            </span>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

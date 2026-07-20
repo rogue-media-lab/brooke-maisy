@@ -1,0 +1,121 @@
+<% content_for(:title, "Sign Agreement - #{@quote.client&.display_name}") %>
+
+<% content_for(:stepper) do %>
+  <%= render "admin/quotes/stepper", quote: @quote %>
+<% end %>
+
+<%
+  is_designer = @designer_mode || (params[:signer] == "designer")
+  signer_label = is_designer ? "Designer (Amanda)" : "Client"
+  doc_type = @doc_type || params[:doc] || "agreement"
+  form_info = Admin::QuoteDocumentsController::WORKFLOW_FORMS[doc_type.to_sym] || Admin::QuoteDocumentsController::WORKFLOW_FORMS[:agreement]
+%>
+
+<div class="max-w-2xl mx-auto" data-controller="signature-pad">
+  <div class="mb-6">
+    <div class="flex items-center gap-2 mb-1">
+      <%= link_to "Documents", admin_documents_path(@quote), { class: "text-sm text-theme-500 hover:underline" } %>
+      <span class="text-gray-300">/</span>
+      <span class="text-sm text-gray-400">Sign Agreement</span>
+    </div>
+    <h1 class="font-serif text-2xl font-semibold text-theme-500"><%= signer_label %> Signature</h1>
+    <p class="text-sm text-gray-400"><%= @quote.client&.display_name %> - Quote #<%= @quote.id %></p>
+  </div>
+
+  <%# Agreement summary %>
+  <div class="bg-theme-100 rounded-xl p-5 mb-6">
+    <h2 class="font-serif text-lg font-semibold text-theme-500 mb-2"><%= form_info[:label] %></h2>
+    <dl class="space-y-1 text-sm">
+      <div class="flex justify-between">
+        <dt class="text-gray-500">Client</dt>
+        <dd class="text-gray-700"><%= @quote.client&.display_name %></dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-gray-500">Project Location</dt>
+        <dd class="text-gray-700"><%= @quote.client&.address || @quote.project&.address || "-" %></dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-gray-500">Grand Total</dt>
+        <dd class="text-gray-700 font-medium"><%= number_to_currency(QuoteCalculator.new(@quote).calculate[:grand_total]) %></dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-gray-500">Deposit Due</dt>
+        <dd class="text-gray-700"><%= number_to_currency(QuoteCalculator.new(@quote).calculate[:deposit_amount]) %></dd>
+      </div>
+    </dl>
+  </div>
+
+  <%# Signature form %>
+  <%= form_with url: create_signature_admin_documents_path(@quote), local: true, html: { data: { turbo: false } } do |f| %>
+    <% if @signature&.errors&.any? %>
+      <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-600 mb-4">
+        <%= @signature.errors.full_messages.to_sentence %>
+      </div>
+    <% end %>
+
+    <%# Hidden fields populated by JS %>
+    <%= hidden_field_tag "signature[signed_name]", "", { data: { signature_pad_target: "hiddenName" } } %>
+    <%= hidden_field_tag "signature[signature_data]", "", { data: { signature_pad_target: "hiddenSig" } } %>
+    <%= hidden_field_tag "signer", is_designer ? "designer" : "client" %>
+    <%= hidden_field_tag "document_type", doc_type %>
+
+    <%# Signature canvas %>
+    <div class="bg-white rounded-xl border border-theme-200 p-5 mb-4">
+      <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Draw Your Signature</label>
+      <div class="border-2 border-dashed border-theme-300 rounded-lg overflow-hidden bg-white">
+        <canvas data-signature-pad-target="canvas"
+                class="w-full h-48 touch-none cursor-crosshair"
+                style="touch-action: none;"></canvas>
+      </div>
+      <div class="flex justify-between items-center mt-2">
+        <p class="text-xs text-gray-400">Draw with your finger or Apple Pencil above</p>
+        <button type="button"
+                data-signature-pad-target="clearBtn"
+                data-action="click->signature-pad#clear"
+                class="text-xs text-theme-500 hover:underline">
+          Clear
+        </button>
+      </div>
+    </div>
+
+    <%# Typed name %>
+    <div class="bg-white rounded-xl border border-theme-200 p-5 mb-4">
+      <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Type Your Full Name</label>
+      <%= text_field_tag :typed_name, nil,
+          { data: { signature_pad_target: "typedName" },
+            placeholder: "Enter your legal name",
+            class: "w-full rounded-lg border border-theme-200 px-3 py-2 text-sm focus:border-theme-400 focus:ring-1 focus:ring-theme-400",
+            autocomplete: "off" } %>
+    </div>
+
+    <%# Agreement checkbox %>
+    <div class="bg-white rounded-xl border border-theme-200 p-5 mb-6">
+      <label class="flex items-start gap-3 cursor-pointer">
+        <%= check_box_tag :agree, "1", false,
+            { data: { signature_pad_target: "agreeCheckbox" },
+              class: "mt-1 w-4 h-4 rounded border-theme-300 text-theme-500 focus:ring-theme-400" } %>
+        <span class="text-sm text-gray-600">
+          I agree that this signature represents my legal signature and that I have read and understood
+          the Design &amp; Installation Services Agreement. I confirm that the typed name above is my
+          legal name, and I consent to be bound by the terms of the agreement.
+        </span>
+      </label>
+    </div>
+
+    <%# Hint (hidden when all requirements met) %>
+    <p data-signature-pad-target="hint"
+       class="text-sm text-amber-600 mb-4">
+      Please draw your signature, type your name, and check the agreement box to continue.
+    </p>
+
+    <%# Submit %>
+    <div class="flex gap-3">
+      <%= f.submit "Submit Signature",
+          { data: { signature_pad_target: "submitBtn" },
+            disabled: true,
+            class: "flex-1 bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-5 py-3 rounded-lg transition-colors opacity-50 cursor-not-allowed" } %>
+      <%= link_to "Cancel", admin_documents_path(@quote),
+          { class: "bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-medium px-5 py-3 rounded-lg transition-colors" } %>
+    </div>
+  <% end %>
+</div>

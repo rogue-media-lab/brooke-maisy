@@ -1,0 +1,44 @@
+<% content_for(:title, "Quotes") %>
+
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="font-serif text-2xl font-semibold text-theme-500">Quotes</h1>
+    <p class="text-gray-500 text-sm"><%= pluralize(@quotes.size, "quote") %></p>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="flex items-center gap-1 text-xs text-gray-400">
+      <span>Sort:</span>
+      <%= link_to "Newest", admin_quotes_path(sort: nil), class: params[:sort].blank? ? "font-semibold text-theme-500" : "text-gray-500 hover:text-theme-500" %>
+      <%= link_to "Oldest", admin_quotes_path(sort: "oldest"), class: params[:sort] == "oldest" ? "font-semibold text-theme-500" : "text-gray-500 hover:text-theme-500" %>
+      <%= link_to "Client", admin_quotes_path(sort: "client"), class: params[:sort] == "client" ? "font-semibold text-theme-500" : "text-gray-500 hover:text-theme-500" %>
+      <%= link_to "Status", admin_quotes_path(sort: "status"), class: params[:sort] == "status" ? "font-semibold text-theme-500" : "text-gray-500 hover:text-theme-500" %>
+    </div>
+    <%= link_to "New quote", new_admin_quote_path(project_id: params[:project_id], client_id: params[:client_id]),
+          class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors" %>
+  </div>
+</div>
+
+<% if @quotes.any? %>
+  <div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+    <div class="grid grid-cols-12 px-5 py-3 bg-theme-100 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+      <div class="col-span-2">Status</div>
+      <div class="col-span-3">Client</div>
+      <div class="col-span-2">Project</div>
+      <div class="col-span-2">Grand Total</div>
+      <div class="col-span-2">Created</div>
+      <div class="col-span-1"></div>
+    </div>
+    <% @quotes.each do |q| %>
+      <%= link_to admin_quote_path(q), class: "grid grid-cols-12 px-5 py-4 items-center border-b border-gray-50 last:border-0 hover:bg-theme-100" do %>
+        <div class="col-span-2"><span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium <%= q.draft? ? 'bg-gray-100 text-gray-600' : q.sent? ? 'bg-blue-100 text-blue-700' : q.approved? ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' %>"><%= q.status&.titleize %></span></div>
+        <div class="col-span-3 text-sm text-theme-500 font-medium"><%= q.client&.display_name || "—" %></div>
+        <div class="col-span-2 text-sm text-gray-500"><%= q.project&.title || "—" %></div>
+        <div class="col-span-2 text-sm text-gray-600"><%= number_to_currency(@quote_totals[q.id][:grand_total] || 0) %></div>
+        <div class="col-span-2 text-sm text-gray-500"><%= q.created_at.strftime("%b %d") %></div>
+        <div class="col-span-1 text-right text-gray-300 text-xs">→</div>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="bg-white rounded-xl border border-theme-100 p-12 text-center text-gray-400"><p>No quotes yet.</p></div>
+<% end %>

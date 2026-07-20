@@ -1,0 +1,160 @@
+<% content_for(:title, "Quote — #{@project&.title || @quote.client&.display_name}") %>
+
+<div class="max-w-3xl mx-auto px-4 py-8">
+  <%# Status banner %>
+  <% if @quote.approved? %>
+    <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-8 text-center">
+      <p class="text-green-700 font-medium">✓ This quote has been approved on <%= @quote.approved_at&.strftime("%B %d, %Y") %></p>
+    </div>
+  <% elsif @quote.declined? %>
+    <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-8 text-center">
+      <p class="text-red-700 font-medium">This quote was declined. We'll be in touch.</p>
+    </div>
+  <% end %>
+
+  <%# Header %>
+  <div class="text-center mb-10">
+    <h1 class="font-serif text-3xl font-semibold text-theme-500 mb-2">Brooke &amp; Maisy</h1>
+    <p class="text-gray-400 text-sm">Interior Design &amp; Window Treatments</p>
+    <div class="mt-6">
+      <% if @project %>
+        <h2 class="text-xl font-semibold text-gray-800"><%= @project.title %></h2>
+      <% else %>
+        <h2 class="text-xl font-semibold text-gray-800"><%= @quote.client&.display_name %></h2>
+      <% end %>
+      <p class="text-gray-500 text-sm mt-1">
+        Quote #<%= @quote.id %> · Prepared <%= @quote.sent_at&.strftime("%B %d, %Y") || @quote.created_at.strftime("%B %d, %Y") %>
+      </p>
+      <% if @quote.valid_until %>
+        <p class="text-gray-400 text-xs mt-1">Valid until <%= @quote.valid_until.strftime("%B %d, %Y") %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Summary card %>
+  <div class="bg-theme-100 rounded-2xl p-6 mb-8">
+    <div class="flex flex-wrap gap-4 text-sm">
+      <div class="flex-1 min-w-[120px]">
+        <span class="text-gray-400 text-xs uppercase tracking-wide">Client</span>
+        <p class="text-gray-800 font-medium mt-1"><%= current_user.display_name %></p>
+      </div>
+      <div class="flex-1 min-w-[120px]">
+        <span class="text-gray-400 text-xs uppercase tracking-wide">Address</span>
+        <p class="text-gray-800 font-medium mt-1"><%= @project&.address || "1726 Gold Hill Rd. #1071, Fort Mill, SC 29708" %></p>
+      </div>
+      <div class="flex-1 min-w-[120px]">
+        <span class="text-gray-400 text-xs uppercase tracking-wide">Status</span>
+        <p class="mt-1">
+          <%= render "client/quotes/status_badge", status: @quote.status %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <%# Line items %>
+  <div class="bg-white rounded-2xl border border-theme-200 overflow-hidden mb-8 shadow-sm">
+    <div class="px-6 py-4 border-b border-theme-200">
+      <h3 class="font-serif text-lg font-semibold text-theme-500">Items</h3>
+    </div>
+
+    <% if @calculator[:line_items].any? %>
+      <%# Group by comparison group if any items have one %>
+      <% groups = @quote.quote_line_items.ordered.group_by(&:comparison_group) %>
+      <% if groups.keys.compact.any? %>
+        <% groups.each do |group_name, items| %>
+          <% if group_name.present? %>
+            <div class="px-6 py-2 bg-theme-50 border-b border-theme-100">
+              <span class="text-xs font-semibold uppercase tracking-wider text-theme-500"><%= group_name %></span>
+            </div>
+          <% end %>
+          <% items.each_with_index do |item, idx| %>
+            <%= render "client/quotes/line_item", item: item, calc: @calculator[:line_items].find { |c| c[:id] == item.id }, is_last: idx == items.length - 1 && group_name == groups.keys.last %>
+          <% end %>
+        <% end %>
+      <% else %>
+        <% @quote.quote_line_items.ordered.each_with_index do |item, idx| %>
+          <%= render "client/quotes/line_item", item: item, calc: @calculator[:line_items].find { |c| c[:id] == item.id }, is_last: idx == @quote.quote_line_items.length - 1 %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <div class="p-8 text-center text-gray-400">No items in this quote.</div>
+    <% end %>
+
+    <%# Totals %>
+    <div class="px-6 py-4 bg-theme-50 border-t border-theme-200">
+      <div class="max-w-xs ml-auto space-y-1 text-sm">
+        <div class="flex justify-between">
+          <span class="text-gray-500">Subtotal</span>
+          <span class="text-gray-700"><%= number_to_currency(@calculator[:subtotal]) %></span>
+        </div>
+        <% if @calculator[:quote_discount] > 0 %>
+          <div class="flex justify-between">
+            <span class="text-gray-500">Discount</span>
+            <span class="text-red-500">−<%= number_to_currency(@calculator[:quote_discount]) %></span>
+          </div>
+        <% end %>
+        <div class="flex justify-between">
+          <span class="text-gray-500">Tax</span>
+          <span class="text-gray-700"><%= number_to_currency(@calculator[:tax_amount]) %></span>
+        </div>
+        <div class="flex justify-between pt-2 border-t border-theme-200 font-semibold text-base">
+          <span class="text-gray-800">Total</span>
+          <span class="text-theme-500"><%= number_to_currency(@calculator[:grand_total]) %></span>
+        </div>
+        <% if @quote.deposit_percentage && @calculator[:deposit_amount] > 0 %>
+          <div class="flex justify-between pt-1">
+            <span class="text-gray-500 text-xs"><%= @quote.deposit_percentage %>% deposit</span>
+            <span class="text-gray-600 text-xs"><%= number_to_currency(@calculator[:deposit_amount]) %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <%# Notes %>
+  <% if @quote.notes.present? %>
+    <div class="bg-white rounded-2xl border border-theme-200 p-6 mb-8 shadow-sm">
+      <h3 class="font-serif text-lg font-semibold text-theme-500 mb-3">Notes</h3>
+      <p class="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap"><%= @quote.notes %></p>
+    </div>
+  <% end %>
+
+  <%# Approve / Decline — only if quote is sent or viewed %>
+  <% if @quote.sent? || @quote.viewed? %>
+    <div class="text-center mb-8">
+      <div class="inline-flex gap-3">
+        <%= button_to "Approve Quote", approve_clients_quote_path(@quote),
+              method: :post,
+              class: "bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-xl transition-colors shadow-sm",
+              form: { data: { turbo_confirm: "By approving this quote, you agree to the terms and pricing shown above. Proceed?" } } %>
+        <%= button_to "Decline", "#",
+              method: :post,
+              class: "bg-white hover:bg-gray-50 text-gray-500 border border-gray-300 font-medium px-6 py-3 rounded-xl transition-colors",
+              disabled: true,
+              title: "Please contact us to discuss changes" %>
+      </div>
+      <p class="text-gray-400 text-xs mt-3">To request changes, please reply to the email or call us directly.</p>
+    </div>
+  <% end %>
+
+  <%# Footer %>
+  <div class="text-center text-gray-400 text-xs border-t border-theme-100 pt-6 mt-8">
+    <p>Brooke &amp; Maisy Interior Design</p>
+    <p>1726 Gold Hill Rd. #1071, Fort Mill, SC 29708</p>
+    <p class="mt-1"><%= mail_to "amanda@brookenmaisy.com" %></p>
+  </div>
+</div>
+
+<%# Print CSS %>
+<style>
+  @media print {
+    body { background: white !important; }
+    nav, footer, .no-print { display: none !important; }
+    button, .button_to, form { display: none !important; }
+    .max-w-3xl { max-width: 100% !important; }
+    .px-4 { padding: 0 !important; }
+    .rounded-2xl, .rounded-xl { border-radius: 0 !important; }
+    .shadow-sm { box-shadow: none !important; }
+    @page { margin: 0.5in; size: letter; }
+  }
+</style>

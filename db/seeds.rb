@@ -147,6 +147,58 @@ ChecklistItem.create!(name: "Level",                        position: 7)
 ChecklistItem.create!(name: "Stud finder",                  position: 8)
 ChecklistItem.create!(name: "First aid kit",                position: 9)
 
+# ── Inventory: SelectBlinds Products ──────────────────────────────────────
+puts "\nSeeding inventory..."
+
+# Load product reference data
+ref = YAML.load_file(Rails.root.join("db/seeds/selectblinds_products.yml"), permitted_classes: [ Symbol ])
+
+# Manufacturer
+selectblinds = Manufacturer.find_or_create_by!(name: ref["manufacturer"]["name"]) do |m|
+  m.website = ref["manufacturer"]["website"]
+  m.trade_program_url = ref["manufacturer"]["trade_program_url"]
+end
+puts "  Manufacturer: #{selectblinds.name}"
+
+# Categories
+ref["products"].map { |p| p["category"] }.uniq.each do |cat_name|
+  ProductCategory.find_or_create_by!(name: cat_name) do |c|
+    c.slug = cat_name.parameterize
+  end
+end
+puts "  Categories: #{ProductCategory.count}"
+
+# Products + Swatches
+ref["products"].each do |data|
+  category = ProductCategory.find_by!(name: data["category"])
+  product = Product.find_or_create_by!(name: data["name"]) do |p|
+    p.manufacturer = selectblinds
+    p.product_category = category
+    p.description = data["description"]
+    p.product_url = data["product_url"]
+    p.unit = data["unit"] || "per window"
+    p.specs = data["specs"]
+    p.pricing = data["pricing"] || { "base_cost" => data["base_price"] }
+    p.images = data["images"] || []
+    p.videos = data["videos"] || []
+    p.documents = data["documents"] || []
+    p.is_active = true
+    p.tier = 2  # research entry
+  end
+
+  # Swatches for this product
+  (data["colors"] || []).each do |color_data|
+    swatch = Swatch.find_or_create_by!(name: color_data["name"], manufacturer: selectblinds) do |s|
+      s.hex = color_data["hex"]
+      s.is_active = true
+    end
+    ProductSwatch.find_or_create_by!(product: product, swatch: swatch)
+  end
+  puts "  #{product.name} — #{product.swatches.count} swatches"
+end
+
+puts "Inventory seeded: #{Manufacturer.count} manufacturers, #{Product.count} products, #{Swatch.count} swatches"
+
 # Tech/installer user for demo
 # (Destroyed above with User.destroy_all; recreate after admin + clients)
 tech = User.create!(

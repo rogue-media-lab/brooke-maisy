@@ -5,6 +5,37 @@
   <p class="text-gray-500 mt-1">Overview of your design business.</p>
 </div>
 
+<div class="mb-8">
+  <%= link_to new_admin_quote_path, class: "inline-flex items-center gap-2 bg-theme-500 hover:bg-theme-400 text-white text-lg font-semibold px-8 py-4 rounded-xl transition-colors shadow-sm" do %>
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+    New Quote
+  <% end %>
+</div>
+
+<div class="bg-white rounded-xl border border-theme-100 mb-8">
+  <div class="flex items-center justify-between px-5 py-4 border-b border-theme-100">
+    <h2 class="font-serif text-lg font-semibold text-theme-500">Recent Quotes</h2>
+    <%= link_to "View all", admin_quotes_path, class: "text-sm text-theme-500 hover:text-theme-400 font-medium" %>
+  </div>
+  <% if @recent_quotes.any? %>
+    <ul>
+      <% @recent_quotes.each do |quote| %>
+        <li class="border-b border-gray-50 last:border-0">
+          <%= link_to admin_quote_path(quote), class: "flex items-center justify-between px-5 py-3 hover:bg-theme-100" do %>
+            <div>
+              <p class="text-sm font-medium text-theme-500">Quote #<%= quote.id %> — <%= quote.client.display_name %></p>
+              <p class="text-xs text-gray-400"><%= quote.quote_line_items.count %> items · v<%= quote.version_number %></p>
+            </div>
+            <%= render "admin/shared/status_badge", status: quote.status %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="px-5 py-6 text-sm text-gray-400">No quotes yet.</p>
+  <% end %>
+</div>
+
 <%# Stat cards %>
 <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
   <% [
@@ -43,7 +74,7 @@
             <%= link_to admin_project_path(project), class: "flex items-center justify-between px-5 py-3 hover:bg-theme-100" do %>
               <div>
                 <p class="text-sm font-medium text-theme-500"><%= project.title %></p>
-                <p class="text-xs text-gray-400"><%= project.user.display_name %></p>
+                <p class="text-xs text-gray-400"><%= project.client.display_name %></p>
               </div>
               <%= render "admin/shared/status_badge", status: project.status %>
             <% end %>

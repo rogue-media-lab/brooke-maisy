@@ -1,0 +1,22 @@
+<% content_for(:title, "#{@swatch.name} - Admin") %>
+<div class="max-w-2xl mx-auto">
+  <div class="flex items-center justify-between mb-8">
+    <%= link_to admin_swatches_path, class: "text-sm text-gray-400 hover:text-theme-500" do %>← Swatches<% end %>
+    <div class="flex gap-2">
+      <%= link_to "Edit", edit_admin_swatch_path(@swatch), class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors" %>
+      <%= button_to "Delete", admin_swatch_path(@swatch), method: :delete, data: { turbo_confirm: "Remove this swatch?" }, class: "bg-red-50 hover:bg-red-100 text-red-600 text-sm font-medium px-4 py-2 rounded-lg transition-colors" %>
+    </div>
+  </div>
+  <div class="bg-white rounded-xl border border-theme-100 p-8">
+    <div class="flex items-center gap-4 mb-6">
+      <span class="w-12 h-12 rounded-lg border-2 border-gray-200" style="background-color: <%= @swatch.hex %>"></span>
+      <div><h1 class="font-serif text-2xl font-semibold text-theme-500"><%= @swatch.name %></h1><p class="text-sm text-gray-400"><%= @swatch.manufacturer.name %></p></div>
+    </div>
+    <dl class="grid grid-cols-2 gap-6">
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Hex</dt><dd class="text-sm font-mono text-gray-600"><%= @swatch.hex.presence || "—" %></dd></div>
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Category</dt><dd class="text-sm text-gray-600"><%= @swatch.category.presence || "—" %></dd></div>
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Color Range</dt><dd class="text-sm text-gray-600"><%= @swatch.color_range&.titleize || "—" %></dd></div>
+      <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">New</dt><dd class="text-sm"><%= @swatch.is_new ? '✓ Yes' : '—' %></dd></div>
+    </dl>
+  </div>
+</div>
