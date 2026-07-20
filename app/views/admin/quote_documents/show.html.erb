@@ -77,25 +77,6 @@
   </div>
 </div>
 
-<%# Internal forms %>
-<div class="bg-white rounded-xl border border-theme-100 overflow-hidden mb-6">
-  <div class="px-5 py-3 bg-theme-100">
-    <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Internal Documents</span>
-  </div>
-  <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <% Admin::QuoteDocumentsController::INTERNAL_FORMS.each do |key, form| %>
-      <div class="border border-theme-100 rounded-lg p-4 flex items-center justify-between hover:border-theme-300 transition-colors">
-        <div>
-          <p class="text-sm font-medium text-theme-500"><%= form[:label] %></p>
-          <p class="text-xs text-gray-400 mt-0.5">Admin use only</p>
-        </div>
-        <%= link_to "Generate PDF", download_admin_documents_path(@quote, form: key),
-            { target: "_blank", class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors" } %>
-      </div>
-    <% end %>
-  </div>
-</div>
-
 <%# Signature status summary %>
 <div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
   <div class="px-5 py-3 bg-theme-100">

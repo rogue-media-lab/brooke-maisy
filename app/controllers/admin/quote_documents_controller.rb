@@ -11,15 +11,6 @@ class Admin::QuoteDocumentsController < Admin::BaseController
     cancellation: { label: "Notice of Cancellation", class: "Pdf::CancellationPdf", doc_type: :cancellation, needs_designer: false }
   }.freeze
 
-  # Internal forms — admin downloads only, no signing
-  INTERNAL_FORMS = {
-    work_order_client: { label: "Work Order - Client", class: "Pdf::WorkOrderClientPdf" },
-    work_order_internal: { label: "Work Order - Internal", class: "Pdf::WorkOrderInternalPdf" },
-    invoice: { label: "Invoice", class: "Pdf::InvoicePdf" }
-  }.freeze
-
-  ALL_FORMS = WORKFLOW_FORMS.merge(INTERNAL_FORMS).freeze
-
   def show
     @quote.bump_workflow_stage!(:contract)
     @signatures = @quote.signatures.ordered
@@ -77,7 +68,7 @@ class Admin::QuoteDocumentsController < Admin::BaseController
 
   def download
     form_key = params[:form].to_sym
-    form = ALL_FORMS[form_key]
+    form = WORKFLOW_FORMS[form_key]
 
     unless form
       redirect_to admin_documents_path(@quote), alert: "Unknown form type."
