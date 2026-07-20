@@ -3,10 +3,10 @@ module Pdf
     private
 
     def draw_body(pdf)
-      2.times { |i| draw_copy(pdf, i) }
+      draw_copy(pdf)
     end
 
-    def draw_copy(pdf, index)
+    def draw_copy(pdf)
       pdf.move_down 20
 
       pdf.text "NOTICE OF CANCELLATION", style: :bold, size: 16, align: :center, color: "776B63"
@@ -33,10 +33,6 @@ module Pdf
       pdf.text "I hereby cancel this transaction.", style: :bold, size: 10
       pdf.move_down 24
       pdf.text "Client Signature: ______________________________________              Date: ______________", size: 10
-
-      if index == 0
-        pdf.start_new_page
-      end
     end
 
     def cancellation_text

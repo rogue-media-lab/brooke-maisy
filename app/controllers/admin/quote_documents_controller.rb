@@ -7,7 +7,7 @@ class Admin::QuoteDocumentsController < Admin::BaseController
 
   FORMS = {
     agreement: { label: "Design & Installation Services Agreement", class: "Pdf::AgreementPdf" },
-    cancellation: { label: "Notice of Cancellation (2 copies)", class: "Pdf::CancellationPdf" },
+    cancellation: { label: "Notice of Cancellation", class: "Pdf::CancellationPdf" },
     work_order_client: { label: "Work Order - Client", class: "Pdf::WorkOrderClientPdf" },
     work_order_internal: { label: "Work Order - Internal", class: "Pdf::WorkOrderInternalPdf" },
     invoice: { label: "Invoice", class: "Pdf::InvoicePdf" }
