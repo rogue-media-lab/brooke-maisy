@@ -30,8 +30,8 @@
       <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Lead Time</dt><dd class="text-sm text-gray-600"><%= @product.lead_time_days ? "#{@product.lead_time_days} days" : "—" %></dd></div>
       <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Tier</dt><dd class="text-sm text-gray-600"><%= @product.tier&.titleize || "—" %></dd></div>
       <div><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Active</dt><dd class="text-sm"><%= @product.is_active ? '✓ Yes' : '✗ No' %></dd></div>
-      <% if @product.product_url.present? %>
-        <div class="col-span-2"><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Product URL</dt><dd class="text-sm text-theme-500"><%= link_to @product.product_url, @product.product_url, target: "_blank", class: "hover:underline truncate block" %></dd></div>
+      <% if @product.product_url.present? && (url = safe_external_url(@product.product_url)) %>
+        <div class="col-span-2"><dt class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Product URL</dt><dd class="text-sm text-theme-500"><%= link_to url, url, target: "_blank", class: "hover:underline truncate block" %></dd></div>
       <% end %>
     </dl>
     <% if @product.description.present? %>
