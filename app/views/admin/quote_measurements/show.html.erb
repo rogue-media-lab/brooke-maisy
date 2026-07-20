@@ -83,8 +83,44 @@
                   <% end %>
                 </div>
 
-                <%# Delete window %>
-                <div class="flex-shrink-0">
+                <%# Edit + Delete %>
+                <div class="flex-shrink-0 flex flex-col items-end gap-2">
+                  <details class="relative">
+                    <summary class="text-theme-500 hover:text-theme-400 text-xs cursor-pointer list-none">
+                      Edit
+                    </summary>
+                    <div class="absolute right-0 top-6 z-10 bg-white border border-theme-200 rounded-lg p-4 shadow-lg w-72">
+                      <%= form_with model: window, url: update_window_admin_quote_path(@quote, room_id: room.id, window_id: window.id),
+                          method: :patch, local: true, html: { data: { turbo: false } }, class: "space-y-2" do |wf| %>
+                        <div>
+                          <wf.label :name, { class: "block text-[10px] text-gray-500" } %>
+                          <wf.text_field :name, class: "w-full rounded border border-theme-200 px-2 py-1 text-xs" %>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                          <div>
+                            <wf.label :width, "Width", { class: "block text-[10px] text-gray-500" } %>
+                            <wf.number_field :width, step: 0.125, class: "w-full rounded border border-theme-200 px-2 py-1 text-xs" %>
+                          </div>
+                          <div>
+                            <wf.label :height, "Height", { class: "block text-[10px] text-gray-500" } %>
+                            <wf.number_field :height, step: 0.125, class: "w-full rounded border border-theme-200 px-2 py-1 text-xs" %>
+                          </div>
+                        </div>
+                        <div>
+                          <wf.label :mount_type, "Mount", { class: "block text-[10px] text-gray-500" } %>
+                          <wf.select :mount_type, [ ["Inside", "inside"], ["Outside", "outside"] ], { include_blank: "Choose" }, { class: "w-full rounded border border-theme-200 px-2 py-1 text-xs" } %>
+                        </div>
+                        <div>
+                          <wf.label :notes, "Notes", { class: "block text-[10px] text-gray-500" } %>
+                          <wf.text_field :notes, class: "w-full rounded border border-theme-200 px-2 py-1 text-xs" %>
+                        </div>
+                        <div class="flex gap-2 pt-1">
+                          <wf.submit "Save", class: "flex-1 bg-theme-500 text-white text-xs font-semibold px-3 py-1.5 rounded" %>
+                          <button type="button" onclick="this.closest('details').removeAttribute('open')" class="text-gray-400 text-xs px-2 py-1.5">Cancel</button>
+                        </div>
+                      <% end %>
+                    </div>
+                  </details>
                   <%= button_to "Remove",
                       destroy_window_admin_quote_path(@quote, room_id: room.id, window_id: window.id),
                       method: :delete,

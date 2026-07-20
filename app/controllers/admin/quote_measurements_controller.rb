@@ -36,6 +36,16 @@ class Admin::QuoteMeasurementsController < Admin::BaseController
     redirect_to measurements_admin_quote_path(@quote), notice: "Window removed."
   end
 
+  def update_window
+    room = @quote.project.rooms.find(params[:room_id])
+    window = room.windows.find(params[:window_id])
+    if window.update(window_params)
+      redirect_to measurements_admin_quote_path(@quote), notice: "Window \"#{window.name}\" updated."
+    else
+      redirect_to measurements_admin_quote_path(@quote), alert: "Update failed: #{window.errors.full_messages.to_sentence}"
+    end
+  end
+
   def create_photo
     @photo = Photo.new(photo_params)
     @photo.quote = @quote
