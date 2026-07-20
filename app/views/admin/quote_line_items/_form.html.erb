@@ -116,30 +116,9 @@
   </div>
   <div class="text-xs text-gray-400" data-quote-calculator-target="upchargeTotal"></div>
 
-  <div class="grid grid-cols-3 gap-6">
-    <div>
-      <%= f.label :discount_type, "Discount Type", class: "block text-sm font-medium text-gray-700 mb-1" %>
-      <%= f.select :discount_type, [["None", ""], ["Percentage", "percentage"], ["Fixed $", "fixed"]], {}, class: "w-full rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500" %>
-    </div>
-    <div>
-      <%= f.label :discount_value, "Discount Value", class: "block text-sm font-medium text-gray-700 mb-1" %>
-      <%= f.number_field :discount_value, step: 0.01, class: "w-full rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500" %>
-    </div>
-    <div>
-      <%= f.label :discount_reason, "Reason", class: "block text-sm font-medium text-gray-700 mb-1" %>
-      <%= f.text_field :discount_reason, class: "w-full rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500", placeholder: "Friends & family" %>
-    </div>
-  </div>
-
   <div>
     <%= f.label :notes, class: "block text-sm font-medium text-gray-700 mb-1" %>
     <%= f.text_area :notes, rows: 2, class: "w-full rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500" %>
-  </div>
-
-  <div>
-    <%= f.label :comparison_group, "Comparison Group", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= f.select :comparison_group, [["None", ""], ["Good", "Good"], ["Better", "Better"], ["Best", "Best"]], {}, class: "w-48 rounded-lg border-gray-300 focus:border-theme-500 focus:ring-theme-500" %>
-    <p class="text-xs text-gray-400 mt-1">Group items for good/better/best comparison on client view.</p>
   </div>
 
   <div class="flex gap-3">
