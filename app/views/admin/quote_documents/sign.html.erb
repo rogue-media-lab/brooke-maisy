@@ -7,6 +7,8 @@
 <%
   is_designer = @designer_mode || (params[:signer] == "designer")
   signer_label = is_designer ? "Designer (Amanda)" : "Client"
+  doc_type = @doc_type || params[:doc] || "agreement"
+  form_info = Admin::QuoteDocumentsController::WORKFLOW_FORMS[doc_type.to_sym] || Admin::QuoteDocumentsController::WORKFLOW_FORMS[:agreement]
 %>
 
 <div class="max-w-2xl mx-auto" data-controller="signature-pad">
@@ -22,7 +24,7 @@
 
   <%# Agreement summary %>
   <div class="bg-theme-100 rounded-xl p-5 mb-6">
-    <h2 class="font-serif text-lg font-semibold text-theme-500 mb-2">Design &amp; Installation Services Agreement</h2>
+    <h2 class="font-serif text-lg font-semibold text-theme-500 mb-2"><%= form_info[:label] %></h2>
     <dl class="space-y-1 text-sm">
       <div class="flex justify-between">
         <dt class="text-gray-500">Client</dt>
@@ -55,6 +57,7 @@
     <%= hidden_field_tag "signature[signed_name]", "", { data: { signature_pad_target: "hiddenName" } } %>
     <%= hidden_field_tag "signature[signature_data]", "", { data: { signature_pad_target: "hiddenSig" } } %>
     <%= hidden_field_tag "signer", is_designer ? "designer" : "client" %>
+    <%= hidden_field_tag "document_type", doc_type %>
 
     <%# Signature canvas %>
     <div class="bg-white rounded-xl border border-theme-200 p-5 mb-4">

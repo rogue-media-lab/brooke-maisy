@@ -14,26 +14,92 @@
   <p class="text-sm text-gray-400"><%= @quote.client&.display_name %> - Quote #<%= @quote.id %></p>
 </div>
 
-<div class="bg-white rounded-xl border border-theme-100 overflow-hidden mb-8">
+<%# Client signing forms %>
+<div class="bg-white rounded-xl border border-theme-100 overflow-hidden mb-6">
   <div class="px-5 py-3 bg-theme-100">
-    <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Generate Forms</span>
+    <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Client Documents</span>
   </div>
-  <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <% Admin::QuoteDocumentsController::FORMS.each do |key, form| %>
-      <div class="border border-theme-100 rounded-lg p-4 flex items-center justify-between hover:border-theme-300 transition-colors">
-        <div>
-          <p class="text-sm font-medium text-theme-500"><%= form[:label] %></p>
-          <p class="text-xs text-gray-400 mt-0.5">PDF - Auto-filled from quote data</p>
+  <div class="p-5 space-y-4">
+    <% Admin::QuoteDocumentsController::WORKFLOW_FORMS.each do |key, form| %>
+      <%
+        client_sig = @quote.signatures.where(document_type: form[:doc_type], signer: :client).first
+        designer_sig = @quote.signatures.where(document_type: form[:doc_type], signer: :designer).first
+      %>
+      <div class="border border-theme-100 rounded-lg p-4">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <p class="text-sm font-medium text-theme-500"><%= form[:label] %></p>
+            <p class="text-xs text-gray-400 mt-0.5">Client signs this document</p>
+          </div>
+          <%= link_to "Generate PDF", download_admin_documents_path(@quote, form: key),
+              { target: "_blank", class: "bg-theme-500 hover:bg-theme-400 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors" } %>
         </div>
-        <%= link_to "Generate", download_admin_documents_path(@quote, form: key), { target: "_blank", class: "bg-theme-500 hover:bg-theme-400 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors" } %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <%# Client signature %>
+          <div class="border rounded-lg p-3 <%= client_sig ? 'border-green-300 bg-green-50' : 'border-theme-100' %>">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-medium <%= client_sig ? 'text-green-700' : 'text-theme-500' %>">Client</span>
+              <% if client_sig %>
+                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                </svg>
+              <% end %>
+            </div>
+            <% if client_sig %>
+              <p class="text-[11px] text-green-600">Signed by <%= client_sig.signed_name %> on <%= client_sig.signed_at&.strftime("%b %d, %Y") %></p>
+            <% else %>
+              <%= link_to "Start Client Signing", sign_admin_documents_path(@quote, doc: key),
+                  { class: "text-[11px] text-theme-500 hover:underline" } %>
+            <% end %>
+          </div>
+          <%# Designer signature (agreement only) %>
+          <% if form[:needs_designer] %>
+            <div class="border rounded-lg p-3 <%= designer_sig ? 'border-green-300 bg-green-50' : 'border-theme-100' %>">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-medium <%= designer_sig ? 'text-green-700' : 'text-theme-500' %>">Designer</span>
+                <% if designer_sig %>
+                  <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                  </svg>
+                <% end %>
+              </div>
+              <% if designer_sig %>
+                <p class="text-[11px] text-green-600">Signed by <%= designer_sig.signed_name %> on <%= designer_sig.signed_at&.strftime("%b %d, %Y") %></p>
+              <% else %>
+                <%= link_to "Start Designer Signing", sign_designer_admin_documents_path(@quote, doc: key),
+                    { class: "text-[11px] text-theme-500 hover:underline" } %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
       </div>
     <% end %>
   </div>
 </div>
 
-<div class="bg-white rounded-xl border border-theme-100 overflow-hidden mb-8">
+<%# Internal forms %>
+<div class="bg-white rounded-xl border border-theme-100 overflow-hidden mb-6">
   <div class="px-5 py-3 bg-theme-100">
-    <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Signature Status</span>
+    <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Internal Documents</span>
+  </div>
+  <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <% Admin::QuoteDocumentsController::INTERNAL_FORMS.each do |key, form| %>
+      <div class="border border-theme-100 rounded-lg p-4 flex items-center justify-between hover:border-theme-300 transition-colors">
+        <div>
+          <p class="text-sm font-medium text-theme-500"><%= form[:label] %></p>
+          <p class="text-xs text-gray-400 mt-0.5">Admin use only</p>
+        </div>
+        <%= link_to "Generate PDF", download_admin_documents_path(@quote, form: key),
+            { target: "_blank", class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors" } %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<%# Signature status summary %>
+<div class="bg-white rounded-xl border border-theme-100 overflow-hidden">
+  <div class="px-5 py-3 bg-theme-100">
+    <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Signature History</span>
   </div>
   <div class="p-5">
     <% if @signatures.any? %>
@@ -52,56 +118,7 @@
         <% end %>
       </div>
     <% else %>
-      <p class="text-gray-400 text-sm">No signatures recorded yet. Generate the agreement above, then use the signing flow to capture client and designer signatures.</p>
+      <p class="text-gray-400 text-sm">No signatures recorded yet.</p>
     <% end %>
-  </div>
-</div>
-
-<%# Signing flow entry %>
-<%
-  client_sig = @quote.signatures.where(document_type: :agreement, signer: :client).first
-  designer_sig = @quote.signatures.where(document_type: :agreement, signer: :designer).first
-%>
-<div class="bg-white rounded-xl border border-theme-100 p-5">
-  <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Signatures</h3>
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <%# Client signing %>
-    <div class="border rounded-lg p-4 <%= client_sig ? 'border-green-300 bg-green-50' : 'border-theme-100' %>">
-      <div class="flex items-center justify-between mb-2">
-        <span class="text-sm font-medium <%= client_sig ? 'text-green-700' : 'text-theme-500' %>">Client Signature</span>
-        <% if client_sig %>
-          <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-          </svg>
-        <% end %>
-      </div>
-      <% if client_sig %>
-        <p class="text-xs text-green-600">Signed by <%= client_sig.signed_name %> on <%= client_sig.signed_at&.strftime("%b %d, %Y") %></p>
-        <p class="text-xs text-green-600 mt-1">Quote is locked.</p>
-      <% else %>
-        <p class="text-xs text-gray-400 mb-3">Hand the iPad to the client to sign.</p>
-        <%= link_to "Start Client Signing", sign_admin_documents_path(@quote),
-            { class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors" } %>
-      <% end %>
-    </div>
-
-    <%# Designer signing %>
-    <div class="border rounded-lg p-4 <%= designer_sig ? 'border-green-300 bg-green-50' : 'border-theme-100' %>">
-      <div class="flex items-center justify-between mb-2">
-        <span class="text-sm font-medium <%= designer_sig ? 'text-green-700' : 'text-theme-500' %>">Designer Signature</span>
-        <% if designer_sig %>
-          <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-          </svg>
-        <% end %>
-      </div>
-      <% if designer_sig %>
-        <p class="text-xs text-green-600">Signed by <%= designer_sig.signed_name %> on <%= designer_sig.signed_at&.strftime("%b %d, %Y") %></p>
-      <% else %>
-        <p class="text-xs text-gray-400 mb-3">Amanda signs after the client.</p>
-        <%= link_to "Start Designer Signing", sign_designer_admin_documents_path(@quote),
-            { class: "bg-theme-100 hover:bg-theme-200 text-theme-500 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors" } %>
-      <% end %>
-    </div>
   </div>
 </div>

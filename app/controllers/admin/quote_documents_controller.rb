@@ -5,13 +5,20 @@ class Admin::QuoteDocumentsController < Admin::BaseController
 
   before_action :set_quote
 
-  FORMS = {
-    agreement: { label: "Design & Installation Services Agreement", class: "Pdf::AgreementPdf" },
-    cancellation: { label: "Notice of Cancellation", class: "Pdf::CancellationPdf" },
+  # Forms the client signs — shown in the workflow with signing flow
+  WORKFLOW_FORMS = {
+    agreement: { label: "Design & Installation Services Agreement", class: "Pdf::AgreementPdf", doc_type: :agreement, needs_designer: true },
+    cancellation: { label: "Notice of Cancellation", class: "Pdf::CancellationPdf", doc_type: :cancellation, needs_designer: false }
+  }.freeze
+
+  # Internal forms — admin downloads only, no signing
+  INTERNAL_FORMS = {
     work_order_client: { label: "Work Order - Client", class: "Pdf::WorkOrderClientPdf" },
     work_order_internal: { label: "Work Order - Internal", class: "Pdf::WorkOrderInternalPdf" },
     invoice: { label: "Invoice", class: "Pdf::InvoicePdf" }
   }.freeze
+
+  ALL_FORMS = WORKFLOW_FORMS.merge(INTERNAL_FORMS).freeze
 
   def show
     @quote.bump_workflow_stage!(:contract)
@@ -20,19 +27,22 @@ class Admin::QuoteDocumentsController < Admin::BaseController
 
   def sign
     @signature = Signature.new
+    @doc_type = params[:doc] || "agreement"
   end
 
   def sign_designer
     @signature = Signature.new
     @designer_mode = true
+    @doc_type = params[:doc] || "agreement"
     render :sign
   end
 
   def create_signature
     @signature = @quote.signatures.build(signature_params)
     signer_val = params[:signer] || "client"
+    doc_type_val = params[:document_type] || "agreement"
     @signature.signer = signer_val
-    @signature.document_type = :agreement
+    @signature.document_type = doc_type_val
     @signature.signed_at = Time.current
     @signature.signature_ip = request.remote_ip
 
@@ -60,13 +70,14 @@ class Admin::QuoteDocumentsController < Admin::BaseController
                           (@signature.signer == "client" ? " Quote has been locked." : "")
     else
       @designer_mode = (signer_val == "designer")
+      @doc_type = doc_type_val
       render :sign, status: :unprocessable_entity
     end
   end
 
   def download
     form_key = params[:form].to_sym
-    form = FORMS[form_key]
+    form = ALL_FORMS[form_key]
 
     unless form
       redirect_to admin_documents_path(@quote), alert: "Unknown form type."
