@@ -46,7 +46,7 @@
   </div>
 
   <%# Signature form %>
-  <%= form_with url: create_signature_admin_documents_path(@quote), local: true, html: { data: { turbo: false } } do |f| %>
+  <%= form_with url: create_signature_admin_documents_path(@quote), local: true, html: { data: { turbo: false, action: "submit->signature-pad#submit" } } do |f| %>
     <% if @signature&.errors&.any? %>
       <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-600 mb-4">
         <%= @signature.errors.full_messages.to_sentence %>
