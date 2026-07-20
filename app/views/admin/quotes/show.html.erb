@@ -10,7 +10,7 @@
   when :client_info
     { label: "Add client info and measurements", path: measurements_admin_quote_path(@quote), icon: "measure" }
   when :measurements
-    { label: "Add products and line items", path: admin_quote_path(@quote), icon: "product" }
+    { label: "Add products and line items", path: new_admin_quote_quote_line_item_path(@quote), icon: "product" }
   when :product_choices
     { label: "Preview the quote and send to client", path: preview_admin_quote_path(@quote), icon: "quote" }
   when :quote_review
@@ -83,7 +83,7 @@
   <div class="flex items-center justify-between px-5 py-3 bg-theme-100">
     <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Line Items</span>
     <% unless @quote.ordered? %>
-      <%= link_to "Add item", new_admin_quote_quote_line_item_path(@quote), class: "text-xs text-theme-500 hover:underline" %>
+      <%= link_to "Add item", new_admin_quote_quote_line_item_path(@quote), class: "bg-theme-500 hover:bg-theme-400 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors" %>
     <% else %>
       <span class="text-[11px] text-gray-400">Locked - changes require a Change Order</span>
     <% end %>
@@ -142,7 +142,12 @@
       <% end %>
     <% end %>
   <% else %>
-    <div class="p-8 text-center text-gray-400"><p>No line items yet. Add products to this quote.</p></div>
+    <div class="p-8 text-center">
+      <p class="text-gray-400 mb-4">No products added yet.</p>
+      <% unless @quote.ordered? %>
+        <%= link_to "Add first product", new_admin_quote_quote_line_item_path(@quote), class: "bg-theme-500 hover:bg-theme-400 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors" %>
+      <% end %>
+    </div>
   <% end %>
 </div>
 
