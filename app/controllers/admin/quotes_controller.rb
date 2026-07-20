@@ -71,6 +71,7 @@ class Admin::QuotesController < Admin::BaseController
   end
 
   def show
+    @quote.bump_workflow_stage!(:product_choices) if @quote.quote_line_items.any?
     @calculator = QuoteCalculator.new(@quote).calculate
     render layout: "quote_workflow"
   end
@@ -127,6 +128,7 @@ class Admin::QuotesController < Admin::BaseController
   end
 
   def preview
+    @quote.bump_workflow_stage!(:quote_review)
     @calculator = QuoteCalculator.new(@quote).calculate
     render layout: "quote_workflow"
   end

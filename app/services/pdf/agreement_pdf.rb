@@ -26,13 +26,51 @@ module Pdf
     end
 
     def draw_signature_blocks(pdf)
-      pdf.text "Client Signature: _______________________________________             Date: ______________", size: 10
+      client_sig = @signatures.find { |s| s.signer == "client" && s.document_type == "agreement" }
+      designer_sig = @signatures.find { |s| s.signer == "designer" && s.document_type == "agreement" }
+
+      # Client signature line
+      if client_sig&.signature_image&.attached?
+        y = pdf.cursor
+        begin
+          pdf.image StringIO.new(client_sig.signature_image.download),
+                    at: [ 0, y ],
+                    width: 180,
+                    height: 36
+        rescue StandardError
+          pdf.text "X__________________________", size: 10
+        end
+        pdf.move_down 32
+        pdf.text "Client Signature: _______________________________________             Date: #{client_sig.signed_at&.strftime('%b %-d, %Y') || '____________'}", size: 10
+      else
+        pdf.text "Client Signature: _______________________________________             Date: ______________", size: 10
+      end
       pdf.move_down 16
-      pdf.text "Print Name: _____________________________________________", size: 10
+      if client_sig
+        pdf.text "Print Name: #{client_sig.signed_name}", size: 10
+      else
+        pdf.text "Print Name: _____________________________________________", size: 10
+      end
       pdf.move_down 24
-      pdf.text "Designer Signature: _____________________________________             Date: ______________", size: 10
+
+      # Designer signature line
+      if designer_sig&.signature_image&.attached?
+        y = pdf.cursor
+        begin
+          pdf.image StringIO.new(designer_sig.signature_image.download),
+                    at: [ 0, y ],
+                    width: 180,
+                    height: 36
+        rescue StandardError
+          pdf.text "X__________________________", size: 10
+        end
+        pdf.move_down 32
+        pdf.text "Designer Signature: _____________________________________             Date: #{designer_sig.signed_at&.strftime('%b %-d, %Y') || '____________'}", size: 10
+      else
+        pdf.text "Designer Signature: _____________________________________             Date: ______________", size: 10
+      end
       pdf.move_down 16
-      pdf.text "Print Name: Amanda Nelson, Owner — Brooke & Maisy Interior Designs, LLC", size: 10
+      pdf.text "Print Name: Amanda Nelson, Owner - Brooke & Maisy Interior Designs, LLC", size: 10
     end
 
     def sections

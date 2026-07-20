@@ -82,7 +82,11 @@
 <div class="bg-white rounded-xl border border-theme-100 overflow-hidden mb-8">
   <div class="flex items-center justify-between px-5 py-3 bg-theme-100">
     <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Line Items</span>
-    <%= link_to "Add item", new_admin_quote_quote_line_item_path(@quote), class: "text-xs text-theme-500 hover:underline" %>
+    <% unless @quote.ordered? %>
+      <%= link_to "Add item", new_admin_quote_quote_line_item_path(@quote), class: "text-xs text-theme-500 hover:underline" %>
+    <% else %>
+      <span class="text-[11px] text-gray-400">Locked - changes require a Change Order</span>
+    <% end %>
   </div>
   <% if @quote.quote_line_items.any? %>
     <%# Group by comparison group %>
@@ -128,7 +132,11 @@
           <div class="col-span-1 text-sm text-gray-600"><%= number_to_currency(calc[:adjusted_retail] || item.unit_price || 0) %></div>
           <div class="col-span-1 text-sm text-gray-600 font-medium"><%= number_to_currency(calc[:line_total] || 0) %></div>
           <div class="col-span-1 text-sm">
-            <%= link_to "Edit", edit_admin_quote_quote_line_item_path(@quote, item), class: "text-theme-500 hover:underline" %>
+            <% unless @quote.ordered? %>
+              <%= link_to "Edit", edit_admin_quote_quote_line_item_path(@quote, item), class: "text-theme-500 hover:underline" %>
+            <% else %>
+              <span class="text-gray-300 text-xs">Locked</span>
+            <% end %>
           </div>
         </div>
       <% end %>

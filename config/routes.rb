@@ -114,6 +114,7 @@ Rails.application.routes.draw do
         delete :destroy_payment, to: "quote_payments#destroy"
         resource :documents, only: [ :show ], controller: "quote_documents" do
           get :sign
+          get :sign_designer
           post :create_signature
           get ":form/download", to: "quote_documents#download", as: :download
         end

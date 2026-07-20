@@ -8,10 +8,11 @@ module Pdf
       owner: "Amanda Nelson, Owner"
     }.freeze
 
-    def initialize(quote)
+    def initialize(quote, signatures: [])
       @quote = quote
       @client = quote.client
       @calculator = QuoteCalculator.new(quote).calculate
+      @signatures = signatures
     end
 
     def render

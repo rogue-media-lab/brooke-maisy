@@ -4,6 +4,11 @@
   <%= render "admin/quotes/stepper", quote: @quote %>
 <% end %>
 
+<%
+  is_designer = @designer_mode || (params[:signer] == "designer")
+  signer_label = is_designer ? "Designer (Amanda)" : "Client"
+%>
+
 <div class="max-w-2xl mx-auto" data-controller="signature-pad">
   <div class="mb-6">
     <div class="flex items-center gap-2 mb-1">
@@ -11,7 +16,7 @@
       <span class="text-gray-300">/</span>
       <span class="text-sm text-gray-400">Sign Agreement</span>
     </div>
-    <h1 class="font-serif text-2xl font-semibold text-theme-500">Client Signature</h1>
+    <h1 class="font-serif text-2xl font-semibold text-theme-500"><%= signer_label %> Signature</h1>
     <p class="text-sm text-gray-400"><%= @quote.client&.display_name %> - Quote #<%= @quote.id %></p>
   </div>
 
@@ -49,6 +54,7 @@
     <%# Hidden fields populated by JS %>
     <%= hidden_field_tag "signature[signed_name]", "", { data: { signature_pad_target: "hiddenName" } } %>
     <%= hidden_field_tag "signature[signature_data]", "", { data: { signature_pad_target: "hiddenSig" } } %>
+    <%= hidden_field_tag "signer", is_designer ? "designer" : "client" %>
 
     <%# Signature canvas %>
     <div class="bg-white rounded-xl border border-theme-200 p-5 mb-4">

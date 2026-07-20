@@ -22,31 +22,44 @@ class Admin::QuoteDocumentsController < Admin::BaseController
     @signature = Signature.new
   end
 
+  def sign_designer
+    @signature = Signature.new
+    @designer_mode = true
+    render :sign
+  end
+
   def create_signature
     @signature = @quote.signatures.build(signature_params)
-    @signature.signer = :client
+    signer_val = params[:signer] || "client"
+    @signature.signer = signer_val
     @signature.document_type = :agreement
     @signature.signed_at = Time.current
     @signature.signature_ip = request.remote_ip
 
     if @signature.signature_data.present?
-      # Decode base64 PNG and attach to ActiveStorage
       data = @signature.signature_data.sub(/^data:image\/png;base64,/, "")
       decoded = Base64.decode64(data)
       @signature.signature_image.attach(
         io: StringIO.new(decoded),
-        filename: "signature_#{@quote.id}_client.png",
+        filename: "signature_#{@quote.id}_#{@signature.signer}.png",
         content_type: "image/png"
       )
     end
 
     if @signature.save
-      # Lock the quote after client signs
-      @quote.update!(status: :ordered) if @quote.draft?
+      # Lock the quote only after client signs
+      if @signature.signer == "client" && @quote.draft?
+        @quote.update!(status: :ordered)
+      end
+
+      # Send email notification
+      SignatureMailer.signed(@quote, @signature).deliver_later if @client&.email.present? rescue nil
 
       redirect_to admin_documents_path(@quote),
-                  notice: "Client signature captured. Quote has been locked."
+                  notice: "#{@signature.signer.humanize} signature captured." +
+                          (@signature.signer == "client" ? " Quote has been locked." : "")
     else
+      @designer_mode = (signer_val == "designer")
       render :sign, status: :unprocessable_entity
     end
   end
@@ -60,7 +73,7 @@ class Admin::QuoteDocumentsController < Admin::BaseController
       return
     end
 
-    generator = form[:class].constantize.new(@quote)
+    generator = form[:class].constantize.new(@quote, signatures: @quote.signatures.to_a)
     pdf_data = generator.render
 
     send_data pdf_data,
