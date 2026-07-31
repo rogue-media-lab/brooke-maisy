@@ -10,6 +10,15 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <%# Google Ads gtag.js - conversion tracking (AW-18304063526) %>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18304063526"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-18304063526');
+    </script>
+
     <%= yield :head %>
 
     <link rel="icon" href="/icon.png" type="image/png">
@@ -25,7 +34,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-theme-100 text-gray-900 font-sans min-h-screen flex flex-col" data-controller="lightbox">
+  <body class="bg-theme-100 text-gray-900 font-sans min-h-screen flex flex-col" data-controller="lightbox google-ads">
     <%= render "shared/navbar" %>
 
     <div class="fixed top-20 right-4 z-50 space-y-2" data-controller="flash-messages">
